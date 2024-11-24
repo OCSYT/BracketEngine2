@@ -53,7 +53,7 @@ namespace Engine
             {
                 Effect.View = CameraObj.GetViewMatrix();
                 Effect.Projection = CameraObj.GetProjectionMatrix();
-                ECSManager.Instance.CallDrawOnComponents(Effect, CameraObj.GetViewMatrix(), CameraObj.GetProjectionMatrix());
+                ECSManager.Instance.CallDrawOnComponents(Effect, CameraObj.GetViewMatrix(), CameraObj.GetProjectionMatrix(), GameTime);
             }
         }
 

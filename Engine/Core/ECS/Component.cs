@@ -22,10 +22,13 @@ namespace Engine.Core.ECS
         public virtual void MainUpdate(GameTime gameTime)
         {
         }
-
-        public virtual void Draw(Effect effect, Matrix viewMatrix, Matrix projectionMatrix)
+        public virtual void DrawGUI(GameTime gameTime)
         {
         }
+        public virtual void Render(Effect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
+        {
+        }
+
 
         public virtual void OnDestroy()
         {

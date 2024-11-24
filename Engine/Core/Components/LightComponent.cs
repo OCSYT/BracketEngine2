@@ -29,7 +29,7 @@ namespace Engine.Core.Components
             Intensity = intensity;
         }
 
-        public override void Draw(Effect effect, Matrix viewMatrix, Matrix projectionMatrix)
+        public override void Render(Effect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
         {
             if (effect is BasicEffect basicEffect)
             {

@@ -13,7 +13,8 @@ namespace Engine.Core.ECS {
         void Start();
         void MainUpdate(GameTime gameTime);
         void FixedUpdate(GameTime gameTime);
-        void Draw(Effect basicEffect, Matrix viewMatrix, Matrix projectionMatrix);
+        void Render(Effect basicEffect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime);
+        void DrawGUI(GameTime gameTime);
         void OnDestroy();
     }
     public class ECSManager
@@ -153,13 +154,23 @@ namespace Engine.Core.ECS {
             });
         }
 
-        public void CallDrawOnComponents(Effect basicEffect, Matrix viewMatrix, Matrix projectionMatrix)
+        public void CallRenderOnComponents(Effect basicEffect, Matrix viewMatrix, Matrix projectionMatrix, GameTime GameTime)
         {
             foreach (var lifecycle in _lifecycleComponents.Values.SelectMany(lifecycleList => lifecycleList))
             {
-                lifecycle.Draw(basicEffect, viewMatrix, projectionMatrix);
+                lifecycle.Render(basicEffect, viewMatrix, projectionMatrix, GameTime);
             }
         }
+        public void CallDrawGUIOnComponents(GameTime GameTime)
+        {
+            foreach (var lifecycle in _lifecycleComponents.Values.SelectMany(lifecycleList => lifecycleList))
+            {
+                lifecycle.DrawGUI(GameTime);
+            }
+        }
+
+
+
 
         private void ProcessTimedRemovals(GameTime gameTime)
         {

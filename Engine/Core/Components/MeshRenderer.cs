@@ -19,7 +19,7 @@ namespace Engine.Core.Components
             Materials = materials ?? new Material[model.Meshes.Count];
         }
 
-        public override void Draw(Effect effect, Matrix viewMatrix, Matrix projectionMatrix)
+        public override void Render(Effect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
         {
             BasicEffect basicEffect = effect as BasicEffect;
             var transform = ECSManager.Instance.GetComponent<Transform>(EntityId);

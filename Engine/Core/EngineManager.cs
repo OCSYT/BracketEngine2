@@ -89,6 +89,7 @@ namespace Engine.Core
             Graphics.GraphicsDevice.DepthStencilState = DepthStencilState.None;
             SpriteBatch.Begin();
             DrawGUI(gameTime);
+            ECSManager.Instance.CallDrawGUIOnComponents(gameTime);
             if (UIControls != null)
             {
                 UIControls.Draw(gameTime);

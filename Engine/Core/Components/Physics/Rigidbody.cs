@@ -253,7 +253,7 @@ namespace Engine.Core.Components.Physics
             }
         }
 
-        public override void Draw(Effect effect, Matrix viewMatrix, Matrix projectionMatrix)
+        public override void Render(Effect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
         {
             if (Debug && BulletRigidBody != null && Debugger != null)
             {

@@ -84,7 +84,7 @@ namespace Engine.Core.Components
             CurrentProjection = CurrentProjection == ProjectionType.Perspective ? ProjectionType.Orthographic : ProjectionType.Perspective;
         }
 
-        public override void Draw(Effect effect, Matrix viewMatrix, Matrix projectionMatrix)
+        public override void Render(Effect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
         {
             BasicEffect basicEffect = effect as BasicEffect;
             AspectRatio = (float)EngineManager.Instance.GraphicsDevice.Viewport.Width / EngineManager.Instance.GraphicsDevice.Viewport.Height;
