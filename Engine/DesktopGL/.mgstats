@@ -1,0 +1,4 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"C:/Users/Bracket/source/repos/BracketEngine/Engine/Content/defaultFont.spritefont","C:/Users/Bracket/source/repos/BracketEngine/Engine/bin/Release/net8.0-windows/Content/defaultFont.xnb","FontDescriptionProcessor","SpriteFontContent",504,21538,0.1256768
+"C:/Users/Bracket/source/repos/BracketEngine/Engine/Content/GameContent/Models/Primitives/cube.fbx","C:/Users/Bracket/source/repos/BracketEngine/Engine/bin/Release/net8.0-windows/Content/GameContent/Models/Primitives/cube.xnb","ModelProcessor","ModelContent",15276,1498,0.0477085
+"C:/Users/Bracket/source/repos/BracketEngine/Engine/Content/GameContent/Textures/Default/checkerboard.png","C:/Users/Bracket/source/repos/BracketEngine/Engine/bin/Release/net8.0-windows/Content/GameContent/Textures/Default/checkerboard.xnb","TextureProcessor","Texture2DContent",3663,1048661,0.044094
