@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Engine
 {
-    internal class MainProgram
+    public class MainProgram
     {
         public static void Main()
         {

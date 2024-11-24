@@ -7,6 +7,9 @@ namespace Engine.Core.ECS
     public class Component : IComponentLifecycle
     {
         public int EntityId { get; private set; }
+        public virtual void Awake()
+        {
+        }
 
         public virtual void Start()
         {

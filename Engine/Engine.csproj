@@ -9,6 +9,7 @@
 	
 	<ItemGroup>
 		<PackageReference Include="BulletSharp" Version="0.11.1" />
+		<PackageReference Include="Coroutine" Version="2.1.5" />
 		<PackageReference Include="MonoGame.Extended" Version="4.0.3" />
 		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.2.1105" />
 		<PackageReference Include="MonoGame.UI.Forms" Version="1.0.1" />
@@ -18,7 +19,6 @@
 	  <Folder Include="Content\GameContent\Audio\" />
 	  <Folder Include="Content\GameContent\UI\" />
 	  <Folder Include="Content\GameContent\Shaders\" />
-	  <Folder Include="Core\Components\GameContent\" />
 	</ItemGroup>
 
 	<Target Name="BuildContent" BeforeTargets="Build">

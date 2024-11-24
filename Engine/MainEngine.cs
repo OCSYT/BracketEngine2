@@ -11,13 +11,13 @@ using Engine.Components;
 
 namespace Engine
 {
-    internal class MainEngine : EngineManager
+    public class MainEngine : EngineManager
     {
         private int CameraEntity;
         private int PlayerEntity;
         private int DirectionalLightEntity;
 
-        protected override void Start()
+        public override void Start()
         {
             Window.Title = "Game";
 
@@ -32,6 +32,39 @@ namespace Engine
             CreateCube(new Vector3(0, 10, 20), new Vector3(0, 90, 0), Vector3.One * 2.5f, Color.Blue);
             CreatePlayer();
         }
+
+        public override void MainUpdate(GameTime GameTime)
+        {
+            UIControls.DisplayFramerate(CurrentFrameRate);
+        }
+
+        public override void FixedUpdate(GameTime GameTime)
+        {
+
+        }
+
+        public override void Render(GameTime GameTime)
+        {
+            Graphics.GraphicsDevice.Clear(Color.SkyBlue);
+            BasicEffect Effect = new BasicEffect(Graphics.GraphicsDevice) { AmbientLightColor = Vector3.One / 4 };
+            var CameraObj = ECSManager.Instance.GetComponent<Camera>(CameraEntity);
+
+            if (CameraObj != null)
+            {
+                Effect.View = CameraObj.GetViewMatrix();
+                Effect.Projection = CameraObj.GetProjectionMatrix();
+                ECSManager.Instance.CallDrawOnComponents(Effect, CameraObj.GetViewMatrix(), CameraObj.GetProjectionMatrix());
+            }
+        }
+
+        public override void DrawGUI(GameTime GameTime)
+        {
+
+        }
+
+
+
+        //Spawning Objects
 
         // Function to create Camera
         private void CreateCamera()
@@ -77,8 +110,8 @@ namespace Engine
                 Mass = 0,
                 Shapes = new[] { new BulletSharp.BoxShape(100, 1, 100) },
                 IsStatic = true,
-                CollisionGroup = PhysicsManager.Instance.CreateCollisionMask(new[] { 1 }, true),
-                CollisionMask = PhysicsManager.Instance.CreateCollisionMask(new[] { 1, 2 }, true),
+                CollisionGroup = PhysicsManager.CreateCollisionMask([1]),
+                CollisionMask = PhysicsManager.CreateCollisionMask([1, 2]),
             });
         }
 
@@ -99,11 +132,11 @@ namespace Engine
             ECSManager.Instance.AddComponent(CubeObj, new RigidBody
             {
                 Friction = 5,
-                Mass = 1000 * ((Scale.X + Scale.Y + Scale.Z)/3),
+                Mass = 1000 * ((Scale.X + Scale.Y + Scale.Z) / 3),
                 Shapes = new[] { new BulletSharp.BoxShape(Scale.X, Scale.Y, Scale.Z) },
                 IsStatic = false,
-                CollisionGroup = PhysicsManager.Instance.CreateCollisionMask(new[] { 1 }, true),
-                CollisionMask = PhysicsManager.Instance.CreateCollisionMask(new[] { 1, 2 }, true),
+                CollisionGroup = PhysicsManager.CreateCollisionMask([1]),
+                CollisionMask = PhysicsManager.CreateCollisionMask([1, 2]),
             });
         }
 
@@ -121,8 +154,8 @@ namespace Engine
             {
                 Mass = 70,
                 Shapes = new[] { new BulletSharp.CapsuleShape(1, 5) },
-                CollisionGroup = PhysicsManager.Instance.CreateCollisionMask(new[] { 2 }, true),
-                CollisionMask = PhysicsManager.Instance.CreateCollisionMask(new[] { 1 }, true),
+                CollisionGroup = PhysicsManager.CreateCollisionMask([2]),
+                CollisionMask = PhysicsManager.CreateCollisionMask([1]),
             };
 
             ECSManager.Instance.AddComponent(PlayerEntity, PlayerBody);
@@ -130,33 +163,5 @@ namespace Engine
             ECSManager.Instance.AddComponent(PlayerEntity, Controller);
         }
 
-        protected override void MainUpdate(GameTime GameTime)
-        {
-            UIControls.DisplayFramerate(CurrentFrameRate);
-        }
-
-        protected override void FixedUpdate(GameTime GameTime)
-        {
-
-        }
-
-        protected override void Render(GameTime GameTime)
-        {
-            Graphics.GraphicsDevice.Clear(Color.SkyBlue);
-            BasicEffect Effect = new BasicEffect(Graphics.GraphicsDevice) { AmbientLightColor = Vector3.One / 4 };
-            var CameraObj = ECSManager.Instance.GetComponent<Camera>(CameraEntity);
-
-            if (CameraObj != null)
-            {
-                Effect.View = CameraObj.GetViewMatrix();
-                Effect.Projection = CameraObj.GetProjectionMatrix();
-                ECSManager.Instance.CallDrawOnComponents(Effect, CameraObj.GetViewMatrix(), CameraObj.GetProjectionMatrix());
-            }
-        }
-
-        protected override void DrawGUI(GameTime GameTime)
-        {
-
-        }
     }
 }

@@ -13,6 +13,7 @@ using Engine.Core.Components;
 
 namespace Engine.Core.Components.Physics
 {
+    
     public class RigidBody : Component
     {
         public BulletSharp.RigidBody BulletRigidBody { get; private set; }
@@ -51,6 +52,7 @@ namespace Engine.Core.Components.Physics
             CollisionGroup = collisionGroup;
             CollisionMask = collisionMask;
         }
+
 
         public void SetVelocityFactor(Vector3 freezePosition)
         {

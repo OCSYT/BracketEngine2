@@ -11,7 +11,7 @@ using Engine.Core.Audio;
 
 namespace Engine.Core
 {
-    public abstract class EngineManager : Game
+    public class EngineManager : Game
     {
         private static EngineManager _instance;
         public static EngineManager Instance
@@ -34,8 +34,7 @@ namespace Engine.Core
             }
         }
 
-        public GraphicsDeviceManager Graphics => Instance._graphics;
-        private readonly GraphicsDeviceManager _graphics;
+        public GraphicsDeviceManager Graphics;
 
         public float FixedTimeStep = 0.016f;
         private float Accumulator = 0;
@@ -55,7 +54,7 @@ namespace Engine.Core
             _instance = this;
 
             TargetElapsedTime = TimeSpan.FromSeconds(1.0 / short.MaxValue);
-            _graphics = new GraphicsDeviceManager(this)
+            Graphics = new GraphicsDeviceManager(this)
             {
                 SynchronizeWithVerticalRetrace = false
             };
@@ -65,17 +64,27 @@ namespace Engine.Core
             Content.RootDirectory = "Content";
         }
 
+        protected override void Initialize()
+        {
+            UIControls = new UIControls(this);
+            Components.Add(UIControls);
+
+            Awake();
+            base.Initialize();
+        }
+
+
         protected override void LoadContent()
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
 
             Start();
+            base.LoadContent();
         }
-
-        protected virtual void Start() { }
 
         protected override void Draw(GameTime gameTime)
         {
+            Graphics.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             Render(gameTime);
             Graphics.GraphicsDevice.DepthStencilState = DepthStencilState.None;
             SpriteBatch.Begin();
@@ -96,20 +105,7 @@ namespace Engine.Core
                 FrameCount = 0;
                 ElapsedTime = 0f;
             }
-        }
-
-        protected virtual void Render(GameTime gameTime) { }
-        protected virtual void DrawGUI(GameTime gameTime)
-        {
-
-        }
-
-
-        protected override void Initialize()
-        {
-            UIControls = new UIControls(this);
-            Components.Add(UIControls);
-            base.Initialize();
+            base.Draw(gameTime);
         }
 
         private DateTime LastTime = DateTime.Now;
@@ -118,11 +114,14 @@ namespace Engine.Core
         private readonly object PhyicsLock = new object();
         protected override void Update(GameTime gameTime)
         {
-            SoundManager.Instance.Update();
+
             var currentTime = DateTime.Now;
             var elapsedTime = (currentTime - LastTime).TotalSeconds;
             LastTime = currentTime;
             Accumulator += (float)elapsedTime;
+
+            MainUpdate(gameTime);
+            ECSManager.Instance.CallMainUpdateOnComponents(gameTime);
 
             if (Accumulator >= FixedTimeStep)
             {
@@ -138,10 +137,14 @@ namespace Engine.Core
                 Accumulator -= FixedTimeStep;
                 TotalTime += FixedTimeStep;
             }
-            MainUpdate(gameTime);
-            ECSManager.Instance.CallMainUpdateOnComponents(gameTime);
+            SoundManager.Instance.Update();
+            base.Update(gameTime);
         }
-        protected virtual void MainUpdate(GameTime gameTime) { }
+        protected override void UnloadContent()
+        {
+            OnDestroy();
+            base.UnloadContent();
+        }
 
         public void LockMouse()
         {
@@ -172,11 +175,13 @@ namespace Engine.Core
             Mouse.SetPosition(viewport.Width / 2, viewport.Height / 2);
         }
 
-        protected virtual void FixedUpdate(GameTime gameTime) { }
+        public virtual void Awake() { }
+        public virtual void Start() { }
+        public virtual void MainUpdate(GameTime gameTime) { }
+        public virtual void FixedUpdate(GameTime gameTime) { }
 
-        protected override void UnloadContent()
-        {
-            base.UnloadContent();
-        }
+        public virtual void Render(GameTime gameTime) { }
+        public virtual void DrawGUI(GameTime gameTime) { }
+        public virtual void OnDestroy() { }
     }
 }

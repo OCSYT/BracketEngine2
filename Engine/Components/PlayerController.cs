@@ -31,7 +31,7 @@ namespace Engine.Components
             this.Sensitivity = Sensitivity;
             this.Speed = Speed;
             this.Jump = Jump;
-            this.MaxVelocity = MaxVelocity; // Initialize MaxVelocity.
+            this.MaxVelocity = MaxVelocity;
         }
 
         public override void Start()
@@ -64,18 +64,17 @@ namespace Engine.Components
         public override void FixedUpdate(GameTime gameTime)
         {
 
-            EngineManager.Instance.LockMouse();
-
             PhysicsManager.HitResult HitResult =
                 PhysicsManager.Instance.Raycast(LocalTransform.Position,
-                LocalTransform.Position + Vector3.Down * 5, PhysicsManager.Instance.CreateCollisionMask([2], true),
-                PhysicsManager.Instance.CreateCollisionMask([1], true));
+                LocalTransform.Position + Vector3.Down * 5, PhysicsManager.CreateCollisionMask([2]),
+                PhysicsManager.CreateCollisionMask([1]));
 
             KeyboardState State = Keyboard.GetState();
 
             Vector3 LocalVel = Vector3.Zero;
             if (EngineManager.Instance.IsActive)
             {
+                EngineManager.Instance.LockMouse();
                 if (State.IsKeyDown(Keys.W))
                 {
                     LocalVel += ForwardDir * Speed;

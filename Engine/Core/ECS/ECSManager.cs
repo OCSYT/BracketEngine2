@@ -6,20 +6,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Engine.Core.ECS
-{
-    public interface IComponentLifecycle
+namespace Engine.Core.ECS { 
+   public interface IComponentLifecycle
     {
+        void Awake();
         void Start();
-        void FixedUpdate(GameTime gameTime);
         void MainUpdate(GameTime gameTime);
+        void FixedUpdate(GameTime gameTime);
         void Draw(Effect basicEffect, Matrix viewMatrix, Matrix projectionMatrix);
         void OnDestroy();
     }
-
     public class ECSManager
     {
-        private static ECSManager _instance;
+        private static readonly Lazy<ECSManager> _lazyInstance = new Lazy<ECSManager>(() => new ECSManager());
+        public static ECSManager Instance => _lazyInstance.Value;
+
         private readonly List<int> _entities = new();
         private int _nextEntityId;
 
@@ -27,9 +28,10 @@ namespace Engine.Core.ECS
         private readonly ConcurrentDictionary<Type, ConcurrentDictionary<int, object>> _components = new();
         private readonly ConcurrentDictionary<int, float> _timedRemovals = new();
 
-        private ECSManager() { }
+        // Queue to track components that need Start to be called
+        private readonly HashSet<IComponentLifecycle> _startQueuedComponents = new();
 
-        public static ECSManager Instance => _instance ??= new ECSManager();
+        private ECSManager() { }
 
         public int CreateEntity()
         {
@@ -58,7 +60,6 @@ namespace Engine.Core.ECS
         {
             _timedRemovals.TryAdd(entityId, seconds);
         }
-
         public void AddComponent<T>(int entityId, T component) where T : Component
         {
             var type = typeof(T);
@@ -69,7 +70,13 @@ namespace Engine.Core.ECS
 
             _components[type][entityId] = component;
             component.SetEntityId(entityId);
-            component.Start();
+            component.Awake();
+
+
+            if (component is IComponentLifecycle lifecycleComponentStart)
+            {
+                _startQueuedComponents.Add(lifecycleComponentStart);
+            }
 
             if (component is IComponentLifecycle lifecycleComponent)
             {
@@ -80,6 +87,7 @@ namespace Engine.Core.ECS
                 _lifecycleComponents[type].Add(lifecycleComponent);
             }
         }
+
 
         public T GetComponent<T>(int entityId) where T : class
         {
@@ -125,17 +133,20 @@ namespace Engine.Core.ECS
         {
             ProcessTimedRemovals(gameTime);
 
-            // Flatten the lifecycle components and call FixedUpdate on each
             Parallel.ForEach(_lifecycleComponents.Values.SelectMany(lifecycleList => lifecycleList), lifecycle =>
             {
                 lifecycle.FixedUpdate(gameTime);
             });
         }
 
-
         public void CallMainUpdateOnComponents(GameTime gameTime)
         {
-            // Flatten the lifecycle components and call MainUpdate on each
+            foreach (var lifecycleComponent in _startQueuedComponents)
+            {
+                lifecycleComponent.Start();
+            }
+            _startQueuedComponents.Clear();
+
             Parallel.ForEach(_lifecycleComponents.Values.SelectMany(lifecycleList => lifecycleList), lifecycle =>
             {
                 lifecycle.MainUpdate(gameTime);
@@ -144,19 +155,16 @@ namespace Engine.Core.ECS
 
         public void CallDrawOnComponents(Effect basicEffect, Matrix viewMatrix, Matrix projectionMatrix)
         {
-            // Flatten the lifecycle components and call Draw on each
             foreach (var lifecycle in _lifecycleComponents.Values.SelectMany(lifecycleList => lifecycleList))
             {
                 lifecycle.Draw(basicEffect, viewMatrix, projectionMatrix);
             }
         }
 
-
         private void ProcessTimedRemovals(GameTime gameTime)
         {
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            // Parallelize timed removals
             Parallel.ForEach(_timedRemovals.ToList(), kvp =>
             {
                 if (kvp.Value <= elapsedSeconds)
