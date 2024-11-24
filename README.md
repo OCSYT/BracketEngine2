@@ -22,7 +22,7 @@
 - MainUpdate (Called on Monogame Update)
 - FixedUpdate (Monogame Update running on FixedTimeStep)
 - Render (Called Manually in Render Function in Engine loop as Camera Matricies need to be defined)
-- DrawGUI (Called after Draw)
+- DrawGUI (Called after Render - Called after Render after SpriteBatch.Begin)
 - OnDestroy (Called on frame component is destroyed)
 
 ## Useful links
