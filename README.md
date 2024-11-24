@@ -25,6 +25,9 @@
 - DrawGUI (Called after Render - Called after Render after SpriteBatch.Begin)
 - OnDestroy (Called on frame component is destroyed)
 
+## Physics
+- Physics (Handled using BulletSharp) runs on the FixedUpdate loop
+
 ## Useful links
 - [Monogame](https://docs.monogame.net/)
 - [Monogame.UI.Forms](https://github.com/csharpskolan/MonoGame.UI.Forms)
