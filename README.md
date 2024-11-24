@@ -16,7 +16,7 @@
 - DrawGUI (Monogame Draw - Called after Render after SpriteBatch.Begin)
 - OnDestroy (Monogame UnloadContent)
 
-##ECS Loop
+## ECS Loop
 - Awake (Called on frame component is created)
 - Start (Called on next frame before MainUpdate and FixedUpdate)
 - MainUpdate (Called on Monogame Update)
