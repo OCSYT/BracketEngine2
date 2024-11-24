@@ -2,6 +2,7 @@
 
 ## Info
 - Main Engine loop is in **MainEngine.cs**
+- UI Form Code is in UI/UIControls.cs
 - Custom Components go in Components Folder
 - Assets such as sounds, images, etc go in the Content Folder `(keep in mind defaultFont.spritefont is required for UI to work)`
 - Core engine code and componets is found in Core folder
