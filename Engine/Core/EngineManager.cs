@@ -8,11 +8,16 @@ using Engine.UI;
 using Engine.Core.ECS;
 using Engine.Core.Physics;
 using Engine.Core.Audio;
-
+using System.Runtime.InteropServices;
 namespace Engine.Core
 {
     public class EngineManager : Game
     {
+#if WINDOWS
+        [DllImport("kernel32.dll")]
+        private static extern bool AllocConsole();
+#endif
+
         private static EngineManager _instance;
         public static EngineManager Instance
         {
@@ -45,6 +50,7 @@ namespace Engine.Core
         private float ElapsedTime = 0f;
         public float CurrentFrameRate = 0f;
         public UIControls UIControls;
+        public bool Debug = false;
         protected EngineManager()
         {
             if (_instance != null)
@@ -77,8 +83,14 @@ namespace Engine.Core
         protected override void LoadContent()
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
-
             Start();
+#if WINDOWS
+
+            if (Debug)
+            {
+                AllocConsole();
+            }
+#endif
             base.LoadContent();
         }
 

@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0-windows</TargetFramework>
 		<!-- Target Windows specifically -->
-		<OutputType>Exe</OutputType>
+		<OutputType>WinExe</OutputType>
 		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
 	

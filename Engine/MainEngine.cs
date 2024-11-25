@@ -7,7 +7,7 @@ using Engine.Core.Physics;
 using Engine.Core.Components.Physics;
 using Engine.Core;
 using Engine.Components;
-
+using System;
 
 namespace Engine
 {
@@ -19,6 +19,7 @@ namespace Engine
 
         public override void Start()
         {
+            Debug = false;
             Window.Title = "Game";
 
             // Call functions to initialize each object
@@ -37,11 +38,11 @@ namespace Engine
         {
             UIControls.DisplayFramerate(CurrentFrameRate);
         }
-
-        public override void FixedUpdate(GameTime GameTime)
+        public override void FixedUpdate(GameTime gameTime)
         {
 
         }
+
 
         public override void Render(GameTime GameTime)
         {
@@ -56,12 +57,6 @@ namespace Engine
                 ECSManager.Instance.CallRenderOnComponents(Effect, CameraObj.GetViewMatrix(), CameraObj.GetProjectionMatrix(), GameTime);
             }
         }
-
-        public override void DrawGUI(GameTime GameTime)
-        {
-
-        }
-
 
 
         //Spawning Objects
