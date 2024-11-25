@@ -60,7 +60,6 @@ namespace Engine.Core.Audio
             return PlaySound(soundName, null, null, 0f, volume, pitch, is3D: false);
         }
 
-        // Generic method to handle both 2D and 3D sound playing
         private SoundEffectInstance PlaySound(string soundName, Transform transform, AudioListener listener, float maxDistance, float volume, float pitch, bool is3D)
         {
             lock (AudioLock)
