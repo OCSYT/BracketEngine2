@@ -4,9 +4,9 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>G:/github/BracketEngine2/Engine/Content/defaultFont.spritefont</File>
-    <File>G:/github/BracketEngine2/Engine/Content/GameContent/Models/Primitives/cube.fbx</File>
-    <File>G:/github/BracketEngine2/Engine/Content/GameContent/Textures/Default/checkerboard.png</File>
+    <File>C:/Users/Creep/Documents/GitHub/BracketEngine2/Engine/Content/defaultFont.spritefont</File>
+    <File>C:/Users/Creep/Documents/GitHub/BracketEngine2/Engine/Content/GameContent/Models/Primitives/cube.fbx</File>
+    <File>C:/Users/Creep/Documents/GitHub/BracketEngine2/Engine/Content/GameContent/Textures/Default/checkerboard.png</File>
   </SourceFiles>
   <DestFiles>
     <File xsi:nil="true" />
