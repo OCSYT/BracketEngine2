@@ -1,0 +1,4 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"G:/github/BracketEngine2/Engine/Content/defaultFont.spritefont","G:/github/BracketEngine2/Engine/bin/Release/Windows/Content/defaultFont.xnb","FontDescriptionProcessor","SpriteFontContent",504,21538,0.1267873
+"G:/github/BracketEngine2/Engine/Content/GameContent/Models/Primitives/cube.fbx","G:/github/BracketEngine2/Engine/bin/Release/Windows/Content/GameContent/Models/Primitives/cube.xnb","ModelProcessor","ModelContent",15276,1498,0.0434868
+"G:/github/BracketEngine2/Engine/Content/GameContent/Textures/Default/checkerboard.png","G:/github/BracketEngine2/Engine/bin/Release/Windows/Content/GameContent/Textures/Default/checkerboard.xnb","TextureProcessor","Texture2DContent",3663,1048661,0.0427472

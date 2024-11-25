@@ -1,7 +1,7 @@
 
 #----------------------------- Global Properties ----------------------------#
 
-/outputDir:../bin/Release/net8.0-windows/Content
+/outputDir:../bin/Release/net9.0/Content
 /intermediateDir:obj/../../$(Platform)
 /platform:DesktopGL
 /config:

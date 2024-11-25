@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0-windows</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<!-- Target Windows specifically -->
 		<OutputType>WinExe</OutputType>
 		<Platforms>AnyCPU;x64</Platforms>

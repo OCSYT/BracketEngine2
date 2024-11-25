@@ -2,8 +2,8 @@
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <SourceFile>G:/github/BracketEngine2/Engine/Content/GameContent/Textures/Default/checkerboard.png</SourceFile>
   <SourceTime>2024-11-24T04:29:34.9241606+00:00</SourceTime>
-  <DestFile>G:/github/BracketEngine2/Engine/bin/Release/net9.0/Content/GameContent/Textures/Default/checkerboard.xnb</DestFile>
-  <DestTime>2024-11-25T03:54:46.5532988+00:00</DestTime>
+  <DestFile>G:/github/BracketEngine2/Engine/bin/Release/Windows/Content/GameContent/Textures/Default/checkerboard.xnb</DestFile>
+  <DestTime>2024-11-25T03:53:48.6769069+00:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2024-08-16T18:05:56+01:00</ImporterTime>
   <Processor>TextureProcessor</Processor>
