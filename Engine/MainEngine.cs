@@ -21,8 +21,6 @@ namespace Engine
 
         public override void Start()
         {
-            Window.Title = "Game";
-
             // Call functions to initialize each object
             CreateCamera();
             CreateDirectionalLight();
