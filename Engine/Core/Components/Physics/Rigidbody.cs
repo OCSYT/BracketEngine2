@@ -185,9 +185,11 @@ namespace Engine.Core.Components.Physics
                 new BulletSharp.Math.Vector3(Transform.Position.X, Transform.Position.Y, Transform.Position.Z) // Position
             );
             BulletSharp.Math.Vector3 calculatedInertia = BulletSharp.Math.Vector3.Zero;
-            if (!IsStatic)
+
+            foreach (CollisionShape shape in Shapes)
             {
-                foreach (CollisionShape shape in Shapes)
+                shape.LocalScaling = new BulletSharp.Math.Vector3(Transform.Scale.X, Transform.Scale.Y, Transform.Scale.Z);
+                if (!IsStatic)
                 {
                     calculatedInertia += shape.CalculateLocalInertia(Mass);
                 }
@@ -264,7 +266,9 @@ namespace Engine.Core.Components.Physics
         private void DrawDebugShapes(Matrix viewMatrix, Matrix projectionMatrix)
         {
             Matrix worldMatrixNormalized = Transform.GetWorldMatrixNormalized();
-            Debugger.DrawCollisionShape(BulletRigidBody.CollisionShape, Transform, worldMatrixNormalized, viewMatrix, projectionMatrix, BulletRigidBody.IsStaticOrKinematicObject);
+            foreach (CollisionShape Shape in Shapes) {
+                Debugger.DrawCollisionShape(Shape, Transform, worldMatrixNormalized, viewMatrix, projectionMatrix, BulletRigidBody.IsStaticOrKinematicObject);
+            }
         }
 
         public override void OnDestroy()

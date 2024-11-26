@@ -88,7 +88,7 @@ namespace Engine
         private void CreateFloor()
         {
             int FloorObj = ECSManager.Instance.CreateEntity();
-            StaticMesh FloorModel = PrimitiveModel.CreateBox(100, 1, 100);
+            StaticMesh FloorModel = PrimitiveModel.CreateBox(1, 1, 1);
             Texture2D CheckerTex = Content.Load<Texture2D>("GameContent/Textures/Default/checkerboard");
             Material FloorMaterial = new Material
             {
@@ -97,13 +97,14 @@ namespace Engine
 
             ECSManager.Instance.AddComponent(FloorObj, new Transform
             {
-                Position = new Vector3(0, -2, 0)
+                Position = new Vector3(0, -2, 0),
+                Scale = new Vector3(100, 1, 100)
             });
             ECSManager.Instance.AddComponent(FloorObj, new MeshRenderer(FloorModel, [ FloorMaterial ]));
             ECSManager.Instance.AddComponent(FloorObj, new RigidBody
             {
                 Mass = 0,
-                Shapes = [ new BulletSharp.BoxShape(100, 1, 100) ],
+                Shapes = [ new BulletSharp.BoxShape(1, 1, 1) ],
                 IsStatic = true,
                 CollisionGroup = PhysicsManager.CreateCollisionMask([1]),
                 CollisionMask = PhysicsManager.CreateCollisionMask([1, 2]),
@@ -114,21 +115,22 @@ namespace Engine
         private void CreateSphere(Vector3 Position, Vector3 Rotation, float Scale, Color Color)
         {
             int SphereObj = ECSManager.Instance.CreateEntity();
-            StaticMesh SphereModel = PrimitiveModel.CreateSphere(Scale);
+            StaticMesh SphereModel = PrimitiveModel.CreateSphere(1);
             Texture2D CheckerTex = Content.Load<Texture2D>("GameContent/Textures/Default/checkerboard");
             Material SphereMaterial = new Material {DiffuseTexture = CheckerTex,  DiffuseColor = Color };
 
             ECSManager.Instance.AddComponent(SphereObj, new Transform
             {
                 Position = Position,
-                Rotation = Quaternion.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z)
+                Rotation = Quaternion.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z),
+                Scale = new Vector3(Scale, Scale, Scale)
             });
             ECSManager.Instance.AddComponent(SphereObj, new MeshRenderer(SphereModel, [ SphereMaterial ]));
             ECSManager.Instance.AddComponent(SphereObj, new RigidBody
             {
                 Friction = 5,
                 Mass = 1000 * Scale,
-                Shapes = [ new BulletSharp.SphereShape(Scale) ],
+                Shapes = [ new BulletSharp.SphereShape(1) ],
                 IsStatic = false,
                 CollisionGroup = PhysicsManager.CreateCollisionMask([1]),
                 CollisionMask = PhysicsManager.CreateCollisionMask([1, 2]),
