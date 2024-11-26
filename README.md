@@ -1,6 +1,10 @@
 # Bracket Engine 2
 
+![image](https://github.com/user-attachments/assets/551d592c-8190-4f43-a631-ba9add6f2d1c)
+
+
 ## Setup
+
 - Clone the repository
 - Open with Visual Studio 2022
 - Set build mode to Release x64
