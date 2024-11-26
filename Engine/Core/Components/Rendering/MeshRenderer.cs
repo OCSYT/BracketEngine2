@@ -112,59 +112,62 @@ namespace Engine.Core.Components.Rendering
                 for (int i = 0; i < subMeshCount; i++)
                 {
                     var subMesh = StaticMesh.SubMeshes[i];
-
-                    EngineManager.Instance.Graphics.GraphicsDevice.SetVertexBuffer(subMesh.VertexBuffer);
-                    EngineManager.Instance.Graphics.GraphicsDevice.Indices = subMesh.IndexBuffer;
-
-                    Effect subMeshEffect = null;
-
-                    if (Materials != null && i < materialCount && Materials[i] != null)
+                    if (frustum.Intersects(subMesh.BoundingSphere.Transform(worldMatrix)))
                     {
-                        var material = Materials[i];
 
-                        // Handle effect caching for static meshes
-                        if (!EffectCache.ContainsKey(i) || EffectCache[i] == null || LastMaterialCache[i] != material)
+                        EngineManager.Instance.Graphics.GraphicsDevice.SetVertexBuffer(subMesh.VertexBuffer);
+                        EngineManager.Instance.Graphics.GraphicsDevice.Indices = subMesh.IndexBuffer;
+
+                        Effect subMeshEffect = null;
+
+                        if (Materials != null && i < materialCount && Materials[i] != null)
                         {
-                            if (EffectCache.ContainsKey(i)) { EffectCache.Remove(i); }
-                            subMeshEffect = material.Shader?.Clone() ?? effect.Clone();
-                            EffectCache[i] = subMeshEffect;
-                            LastMaterialCache[i] = material;
+                            var material = Materials[i];
+
+                            // Handle effect caching for static meshes
+                            if (!EffectCache.ContainsKey(i) || EffectCache[i] == null || LastMaterialCache[i] != material)
+                            {
+                                if (EffectCache.ContainsKey(i)) { EffectCache.Remove(i); }
+                                subMeshEffect = material.Shader?.Clone() ?? effect.Clone();
+                                EffectCache[i] = subMeshEffect;
+                                LastMaterialCache[i] = material;
+                            }
+                            else
+                            {
+                                subMeshEffect = EffectCache[i];
+                            }
+                            material.ApplyEffectParameters(subMeshEffect, effect, true);
                         }
                         else
                         {
-                            subMeshEffect = EffectCache[i];
+                            if (!EffectCache.ContainsKey(i))
+                            {
+                                subMeshEffect = effect.Clone();
+                                EffectCache[i] = subMeshEffect;
+                            }
+                            else
+                            {
+                                subMeshEffect = EffectCache[i];
+                            }
+
+                            Material.Default.ApplyEffectParameters(subMeshEffect, effect, true);
                         }
-                        material.ApplyEffectParameters(subMeshEffect, effect, true);
-                    }
-                    else
-                    {
-                        if (!EffectCache.ContainsKey(i))
+                        if (subMeshEffect is BasicEffect basicEffect)
                         {
-                            subMeshEffect = effect.Clone();
-                            EffectCache[i] = subMeshEffect;
-                        }
-                        else
-                        {
-                            subMeshEffect = EffectCache[i];
+                            basicEffect.World = worldMatrix;
+                            basicEffect.View = viewMatrix;
+                            basicEffect.Projection = projectionMatrix;
                         }
 
-                        Material.Default.ApplyEffectParameters(subMeshEffect, effect, true);
+                        // Apply the effect
+                        subMeshEffect.CurrentTechnique.Passes[0].Apply();
+
+                        // Draw the static mesh
+                        EngineManager.Instance.Graphics.GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, subMesh.NumIndices / 3);
+
+                        EngineManager.Instance.Graphics.GraphicsDevice.SetVertexBuffer(null);
+                        EngineManager.Instance.Graphics.GraphicsDevice.Indices = null;
                     }
-                    if (subMeshEffect is BasicEffect basicEffect)
-                    {
-                        basicEffect.World = worldMatrix;
-                        basicEffect.View = viewMatrix;
-                        basicEffect.Projection = projectionMatrix;
-                    }
-
-                    // Apply the effect
-                    subMeshEffect.CurrentTechnique.Passes[0].Apply();
-
-                    // Draw the static mesh
-                    EngineManager.Instance.Graphics.GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, subMesh.NumIndices/3);
-
-                    EngineManager.Instance.Graphics.GraphicsDevice.SetVertexBuffer(null);
-                    EngineManager.Instance.Graphics.GraphicsDevice.Indices = null;
                 }
             }
         }

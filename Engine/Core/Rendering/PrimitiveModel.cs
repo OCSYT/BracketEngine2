@@ -451,13 +451,15 @@ namespace Engine.Core.Rendering
             indexBuffer.SetData(indices);
             StaticMesh.SubMesh subMesh = new StaticMesh.SubMesh(vertexBuffer, indexBuffer, vertices.Length, indices.Length);
 
-            return new StaticMesh
+            StaticMesh Mesh = new StaticMesh
             {
                 SubMeshes = new List<StaticMesh.SubMesh>
                 {
                     subMesh
                 }
             };
+            Mesh.CalculateBoundingSpheres(MainEngine.Instance.GraphicsDevice);
+            return Mesh;
         }
     }
 }

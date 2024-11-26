@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 
@@ -16,14 +17,79 @@ namespace Engine.Core.Rendering
         public void AddSubMesh(VertexBuffer VertexBuffer, IndexBuffer IndexBuffer, int NumVertices, int NumIndices)
         {
             SubMeshes.Add(new SubMesh(VertexBuffer, IndexBuffer, NumVertices, NumIndices));
+            CalculateBoundingSphereForSubMesh(SubMeshes.Count - 1, MainEngine.Instance.Graphics.GraphicsDevice);
+        }
+        public void ModifySubMesh(int subMeshIndex, VertexBuffer newVertexBuffer, IndexBuffer newIndexBuffer, int newNumVertices, int newNumIndices)
+        {
+            if (subMeshIndex >= 0 && subMeshIndex < SubMeshes.Count)
+            {
+                SubMesh subMesh = SubMeshes[subMeshIndex];
+
+                subMesh.VertexBuffer = newVertexBuffer;
+                subMesh.IndexBuffer = newIndexBuffer;
+                subMesh.NumVertices = newNumVertices;
+                subMesh.NumIndices = newNumIndices;
+
+                CalculateBoundingSphereForSubMesh(subMeshIndex, MainEngine.Instance.Graphics.GraphicsDevice);
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException(nameof(subMeshIndex), "Invalid SubMesh index.");
+            }
+        }
+
+        public void CalculateBoundingSpheres(GraphicsDevice graphicsDevice)
+        {
+            foreach (var subMesh in SubMeshes)
+            {
+                subMesh.BoundingSphere = CalculateBoundingSphere(subMesh.VertexBuffer, graphicsDevice);
+            }
+        }
+
+        public void CalculateBoundingSphereForSubMesh(int subMeshIndex, GraphicsDevice graphicsDevice)
+        {
+            if (subMeshIndex >= 0 && subMeshIndex < SubMeshes.Count)
+            {
+                var subMesh = SubMeshes[subMeshIndex];
+                subMesh.BoundingSphere = CalculateBoundingSphere(subMesh.VertexBuffer, graphicsDevice);
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException(nameof(subMeshIndex), "Invalid SubMesh index.");
+            }
+        }
+
+        private BoundingSphere CalculateBoundingSphere(VertexBuffer vertexBuffer, GraphicsDevice graphicsDevice)
+        {
+            VertexPosition[] vertices = new VertexPosition[vertexBuffer.VertexCount];
+            vertexBuffer.GetData(vertices);
+
+            Vector3 min = new Vector3(float.MaxValue);
+            Vector3 max = new Vector3(float.MinValue);
+            foreach (var vertex in vertices)
+            {
+                Vector3 position = vertex.Position;
+                min = Vector3.Min(min, position);
+                max = Vector3.Max(max, position);
+            }
+
+            Vector3 center = (min + max) / 2f;
+            float radius = 0f;
+            foreach (var vertex in vertices)
+            {
+                float distance = Vector3.Distance(center, vertex.Position);
+                radius = Math.Max(radius, distance);
+            }
+            return new BoundingSphere(center, radius);
         }
 
         public class SubMesh
         {
-            public VertexBuffer VertexBuffer { get; }
-            public IndexBuffer IndexBuffer { get; }
-            public int NumVertices { get; }
-            public int NumIndices { get; }
+            public BoundingSphere BoundingSphere;
+            public VertexBuffer VertexBuffer;
+            public IndexBuffer IndexBuffer;
+            public int NumVertices;
+            public int NumIndices;
 
             public SubMesh(VertexBuffer VertexBuffer, IndexBuffer IndexBuffer, int NumVertices, int NumIndices)
             {
