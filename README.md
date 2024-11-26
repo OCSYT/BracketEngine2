@@ -1,6 +1,6 @@
 # Bracket Engine 2
 
-# Setup
+## Setup
 - Clone the repository
 - Open with Visual Studio 2022
 - Set build mode to Release x64
