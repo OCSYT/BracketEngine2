@@ -5,6 +5,8 @@
 		<!-- Target Windows specifically -->
 		<OutputType>WinExe</OutputType>
 		<Platforms>AnyCPU;x64</Platforms>
+		<AssemblyName>Game</AssemblyName>
+		<NoWin32Manifest>true</NoWin32Manifest>
 	</PropertyGroup>
 	
 	<ItemGroup>

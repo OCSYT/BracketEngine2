@@ -1,3 +1,3 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
-"G:/github/BracketEngine2/Engine/Content/defaultFont.spritefont","G:/github/BracketEngine2/Engine/bin/Release/net9.0/Content/defaultFont.xnb","FontDescriptionProcessor","SpriteFontContent",504,21538,0.1685777
-"G:/github/BracketEngine2/Engine/Content/GameContent/Textures/Default/checkerboard.png","G:/github/BracketEngine2/Engine/bin/Release/net9.0/Content/GameContent/Textures/Default/checkerboard.xnb","TextureProcessor","Texture2DContent",3663,1048661,0.0915611
+"G:/github/BracketEngine2/Engine/Content/defaultFont.spritefont","G:/github/BracketEngine2/Engine/bin/Release/net9.0/Content/defaultFont.xnb","FontDescriptionProcessor","SpriteFontContent",504,21538,0.2241591
+"G:/github/BracketEngine2/Engine/Content/GameContent/Textures/Default/checkerboard.png","G:/github/BracketEngine2/Engine/bin/Release/net9.0/Content/GameContent/Textures/Default/checkerboard.xnb","TextureProcessor","Texture2DContent",3663,1048661,0.0768075
