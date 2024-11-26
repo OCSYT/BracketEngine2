@@ -1,5 +1,10 @@
 # Bracket Engine 2
 
+# Setup
+- Clone the repository
+- Open with Visual Studio 2022
+- Set build mode to Release x64
+
 ## Info
 - Main Engine loop is in **MainEngine.cs**
 - UI Form Code is in UI/UIControls.cs
