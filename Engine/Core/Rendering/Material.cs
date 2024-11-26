@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 
-namespace Engine
+namespace Engine.Core.Rendering
 {
     public class Material
     {
@@ -23,9 +23,9 @@ namespace Engine
         }
 
         public Material(Texture2D diffuseTexture,
-                        Color diffuseColor = default(Color),
-                        Color specular = default(Color),
-                        Color emissive = default(Color),
+                        Color diffuseColor = default,
+                        Color specular = default,
+                        Color emissive = default,
                         Effect shader = null,
                         float alpha = 1,
                         bool transparent = false)

@@ -13,7 +13,7 @@ namespace Engine.Core.ECS {
         void Start();
         void MainUpdate(GameTime gameTime);
         void FixedUpdate(GameTime gameTime);
-        void Render(Effect basicEffect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime);
+        void Render(BasicEffect basicEffect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime);
         void DrawGUI(GameTime gameTime);
         void OnDestroy();
     }
@@ -154,7 +154,7 @@ namespace Engine.Core.ECS {
             });
         }
 
-        public void CallRenderOnComponents(Effect basicEffect, Matrix viewMatrix, Matrix projectionMatrix, GameTime GameTime)
+        public void CallRenderOnComponents(BasicEffect basicEffect, Matrix viewMatrix, Matrix projectionMatrix, GameTime GameTime)
         {
             foreach (var lifecycle in _lifecycleComponents.Values.SelectMany(lifecycleList => lifecycleList))
             {

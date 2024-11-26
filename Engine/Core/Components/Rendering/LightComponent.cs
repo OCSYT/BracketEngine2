@@ -29,32 +29,29 @@ namespace Engine.Core.Components
             Intensity = intensity;
         }
 
-        public override void Render(Effect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
+        public override void Render(BasicEffect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
         {
-            if (effect is BasicEffect basicEffect)
-            {
-                basicEffect.LightingEnabled = true;
 
-                // Check for directional lights
-                if (LightType == LightType.Directional)
+            effect.LightingEnabled = true;
+
+            // Check for directional lights
+            if (LightType == LightType.Directional)
+            {
+                // Check which directional light slot is available
+                for (int i = 0; i < 4; i++)
                 {
-                    // Check which directional light slot is available
-                    for (int i = 0; i < 4; i++)
+                    var lightSlot = GetDirectionalLightSlot(i, effect);
+                    if (lightSlot != null)
                     {
-                        var lightSlot = GetDirectionalLightSlot(i, basicEffect);
-                        if (lightSlot != null)
-                        {
-                            lightSlot.Enabled = true;
-                            lightSlot.DiffuseColor = Color.ToVector3() * Intensity;
-                            lightSlot.Direction = Direction;
-                            break;
-                        }
+                        lightSlot.Enabled = true;
+                        lightSlot.DiffuseColor = Color.ToVector3() * Intensity;
+                        lightSlot.Direction = Direction;
+                        break;
                     }
                 }
             }
         }
 
-        // Utility to get a specific directional light slot from BasicEffect
         private DirectionalLight GetDirectionalLightSlot(int slotIndex, BasicEffect effect)
         {
             switch (slotIndex)

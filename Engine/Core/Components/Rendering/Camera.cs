@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
 using Engine.Core.ECS;
 
-namespace Engine.Core.Components
+namespace Engine.Core.Components.Rendering
 {
     public class Camera : Component
     {
@@ -84,12 +84,11 @@ namespace Engine.Core.Components
             CurrentProjection = CurrentProjection == ProjectionType.Perspective ? ProjectionType.Orthographic : ProjectionType.Perspective;
         }
 
-        public override void Render(Effect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
+        public override void Render(BasicEffect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
         {
-            BasicEffect basicEffect = effect as BasicEffect;
             AspectRatio = (float)EngineManager.Instance.GraphicsDevice.Viewport.Width / EngineManager.Instance.GraphicsDevice.Viewport.Height;
-            basicEffect.View = GetViewMatrix();
-            basicEffect.Projection = GetProjectionMatrix();
+            effect.View = GetViewMatrix();
+            effect.Projection = GetProjectionMatrix();
         }
     }
 }

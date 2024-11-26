@@ -13,10 +13,9 @@ namespace Engine.Core
 {
     public class EngineManager : Game
     {
-#if WINDOWS
+
         [DllImport("kernel32.dll")]
         private static extern bool AllocConsole();
-#endif
 
         private static EngineManager _instance;
         public static EngineManager Instance
@@ -83,14 +82,12 @@ namespace Engine.Core
         protected override void LoadContent()
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
-            Start();
-#if WINDOWS
 
+            Start();
             if (Debug)
             {
                 AllocConsole();
             }
-#endif
             base.LoadContent();
         }
 

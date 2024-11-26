@@ -17,6 +17,7 @@
 	
 	<ItemGroup>
 	  <Folder Include="Content\GameContent\Audio\" />
+	  <Folder Include="Content\GameContent\Models\" />
 	  <Folder Include="Content\GameContent\UI\" />
 	  <Folder Include="Content\GameContent\Shaders\" />
 	</ItemGroup>

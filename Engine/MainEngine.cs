@@ -8,6 +8,8 @@ using Engine.Core.Components.Physics;
 using Engine.Core;
 using Engine.Components;
 using System;
+using Engine.Core.Rendering;
+using Engine.Core.Components.Rendering;
 
 namespace Engine
 {
@@ -19,18 +21,17 @@ namespace Engine
 
         public override void Start()
         {
-            Debug = false;
             Window.Title = "Game";
 
             // Call functions to initialize each object
             CreateCamera();
             CreateDirectionalLight();
             CreateFloor();
-            CreateCube(new Vector3(-10, 10, -10), new Vector3(45, 0, 0), Vector3.One * 3, Color.Cyan);
-            CreateCube(new Vector3(5, 10, -5), new Vector3(0, 45, 0), Vector3.One * 2, Color.Red);
-            CreateCube(new Vector3(-15, 10, 15), new Vector3(0, 0, 90), Vector3.One * 4, Color.Green);
-            CreateCube(new Vector3(20, 10, 20), new Vector3(90, 0, 0), Vector3.One * 1.5f, Color.Yellow);
-            CreateCube(new Vector3(0, 10, 20), new Vector3(0, 90, 0), Vector3.One * 2.5f, Color.Blue);
+            CreateSphere(new Vector3(-10, 10, -10), new Vector3(45, 0, 0), 3, Color.Cyan);
+            CreateSphere(new Vector3(5, 10, -5), new Vector3(0, 45, 0), 2, Color.Red);
+            CreateSphere(new Vector3(-15, 10, 15), new Vector3(0, 0, 90), 4, Color.Green);
+            CreateSphere(new Vector3(20, 10, 20), new Vector3(90, 0, 0), 1.5f, Color.Yellow);
+            CreateSphere(new Vector3(0, 10, 20), new Vector3(0, 90, 0), 2.5f, Color.Blue);
             CreatePlayer();
         }
 
@@ -87,7 +88,7 @@ namespace Engine
         private void CreateFloor()
         {
             int FloorObj = ECSManager.Instance.CreateEntity();
-            Model FloorModel = Content.Load<Model>("GameContent/Models/Primitives/cube");
+            StaticMesh FloorModel = PrimitiveModel.CreateBox(100, 1, 100);
             Texture2D CheckerTex = Content.Load<Texture2D>("GameContent/Textures/Default/checkerboard");
             Material FloorMaterial = new Material
             {
@@ -96,39 +97,38 @@ namespace Engine
 
             ECSManager.Instance.AddComponent(FloorObj, new Transform
             {
-                Position = new Vector3(0, -2, 0),
-                Scale = new Vector3(100, 1, 100),
+                Position = new Vector3(0, -2, 0)
             });
-            ECSManager.Instance.AddComponent(FloorObj, new MeshRenderer(FloorModel, new[] { FloorMaterial }));
+            ECSManager.Instance.AddComponent(FloorObj, new MeshRenderer(FloorModel, [ FloorMaterial ]));
             ECSManager.Instance.AddComponent(FloorObj, new RigidBody
             {
                 Mass = 0,
-                Shapes = new[] { new BulletSharp.BoxShape(100, 1, 100) },
+                Shapes = [ new BulletSharp.BoxShape(100, 1, 100) ],
                 IsStatic = true,
                 CollisionGroup = PhysicsManager.CreateCollisionMask([1]),
                 CollisionMask = PhysicsManager.CreateCollisionMask([1, 2]),
             });
         }
 
-        // Function to create Cube object
-        private void CreateCube(Vector3 Position, Vector3 Rotation, Vector3 Scale, Color CubeColor)
+        // Function to create Sphere object
+        private void CreateSphere(Vector3 Position, Vector3 Rotation, float Scale, Color Color)
         {
-            int CubeObj = ECSManager.Instance.CreateEntity();
-            Model CubeModel = Content.Load<Model>("GameContent/Models/Primitives/cube");
-            Material CubeMaterial = new Material { DiffuseColor = CubeColor };
+            int SphereObj = ECSManager.Instance.CreateEntity();
+            StaticMesh SphereModel = PrimitiveModel.CreateSphere(Scale);
+            Texture2D CheckerTex = Content.Load<Texture2D>("GameContent/Textures/Default/checkerboard");
+            Material SphereMaterial = new Material {DiffuseTexture = CheckerTex,  DiffuseColor = Color };
 
-            ECSManager.Instance.AddComponent(CubeObj, new Transform
+            ECSManager.Instance.AddComponent(SphereObj, new Transform
             {
                 Position = Position,
-                Rotation = Quaternion.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z),
-                Scale = Scale,
+                Rotation = Quaternion.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z)
             });
-            ECSManager.Instance.AddComponent(CubeObj, new MeshRenderer(CubeModel, new[] { CubeMaterial }));
-            ECSManager.Instance.AddComponent(CubeObj, new RigidBody
+            ECSManager.Instance.AddComponent(SphereObj, new MeshRenderer(SphereModel, [ SphereMaterial ]));
+            ECSManager.Instance.AddComponent(SphereObj, new RigidBody
             {
                 Friction = 5,
-                Mass = 1000 * ((Scale.X + Scale.Y + Scale.Z) / 3),
-                Shapes = new[] { new BulletSharp.BoxShape(Scale.X, Scale.Y, Scale.Z) },
+                Mass = 1000 * Scale,
+                Shapes = [ new BulletSharp.SphereShape(Scale) ],
                 IsStatic = false,
                 CollisionGroup = PhysicsManager.CreateCollisionMask([1]),
                 CollisionMask = PhysicsManager.CreateCollisionMask([1, 2]),

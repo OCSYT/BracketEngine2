@@ -25,7 +25,7 @@ namespace Engine.Core.ECS
         public virtual void DrawGUI(GameTime gameTime)
         {
         }
-        public virtual void Render(Effect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
+        public virtual void Render(BasicEffect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
         {
         }
 
