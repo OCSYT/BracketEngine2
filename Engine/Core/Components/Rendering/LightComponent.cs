@@ -34,10 +34,8 @@ namespace Engine.Core.Components
 
             effect.LightingEnabled = true;
 
-            // Check for directional lights
             if (LightType == LightType.Directional)
             {
-                // Check which directional light slot is available
                 for (int i = 0; i < 4; i++)
                 {
                     var lightSlot = GetDirectionalLightSlot(i, effect);

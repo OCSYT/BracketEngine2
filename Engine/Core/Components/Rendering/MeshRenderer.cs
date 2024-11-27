@@ -18,52 +18,61 @@ namespace Engine.Core.Components.Rendering
         public MeshRenderer(Model model, Material[] materials = null)
         {
             Model = model;
-            StaticMesh = null; // Default is Model
+            StaticMesh = null;
             Materials = materials ?? new Material[model?.Meshes.Count ?? 0];
         }
 
         public MeshRenderer(StaticMesh staticMesh, Material[] materials = null)
         {
             StaticMesh = staticMesh;
-            Model = null; // Use StaticMesh instead of Model
+            Model = null;
             Materials = materials ?? new Material[staticMesh.SubMeshes.Count];
         }
 
-        public override void Render(BasicEffect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
+        public override void Render(
+            BasicEffect effect,
+            Matrix viewMatrix,
+            Matrix projectionMatrix,
+            GameTime gameTime
+        )
         {
             var transform = ECSManager.Instance.GetComponent<Transform>(EntityId);
-            if (transform == null) { return; }
+            if (transform == null)
+            {
+                return;
+            }
 
             var worldMatrix = transform.GetWorldMatrix();
             var viewProjectionMatrix = viewMatrix * projectionMatrix;
             var frustum = new BoundingFrustum(viewProjectionMatrix);
 
-            if (Model != null) // Handle Model Rendering
+            if (Model != null)
             {
                 foreach (var mesh in Model.Meshes)
                 {
                     var boundingSphere = mesh.BoundingSphere.Transform(worldMatrix);
-                    if (!frustum.Intersects(boundingSphere)) continue;
+                    if (!frustum.Intersects(boundingSphere))
+                        continue;
 
                     for (int i = 0; i < mesh.MeshParts.Count; i++)
                     {
                         var part = mesh.MeshParts[i];
                         Effect partEffect = null;
 
-                        // Check if we have a specific material for the mesh part
                         if (Materials != null && i < Materials.Length && Materials[i] != null)
                         {
                             var material = Materials[i];
 
-                            // Handle effect caching per material
-                            if (!LastMaterialCache.ContainsKey(i) || LastMaterialCache[i] != material)
+                            if (
+                                !LastMaterialCache.ContainsKey(i)
+                                || LastMaterialCache[i] != material
+                            )
                             {
                                 if (EffectCache.ContainsKey(i))
                                 {
                                     EffectCache.Remove(i);
                                 }
 
-                                // Clone effect based on material or use the default effect
                                 partEffect = material.Shader?.Clone() ?? effect.Clone();
                                 EffectCache[i] = partEffect;
                                 LastMaterialCache[i] = material;
@@ -78,7 +87,6 @@ namespace Engine.Core.Components.Rendering
                         }
                         else
                         {
-                            // If no material provided, use default effect
                             if (!EffectCache.ContainsKey(i))
                             {
                                 partEffect = effect.Clone();
@@ -114,9 +122,11 @@ namespace Engine.Core.Components.Rendering
                     var subMesh = StaticMesh.SubMeshes[i];
                     if (frustum.Intersects(subMesh.BoundingSphere.Transform(worldMatrix)))
                     {
-
-                        EngineManager.Instance.Graphics.GraphicsDevice.SetVertexBuffer(subMesh.VertexBuffer);
-                        EngineManager.Instance.Graphics.GraphicsDevice.Indices = subMesh.IndexBuffer;
+                        EngineManager.Instance.Graphics.GraphicsDevice.SetVertexBuffer(
+                            subMesh.VertexBuffer
+                        );
+                        EngineManager.Instance.Graphics.GraphicsDevice.Indices =
+                            subMesh.IndexBuffer;
 
                         Effect subMeshEffect = null;
 
@@ -124,10 +134,16 @@ namespace Engine.Core.Components.Rendering
                         {
                             var material = Materials[i];
 
-                            // Handle effect caching for static meshes
-                            if (!EffectCache.ContainsKey(i) || EffectCache[i] == null || LastMaterialCache[i] != material)
+                            if (
+                                !EffectCache.ContainsKey(i)
+                                || EffectCache[i] == null
+                                || LastMaterialCache[i] != material
+                            )
                             {
-                                if (EffectCache.ContainsKey(i)) { EffectCache.Remove(i); }
+                                if (EffectCache.ContainsKey(i))
+                                {
+                                    EffectCache.Remove(i);
+                                }
                                 subMeshEffect = material.Shader?.Clone() ?? effect.Clone();
                                 EffectCache[i] = subMeshEffect;
                                 LastMaterialCache[i] = material;
@@ -159,11 +175,14 @@ namespace Engine.Core.Components.Rendering
                             basicEffect.Projection = projectionMatrix;
                         }
 
-                        // Apply the effect
                         subMeshEffect.CurrentTechnique.Passes[0].Apply();
 
-                        // Draw the static mesh
-                        EngineManager.Instance.Graphics.GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, subMesh.NumIndices / 3);
+                        EngineManager.Instance.Graphics.GraphicsDevice.DrawIndexedPrimitives(
+                            PrimitiveType.TriangleList,
+                            0,
+                            0,
+                            subMesh.NumIndices / 3
+                        );
 
                         EngineManager.Instance.Graphics.GraphicsDevice.SetVertexBuffer(null);
                         EngineManager.Instance.Graphics.GraphicsDevice.Indices = null;

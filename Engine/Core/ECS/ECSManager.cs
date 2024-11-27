@@ -29,7 +29,6 @@ namespace Engine.Core.ECS {
         private readonly ConcurrentDictionary<Type, ConcurrentDictionary<int, object>> _components = new();
         private readonly ConcurrentDictionary<int, float> _timedRemovals = new();
 
-        // Queue to track components that need Start to be called
         private readonly HashSet<IComponentLifecycle> _startQueuedComponents = new();
 
         private ECSManager() { }

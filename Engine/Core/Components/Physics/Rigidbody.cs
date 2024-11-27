@@ -13,7 +13,6 @@ using Engine.Core.Components;
 
 namespace Engine.Core.Components.Physics
 {
-    
     public class RigidBody : Component
     {
         public BulletSharp.RigidBody BulletRigidBody { get; private set; }
@@ -40,7 +39,8 @@ namespace Engine.Core.Components.Physics
             float friction = 0.5f,
             float restitution = 0.5f,
             int collisionGroup = 1,
-            int collisionMask = 1)
+            int collisionMask = 1
+        )
         {
             PhysicsWorld = PhysicsManager.Instance.PhysicsWorld;
             Debug = debug;
@@ -53,12 +53,15 @@ namespace Engine.Core.Components.Physics
             CollisionMask = collisionMask;
         }
 
-
         public void SetVelocityFactor(Vector3 freezePosition)
         {
             if (BulletRigidBody != null)
             {
-                BulletRigidBody.LinearFactor = new BulletSharp.Math.Vector3(freezePosition.X, freezePosition.Y, freezePosition.Z);
+                BulletRigidBody.LinearFactor = new BulletSharp.Math.Vector3(
+                    freezePosition.X,
+                    freezePosition.Y,
+                    freezePosition.Z
+                );
             }
         }
 
@@ -66,7 +69,11 @@ namespace Engine.Core.Components.Physics
         {
             if (BulletRigidBody != null)
             {
-                BulletRigidBody.AngularFactor = new BulletSharp.Math.Vector3(freezeRotation.X, freezeRotation.Y, freezeRotation.Z);
+                BulletRigidBody.AngularFactor = new BulletSharp.Math.Vector3(
+                    freezeRotation.X,
+                    freezeRotation.Y,
+                    freezeRotation.Z
+                );
             }
         }
 
@@ -99,7 +106,6 @@ namespace Engine.Core.Components.Physics
 
             var dispatcher = PhysicsWorld.Dispatcher;
 
-            // Early out if no manifolds
             if (dispatcher.NumManifolds == 0)
                 return;
 
@@ -112,7 +118,8 @@ namespace Engine.Core.Components.Physics
 
                 if (manifold.Body0 == BulletRigidBody || manifold.Body1 == BulletRigidBody)
                 {
-                    var otherBody = manifold.Body0 == BulletRigidBody ? manifold.Body1 : manifold.Body0;
+                    var otherBody =
+                        manifold.Body0 == BulletRigidBody ? manifold.Body1 : manifold.Body0;
 
                     if (otherBody.UserObject is RigidBody otherRigidBody)
                     {
@@ -122,32 +129,33 @@ namespace Engine.Core.Components.Physics
                 }
             }
 
-            // Efficiently remove bodies that are no longer colliding
-            currentlyColliding.RemoveWhere(body =>
-            {
-                bool isStillColliding = false;
-                for (int i = 0; i < dispatcher.NumManifolds; i++)
+            currentlyColliding.RemoveWhere(
+                body =>
                 {
-                    var manifold = dispatcher.GetManifoldByIndexInternal(i);
-                    if (manifold.Body0 == BulletRigidBody || manifold.Body1 == BulletRigidBody)
+                    bool isStillColliding = false;
+                    for (int i = 0; i < dispatcher.NumManifolds; i++)
                     {
-                        var otherBody = manifold.Body0 == BulletRigidBody ? manifold.Body1 : manifold.Body0;
-                        if (otherBody.UserObject == body)
+                        var manifold = dispatcher.GetManifoldByIndexInternal(i);
+                        if (manifold.Body0 == BulletRigidBody || manifold.Body1 == BulletRigidBody)
                         {
-                            isStillColliding = true;
-                            break;
+                            var otherBody =
+                                manifold.Body0 == BulletRigidBody ? manifold.Body1 : manifold.Body0;
+                            if (otherBody.UserObject == body)
+                            {
+                                isStillColliding = true;
+                                break;
+                            }
                         }
                     }
+                    if (!isStillColliding)
+                    {
+                        pendingExitCollisions.Add(body);
+                        return true;
+                    }
+                    return false;
                 }
-                if (!isStillColliding)
-                {
-                    pendingExitCollisions.Add(body);
-                    return true;
-                }
-                return false;
-            });
+            );
 
-            // Invoke collision events
             foreach (var body in pendingEnterCollisions)
                 OnCollisionEnter?.Invoke(this, body);
 
@@ -180,15 +188,28 @@ namespace Engine.Core.Components.Physics
             }
 
             BulletSharp.Math.Matrix initialTransform = BulletSharp.Math.Matrix.AffineTransformation(
-                1.0f, // Scale
-                new BulletSharp.Math.Quaternion(Transform.Rotation.X, Transform.Rotation.Y, Transform.Rotation.Z, Transform.Rotation.W), // Rotation
-                new BulletSharp.Math.Vector3(Transform.Position.X, Transform.Position.Y, Transform.Position.Z) // Position
+                1.0f,
+                new BulletSharp.Math.Quaternion(
+                    Transform.Rotation.X,
+                    Transform.Rotation.Y,
+                    Transform.Rotation.Z,
+                    Transform.Rotation.W
+                ),
+                new BulletSharp.Math.Vector3(
+                    Transform.Position.X,
+                    Transform.Position.Y,
+                    Transform.Position.Z
+                )
             );
             BulletSharp.Math.Vector3 calculatedInertia = BulletSharp.Math.Vector3.Zero;
 
             foreach (CollisionShape shape in Shapes)
             {
-                shape.LocalScaling = new BulletSharp.Math.Vector3(Transform.Scale.X, Transform.Scale.Y, Transform.Scale.Z);
+                shape.LocalScaling = new BulletSharp.Math.Vector3(
+                    Transform.Scale.X,
+                    Transform.Scale.Y,
+                    Transform.Scale.Z
+                );
                 if (!IsStatic)
                 {
                     calculatedInertia += shape.CalculateLocalInertia(Mass);
@@ -199,7 +220,10 @@ namespace Engine.Core.Components.Physics
                 IsStatic ? 0 : Mass,
                 new DefaultMotionState(initialTransform),
                 Shapes[0],
-                new BulletSharp.Math.Vector3(Inertia.X, Inertia.Y, Inertia.Z) == BulletSharp.Math.Vector3.Zero ? calculatedInertia : new BulletSharp.Math.Vector3(Inertia.X, Inertia.Y, Inertia.Z)
+                new BulletSharp.Math.Vector3(Inertia.X, Inertia.Y, Inertia.Z)
+                    == BulletSharp.Math.Vector3.Zero
+                  ? calculatedInertia
+                  : new BulletSharp.Math.Vector3(Inertia.X, Inertia.Y, Inertia.Z)
             );
 
             BulletRigidBody = new BulletSharp.RigidBody(rigidBodyInfo)
@@ -217,7 +241,11 @@ namespace Engine.Core.Components.Physics
         private void UpdateTransform()
         {
             BulletSharp.Math.Matrix worldTransform = BulletRigidBody.WorldTransform;
-            Transform.Position = new Vector3(worldTransform.M41, worldTransform.M42, worldTransform.M43);
+            Transform.Position = new Vector3(
+                worldTransform.M41,
+                worldTransform.M42,
+                worldTransform.M43
+            );
             Transform.Rotation = BulletToQuaternion(worldTransform);
         }
 
@@ -235,7 +263,9 @@ namespace Engine.Core.Components.Physics
         {
             if (Initalized && BulletRigidBody != null)
             {
-                BulletRigidBody.ApplyCentralForce(new BulletSharp.Math.Vector3(force.X, force.Y, force.Z));
+                BulletRigidBody.ApplyCentralForce(
+                    new BulletSharp.Math.Vector3(force.X, force.Y, force.Z)
+                );
             }
         }
 
@@ -243,7 +273,9 @@ namespace Engine.Core.Components.Physics
         {
             if (Initalized && BulletRigidBody != null)
             {
-                BulletRigidBody.ApplyCentralImpulse(new BulletSharp.Math.Vector3(impulse.X, impulse.Y, impulse.Z));
+                BulletRigidBody.ApplyCentralImpulse(
+                    new BulletSharp.Math.Vector3(impulse.X, impulse.Y, impulse.Z)
+                );
             }
         }
 
@@ -251,11 +283,18 @@ namespace Engine.Core.Components.Physics
         {
             if (Initalized && BulletRigidBody != null)
             {
-                BulletRigidBody.ApplyTorque(new BulletSharp.Math.Vector3(torque.X, torque.Y, torque.Z));
+                BulletRigidBody.ApplyTorque(
+                    new BulletSharp.Math.Vector3(torque.X, torque.Y, torque.Z)
+                );
             }
         }
 
-        public override void Render(BasicEffect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
+        public override void Render(
+            BasicEffect effect,
+            Matrix viewMatrix,
+            Matrix projectionMatrix,
+            GameTime gameTime
+        )
         {
             if (Debug && BulletRigidBody != null && Debugger != null)
             {
@@ -266,8 +305,16 @@ namespace Engine.Core.Components.Physics
         private void DrawDebugShapes(Matrix viewMatrix, Matrix projectionMatrix)
         {
             Matrix worldMatrixNormalized = Transform.GetWorldMatrixNormalized();
-            foreach (CollisionShape Shape in Shapes) {
-                Debugger.DrawCollisionShape(Shape, Transform, worldMatrixNormalized, viewMatrix, projectionMatrix, BulletRigidBody.IsStaticOrKinematicObject);
+            foreach (CollisionShape Shape in Shapes)
+            {
+                Debugger.DrawCollisionShape(
+                    Shape,
+                    Transform,
+                    worldMatrixNormalized,
+                    viewMatrix,
+                    projectionMatrix,
+                    BulletRigidBody.IsStaticOrKinematicObject
+                );
             }
         }
 
@@ -293,10 +340,22 @@ namespace Engine.Core.Components.Physics
         private static Quaternion BulletToQuaternion(BulletSharp.Math.Matrix bulletMatrix)
         {
             Matrix matrix = new Matrix(
-                bulletMatrix.M11, bulletMatrix.M12, bulletMatrix.M13, 0,
-                bulletMatrix.M21, bulletMatrix.M22, bulletMatrix.M23, 0,
-                bulletMatrix.M31, bulletMatrix.M32, bulletMatrix.M33, 0,
-                0, 0, 0, 1
+                bulletMatrix.M11,
+                bulletMatrix.M12,
+                bulletMatrix.M13,
+                0,
+                bulletMatrix.M21,
+                bulletMatrix.M22,
+                bulletMatrix.M23,
+                0,
+                bulletMatrix.M31,
+                bulletMatrix.M32,
+                bulletMatrix.M33,
+                0,
+                0,
+                0,
+                0,
+                1
             );
             return Quaternion.CreateFromRotationMatrix(matrix);
         }

@@ -37,7 +37,13 @@ namespace Engine.Core.Physics
             }
         }
 
-        public void DrawSphere(float radius, Matrix world, Matrix view, Matrix projection, Color color)
+        public void DrawSphere(
+            float radius,
+            Matrix world,
+            Matrix view,
+            Matrix projection,
+            Color color
+        )
         {
             int segments = 16;
             VertexPositionColor[] vertices = new VertexPositionColor[segments * 2 * 3];
@@ -78,7 +84,13 @@ namespace Engine.Core.Physics
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.LineList, vertices, 0, segments * 3);
         }
 
-        public void DrawBox(Vector3 halfExtents, Matrix world, Matrix view, Matrix projection, Color color)
+        public void DrawBox(
+            Vector3 halfExtents,
+            Matrix world,
+            Matrix view,
+            Matrix projection,
+            Color color
+        )
         {
             VertexPositionColor[] vertices = new VertexPositionColor[24];
             Vector3[] corners = new Vector3[8];
@@ -92,7 +104,33 @@ namespace Engine.Core.Physics
                 corners[i] = new Vector3(x, y, z);
             }
 
-            int[] indices = { 0, 1, 1, 3, 3, 2, 2, 0, 4, 5, 5, 7, 7, 6, 6, 4, 0, 4, 1, 5, 2, 6, 3, 7 };
+            int[] indices =
+            {
+                0,
+                1,
+                1,
+                3,
+                3,
+                2,
+                2,
+                0,
+                4,
+                5,
+                5,
+                7,
+                7,
+                6,
+                6,
+                4,
+                0,
+                4,
+                1,
+                5,
+                2,
+                6,
+                3,
+                7
+            };
 
             for (int i = 0; i < indices.Length; i += 2)
             {
@@ -101,9 +139,21 @@ namespace Engine.Core.Physics
             }
 
             SetEffectMatrices(world, view, projection);
-            GraphicsDevice.DrawUserPrimitives(PrimitiveType.LineList, vertices, 0, vertices.Length / 2);
+            GraphicsDevice.DrawUserPrimitives(
+                PrimitiveType.LineList,
+                vertices,
+                0,
+                vertices.Length / 2
+            );
         }
-        public void DrawCone(float radius, float height, Matrix world, Matrix view, Matrix projection, Color color)
+        public void DrawCone(
+            float radius,
+            float height,
+            Matrix world,
+            Matrix view,
+            Matrix projection,
+            Color color
+        )
         {
             int segments = 16;
             VertexPositionColor[] vertices = new VertexPositionColor[segments * 6];
@@ -115,17 +165,23 @@ namespace Engine.Core.Physics
                 float theta2 = MathHelper.TwoPi * (i + 1) / segments;
 
                 Vector3 top = new Vector3(0, height / 2, 0);
-                Vector3 base1 = new Vector3(MathF.Cos(theta1) * radius, -height / 2, MathF.Sin(theta1) * radius);
-                Vector3 base2 = new Vector3(MathF.Cos(theta2) * radius, -height / 2, MathF.Sin(theta2) * radius);
+                Vector3 base1 = new Vector3(
+                    MathF.Cos(theta1) * radius,
+                    -height / 2,
+                    MathF.Sin(theta1) * radius
+                );
+                Vector3 base2 = new Vector3(
+                    MathF.Cos(theta2) * radius,
+                    -height / 2,
+                    MathF.Sin(theta2) * radius
+                );
 
-                // Edges connecting top to base
                 vertices[index++] = new VertexPositionColor(top, color);
                 vertices[index++] = new VertexPositionColor(base1, color);
 
                 vertices[index++] = new VertexPositionColor(top, color);
                 vertices[index++] = new VertexPositionColor(base2, color);
 
-                // Edges along the base circle
                 vertices[index++] = new VertexPositionColor(base1, color);
                 vertices[index++] = new VertexPositionColor(base2, color);
             }
@@ -133,7 +189,14 @@ namespace Engine.Core.Physics
             SetEffectMatrices(world, view, projection);
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.LineList, vertices, 0, index / 2);
         }
-        public void DrawCylinder(float radius, float height, Matrix world, Matrix view, Matrix projection, Color color)
+        public void DrawCylinder(
+            float radius,
+            float height,
+            Matrix world,
+            Matrix view,
+            Matrix projection,
+            Color color
+        )
         {
             int segments = 16;
             VertexPositionColor[] vertices = new VertexPositionColor[segments * 6];
@@ -144,20 +207,33 @@ namespace Engine.Core.Physics
                 float theta1 = MathHelper.TwoPi * i / segments;
                 float theta2 = MathHelper.TwoPi * (i + 1) / segments;
 
-                Vector3 top1 = new Vector3(MathF.Cos(theta1) * radius, height / 2, MathF.Sin(theta1) * radius);
-                Vector3 top2 = new Vector3(MathF.Cos(theta2) * radius, height / 2, MathF.Sin(theta2) * radius);
-                Vector3 bottom1 = new Vector3(MathF.Cos(theta1) * radius, -height / 2, MathF.Sin(theta1) * radius);
-                Vector3 bottom2 = new Vector3(MathF.Cos(theta2) * radius, -height / 2, MathF.Sin(theta2) * radius);
+                Vector3 top1 = new Vector3(
+                    MathF.Cos(theta1) * radius,
+                    height / 2,
+                    MathF.Sin(theta1) * radius
+                );
+                Vector3 top2 = new Vector3(
+                    MathF.Cos(theta2) * radius,
+                    height / 2,
+                    MathF.Sin(theta2) * radius
+                );
+                Vector3 bottom1 = new Vector3(
+                    MathF.Cos(theta1) * radius,
+                    -height / 2,
+                    MathF.Sin(theta1) * radius
+                );
+                Vector3 bottom2 = new Vector3(
+                    MathF.Cos(theta2) * radius,
+                    -height / 2,
+                    MathF.Sin(theta2) * radius
+                );
 
-                // Top circle
                 vertices[index++] = new VertexPositionColor(top1, color);
                 vertices[index++] = new VertexPositionColor(top2, color);
 
-                // Bottom circle
                 vertices[index++] = new VertexPositionColor(bottom1, color);
                 vertices[index++] = new VertexPositionColor(bottom2, color);
 
-                // Vertical edges
                 vertices[index++] = new VertexPositionColor(top1, color);
                 vertices[index++] = new VertexPositionColor(bottom1, color);
             }
@@ -165,47 +241,62 @@ namespace Engine.Core.Physics
             SetEffectMatrices(world, view, projection);
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.LineList, vertices, 0, index / 2);
         }
-        public void DrawCapsule(float radius, float height, Matrix world, Matrix view, Matrix projection, Color color)
+        public void DrawCapsule(
+            float radius,
+            float height,
+            Matrix world,
+            Matrix view,
+            Matrix projection,
+            Color color
+        )
         {
-            int segments = 16; // Number of radial segments
-            int rings = segments / 2; // Latitude rings for hemispheres
-
-            // Correct total vertex count calculation
-            int cylinderVertexCount = segments * 6; // Vertical edges + top & bottom circles
-            int hemisphereVertexCount = rings * segments * 6; // Each hemisphere (2 triangles per segment per ring)
+            int segments = 16;
+            int rings = segments / 2;
+            int cylinderVertexCount = segments * 6;
+            int hemisphereVertexCount = rings * segments * 6;
             int totalVertexCount = cylinderVertexCount + 2 * hemisphereVertexCount;
 
             VertexPositionColor[] vertices = new VertexPositionColor[totalVertexCount];
             int index = 0;
 
-            // Cylinder height
             float cylinderHeight = height - 2 * radius;
 
-            // Generate cylinder
             for (int i = 0; i < segments; i++)
             {
                 float theta1 = MathHelper.TwoPi * i / segments;
                 float theta2 = MathHelper.TwoPi * (i + 1) / segments;
 
-                Vector3 top1 = new Vector3(MathF.Cos(theta1) * radius, cylinderHeight / 2, MathF.Sin(theta1) * radius);
-                Vector3 top2 = new Vector3(MathF.Cos(theta2) * radius, cylinderHeight / 2, MathF.Sin(theta2) * radius);
-                Vector3 bottom1 = new Vector3(MathF.Cos(theta1) * radius, -cylinderHeight / 2, MathF.Sin(theta1) * radius);
-                Vector3 bottom2 = new Vector3(MathF.Cos(theta2) * radius, -cylinderHeight / 2, MathF.Sin(theta2) * radius);
+                Vector3 top1 = new Vector3(
+                    MathF.Cos(theta1) * radius,
+                    cylinderHeight / 2,
+                    MathF.Sin(theta1) * radius
+                );
+                Vector3 top2 = new Vector3(
+                    MathF.Cos(theta2) * radius,
+                    cylinderHeight / 2,
+                    MathF.Sin(theta2) * radius
+                );
+                Vector3 bottom1 = new Vector3(
+                    MathF.Cos(theta1) * radius,
+                    -cylinderHeight / 2,
+                    MathF.Sin(theta1) * radius
+                );
+                Vector3 bottom2 = new Vector3(
+                    MathF.Cos(theta2) * radius,
+                    -cylinderHeight / 2,
+                    MathF.Sin(theta2) * radius
+                );
 
-                // Vertical edges
                 vertices[index++] = new VertexPositionColor(top1, color);
                 vertices[index++] = new VertexPositionColor(bottom1, color);
 
-                // Top circle
                 vertices[index++] = new VertexPositionColor(top1, color);
                 vertices[index++] = new VertexPositionColor(top2, color);
 
-                // Bottom circle
                 vertices[index++] = new VertexPositionColor(bottom1, color);
                 vertices[index++] = new VertexPositionColor(bottom2, color);
             }
 
-            // Generate hemispheres
             for (int i = 0; i < segments; i++)
             {
                 float theta1 = MathHelper.TwoPi * i / segments;
@@ -216,34 +307,40 @@ namespace Engine.Core.Physics
                     float phi1 = MathHelper.PiOver2 * j / rings;
                     float phi2 = MathHelper.PiOver2 * (j + 1) / rings;
 
-                    // Top hemisphere
                     Vector3 topCenter = new Vector3(0, cylinderHeight / 2, 0);
 
-                    Vector3 top1 = topCenter + new Vector3(
-                        radius * MathF.Sin(phi1) * MathF.Cos(theta1),
-                        radius * MathF.Cos(phi1),
-                        radius * MathF.Sin(phi1) * MathF.Sin(theta1)
-                    );
+                    Vector3 top1 =
+                        topCenter
+                        + new Vector3(
+                            radius * MathF.Sin(phi1) * MathF.Cos(theta1),
+                            radius * MathF.Cos(phi1),
+                            radius * MathF.Sin(phi1) * MathF.Sin(theta1)
+                        );
 
-                    Vector3 top2 = topCenter + new Vector3(
-                        radius * MathF.Sin(phi1) * MathF.Cos(theta2),
-                        radius * MathF.Cos(phi1),
-                        radius * MathF.Sin(phi1) * MathF.Sin(theta2)
-                    );
+                    Vector3 top2 =
+                        topCenter
+                        + new Vector3(
+                            radius * MathF.Sin(phi1) * MathF.Cos(theta2),
+                            radius * MathF.Cos(phi1),
+                            radius * MathF.Sin(phi1) * MathF.Sin(theta2)
+                        );
 
-                    Vector3 top3 = topCenter + new Vector3(
-                        radius * MathF.Sin(phi2) * MathF.Cos(theta1),
-                        radius * MathF.Cos(phi2),
-                        radius * MathF.Sin(phi2) * MathF.Sin(theta1)
-                    );
+                    Vector3 top3 =
+                        topCenter
+                        + new Vector3(
+                            radius * MathF.Sin(phi2) * MathF.Cos(theta1),
+                            radius * MathF.Cos(phi2),
+                            radius * MathF.Sin(phi2) * MathF.Sin(theta1)
+                        );
 
-                    Vector3 top4 = topCenter + new Vector3(
-                        radius * MathF.Sin(phi2) * MathF.Cos(theta2),
-                        radius * MathF.Cos(phi2),
-                        radius * MathF.Sin(phi2) * MathF.Sin(theta2)
-                    );
+                    Vector3 top4 =
+                        topCenter
+                        + new Vector3(
+                            radius * MathF.Sin(phi2) * MathF.Cos(theta2),
+                            radius * MathF.Cos(phi2),
+                            radius * MathF.Sin(phi2) * MathF.Sin(theta2)
+                        );
 
-                    // Add top hemisphere triangles
                     vertices[index++] = new VertexPositionColor(top1, color);
                     vertices[index++] = new VertexPositionColor(top2, color);
                     vertices[index++] = new VertexPositionColor(top3, color);
@@ -251,34 +348,40 @@ namespace Engine.Core.Physics
                     vertices[index++] = new VertexPositionColor(top2, color);
                     vertices[index++] = new VertexPositionColor(top4, color);
 
-                    // Bottom hemisphere
                     Vector3 bottomCenter = new Vector3(0, -cylinderHeight / 2, 0);
 
-                    Vector3 bottom1 = bottomCenter + new Vector3(
-                        radius * MathF.Sin(phi1) * MathF.Cos(theta1),
-                        -radius * MathF.Cos(phi1),
-                        radius * MathF.Sin(phi1) * MathF.Sin(theta1)
-                    );
+                    Vector3 bottom1 =
+                        bottomCenter
+                        + new Vector3(
+                            radius * MathF.Sin(phi1) * MathF.Cos(theta1),
+                            -radius * MathF.Cos(phi1),
+                            radius * MathF.Sin(phi1) * MathF.Sin(theta1)
+                        );
 
-                    Vector3 bottom2 = bottomCenter + new Vector3(
-                        radius * MathF.Sin(phi1) * MathF.Cos(theta2),
-                        -radius * MathF.Cos(phi1),
-                        radius * MathF.Sin(phi1) * MathF.Sin(theta2)
-                    );
+                    Vector3 bottom2 =
+                        bottomCenter
+                        + new Vector3(
+                            radius * MathF.Sin(phi1) * MathF.Cos(theta2),
+                            -radius * MathF.Cos(phi1),
+                            radius * MathF.Sin(phi1) * MathF.Sin(theta2)
+                        );
 
-                    Vector3 bottom3 = bottomCenter + new Vector3(
-                        radius * MathF.Sin(phi2) * MathF.Cos(theta1),
-                        -radius * MathF.Cos(phi2),
-                        radius * MathF.Sin(phi2) * MathF.Sin(theta1)
-                    );
+                    Vector3 bottom3 =
+                        bottomCenter
+                        + new Vector3(
+                            radius * MathF.Sin(phi2) * MathF.Cos(theta1),
+                            -radius * MathF.Cos(phi2),
+                            radius * MathF.Sin(phi2) * MathF.Sin(theta1)
+                        );
 
-                    Vector3 bottom4 = bottomCenter + new Vector3(
-                        radius * MathF.Sin(phi2) * MathF.Cos(theta2),
-                        -radius * MathF.Cos(phi2),
-                        radius * MathF.Sin(phi2) * MathF.Sin(theta2)
-                    );
+                    Vector3 bottom4 =
+                        bottomCenter
+                        + new Vector3(
+                            radius * MathF.Sin(phi2) * MathF.Cos(theta2),
+                            -radius * MathF.Cos(phi2),
+                            radius * MathF.Sin(phi2) * MathF.Sin(theta2)
+                        );
 
-                    // Add bottom hemisphere triangles
                     vertices[index++] = new VertexPositionColor(bottom1, color);
                     vertices[index++] = new VertexPositionColor(bottom2, color);
                     vertices[index++] = new VertexPositionColor(bottom3, color);
@@ -288,13 +391,18 @@ namespace Engine.Core.Physics
                 }
             }
 
-            // Set effect matrices and draw the capsule
             SetEffectMatrices(world, view, projection);
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.LineList, vertices, 0, index / 2);
         }
 
-
-        public void DrawCollisionShape(CollisionShape shape, Transform TransformObj, Matrix world, Matrix view, Matrix projection, bool isStatic)
+        public void DrawCollisionShape(
+            CollisionShape shape,
+            Transform TransformObj,
+            Matrix world,
+            Matrix view,
+            Matrix projection,
+            bool isStatic
+        )
         {
             Color color = isStatic ? Color.Red : Color.Cyan;
 
@@ -305,15 +413,39 @@ namespace Engine.Core.Physics
                     break;
 
                 case BoxShape box:
-                    DrawBox(new Vector3(box.HalfExtentsWithoutMargin.X, box.HalfExtentsWithoutMargin.Y, box.HalfExtentsWithoutMargin.Z), world, view, projection, color);
+                    DrawBox(
+                        new Vector3(
+                            box.HalfExtentsWithoutMargin.X,
+                            box.HalfExtentsWithoutMargin.Y,
+                            box.HalfExtentsWithoutMargin.Z
+                        ),
+                        world,
+                        view,
+                        projection,
+                        color
+                    );
                     break;
 
                 case CapsuleShape capsule:
-                    DrawCapsule(capsule.Radius, capsule.HalfHeight * 2, world, view, projection, color);
+                    DrawCapsule(
+                        capsule.Radius,
+                        capsule.HalfHeight * 2,
+                        world,
+                        view,
+                        projection,
+                        color
+                    );
                     break;
 
                 case CylinderShape cylinder:
-                    DrawCylinder(cylinder.Radius, cylinder.HalfExtentsWithoutMargin.Y * 2, world, view, projection, color);
+                    DrawCylinder(
+                        cylinder.Radius,
+                        cylinder.HalfExtentsWithoutMargin.Y * 2,
+                        world,
+                        view,
+                        projection,
+                        color
+                    );
                     break;
 
                 case ConeShape cone:
@@ -324,7 +456,14 @@ namespace Engine.Core.Physics
                     for (int i = 0; i < compoundShape.NumChildShapes; i++)
                     {
                         CollisionShape childShape = compoundShape.GetChildShape(i);
-                        DrawCollisionShape(childShape, TransformObj, world, view, projection, isStatic);
+                        DrawCollisionShape(
+                            childShape,
+                            TransformObj,
+                            world,
+                            view,
+                            projection,
+                            isStatic
+                        );
                     }
                     break;
             }

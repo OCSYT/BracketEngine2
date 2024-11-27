@@ -23,7 +23,6 @@ namespace Engine.Core.Components.Rendering
         public float OrthoWidth { get; set; }
         public float OrthoHeight { get; set; }
 
-        // New property to hold the AudioListener
         public AudioListener Listener { get; private set; }
 
         public Camera()
@@ -35,7 +34,6 @@ namespace Engine.Core.Components.Rendering
             OrthoHeight = 10f;
             CurrentProjection = ProjectionType.Perspective;
 
-            // Initialize the AudioListener
             Listener = new AudioListener();
         }
 
@@ -47,11 +45,7 @@ namespace Engine.Core.Components.Rendering
                 Listener.Position = Vector3.Zero;
                 Listener.Up = Vector3.Up;
                 Listener.Forward = Vector3.Forward;
-                return Matrix.CreateLookAt(
-                    new Vector3(0, 0, 0),
-                    Vector3.Zero,
-                    Vector3.Up
-                );
+                return Matrix.CreateLookAt(new Vector3(0, 0, 0), Vector3.Zero, Vector3.Up);
             }
 
             Matrix rotationMatrix = Matrix.CreateFromQuaternion(transform.Rotation);
@@ -59,7 +53,6 @@ namespace Engine.Core.Components.Rendering
             Vector3 up = Vector3.Transform(Vector3.Up, rotationMatrix);
             Vector3 target = transform.Position + forward;
 
-            // Update the listener's position to match the camera's position
             Listener.Position = transform.Position;
             Listener.Up = transform.Up;
             Listener.Forward = transform.Forward;
@@ -71,7 +64,12 @@ namespace Engine.Core.Components.Rendering
         {
             if (CurrentProjection == ProjectionType.Perspective)
             {
-                return Matrix.CreatePerspectiveFieldOfView(FieldOfView, AspectRatio, NearClip, FarClip);
+                return Matrix.CreatePerspectiveFieldOfView(
+                    FieldOfView,
+                    AspectRatio,
+                    NearClip,
+                    FarClip
+                );
             }
             else
             {
@@ -81,12 +79,22 @@ namespace Engine.Core.Components.Rendering
 
         public void SwitchProjection()
         {
-            CurrentProjection = CurrentProjection == ProjectionType.Perspective ? ProjectionType.Orthographic : ProjectionType.Perspective;
+            CurrentProjection =
+                CurrentProjection == ProjectionType.Perspective
+                    ? ProjectionType.Orthographic
+                    : ProjectionType.Perspective;
         }
 
-        public override void Render(BasicEffect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
+        public override void Render(
+            BasicEffect effect,
+            Matrix viewMatrix,
+            Matrix projectionMatrix,
+            GameTime gameTime
+        )
         {
-            AspectRatio = (float)EngineManager.Instance.GraphicsDevice.Viewport.Width / EngineManager.Instance.GraphicsDevice.Viewport.Height;
+            AspectRatio =
+                (float)EngineManager.Instance.GraphicsDevice.Viewport.Width
+                / EngineManager.Instance.GraphicsDevice.Viewport.Height;
             effect.View = GetViewMatrix();
             effect.Projection = GetProjectionMatrix();
         }
