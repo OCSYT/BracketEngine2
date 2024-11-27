@@ -1,5 +1,6 @@
 ﻿using BulletSharp;
 using BulletSharp.Math;
+using Engine.Core.Rendering;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -125,6 +126,94 @@ namespace Engine.Core.Physics
             }
 
             return mask;
+        }
+
+        public static CollisionShape CreateCollisionShapeFromStaticMesh(
+            StaticMesh staticMesh,
+            Microsoft.Xna.Framework.Vector3? scale = null,
+            bool isConvex = true
+        )
+        {
+            Microsoft.Xna.Framework.Vector3 scalingFactor =
+                scale ?? Microsoft.Xna.Framework.Vector3.One;
+
+            List<Vector3> vertices = new List<Vector3>();
+
+            foreach (StaticMesh.SubMesh subMesh in staticMesh.SubMeshes)
+            {
+                VertexPosition[] submeshVertices = new VertexPosition[subMesh.NumVertices];
+
+                subMesh.VertexBuffer.GetData(submeshVertices);
+
+                foreach (var vertex in submeshVertices)
+                {
+                    vertices.Add(
+                        new Vector3(vertex.Position.X, vertex.Position.Y, vertex.Position.Z)
+                    );
+                }
+            }
+
+            if (isConvex)
+            {
+                ConvexHullShape convexShape = new ConvexHullShape();
+                foreach (var vertex in vertices)
+                {
+                    var scaledVertex = new Vector3(
+                        vertex.X * scalingFactor.X,
+                        vertex.Y * scalingFactor.Y,
+                        vertex.Z * scalingFactor.Z
+                    );
+                    convexShape.AddPoint(scaledVertex, false);
+                }
+                convexShape.RecalcLocalAabb();
+                return convexShape;
+            }
+            else
+            {
+                TriangleMesh triangleMesh = new TriangleMesh();
+                List<int> indices = new List<int>();
+
+                foreach (StaticMesh.SubMesh subMesh in staticMesh.SubMeshes)
+                {
+                    int[] submeshIndices = new int[subMesh.NumIndices];
+                    subMesh.IndexBuffer.GetData(submeshIndices);
+
+                    foreach (var index in submeshIndices)
+                    {
+                        indices.Add(index);
+                    }
+                }
+
+
+                for (int i = 0; i < indices.Count; i += 3)
+                {
+                    var v0 = vertices[indices[i]];
+                    var v1 = vertices[indices[i + 1]];
+                    var v2 = vertices[indices[i + 2]];
+
+                    var scaledV0 = new Vector3(
+                        v0.X * scalingFactor.X,
+                        v0.Y * scalingFactor.Y,
+                        v0.Z * scalingFactor.Z
+                    );
+                    var scaledV1 = new Vector3(
+                        v1.X * scalingFactor.X,
+                        v1.Y * scalingFactor.Y,
+                        v1.Z * scalingFactor.Z
+                    );
+                    var scaledV2 = new Vector3(
+                        v2.X * scalingFactor.X,
+                        v2.Y * scalingFactor.Y,
+                        v2.Z * scalingFactor.Z
+                    );
+
+                    triangleMesh.AddTriangle(scaledV0, scaledV1, scaledV2, true);
+                }
+
+                var shape = new BvhTriangleMeshShape(triangleMesh, true);
+
+                return shape;
+            }
         }
 
         public static CollisionShape CreateCollisionShapeFromModel(
