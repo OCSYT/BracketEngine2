@@ -35,6 +35,7 @@
 	<Target Name="BuildContent" BeforeTargets="Build">
 		<Exec Command="dotnet tool restore" />
 		<Exec Command="dotnet mgcb-editor $(ProjectDir)Content/Content.mgcb" />
+		<Exec Command="if exist &quot;$(ProjectDir)ContentXML&quot; rmdir /s /q &quot;$(ProjectDir)ContentXML&quot;" />
 	</Target>
 
 </Project>

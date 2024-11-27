@@ -2,7 +2,7 @@
 #----------------------------- Global Properties ----------------------------#
 
 /outputDir:../bin/Release/net9.0/Content
-/intermediateDir:obj/../../$(Platform)
+/intermediateDir:obj/../../ContentXML
 /platform:DesktopGL
 /config:
 /profile:Reach
