@@ -1,7 +1,6 @@
 # Bracket Engine 2
 
-![image](https://github.com/user-attachments/assets/551d592c-8190-4f43-a631-ba9add6f2d1c)
-
+![image](https://github.com/user-attachments/assets/69302476-a6e6-4fc5-a424-bb15d07efb70)
 
 ## Setup
 
