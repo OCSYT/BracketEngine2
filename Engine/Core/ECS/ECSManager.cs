@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Engine.Core.Components;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Concurrent;
@@ -37,6 +38,7 @@ namespace Engine.Core.ECS {
         {
             int entityId = _nextEntityId++;
             _entities.Add(entityId);
+            AddComponent(entityId, new Transform());
             return entityId;
         }
 

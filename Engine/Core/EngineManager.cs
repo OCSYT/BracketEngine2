@@ -131,6 +131,7 @@ namespace Engine.Core
                 FrameCount = 0;
                 ElapsedTime = 0f;
             }
+            LightManager.Instance.UpdateLights();
             base.Draw(gameTime);
         }
 
@@ -145,7 +146,6 @@ namespace Engine.Core
             var elapsedTime = (currentTime - LastTime).TotalSeconds;
             LastTime = currentTime;
             Accumulator += (float)elapsedTime;
-            LightManager.Instance.UpdateLights();
             MainUpdate(gameTime);
             ECSManager.Instance.CallMainUpdateOnComponents(gameTime);
 
@@ -163,6 +163,7 @@ namespace Engine.Core
                 Accumulator -= FixedTimeStep;
                 TotalTime += FixedTimeStep;
             }
+
             SoundManager.Instance.Update();
             base.Update(gameTime);
         }

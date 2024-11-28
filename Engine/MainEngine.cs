@@ -64,7 +64,6 @@ namespace Engine
         private void CreateCamera()
         {
             CameraEntity = ECSManager.Instance.CreateEntity();
-            ECSManager.Instance.AddComponent(CameraEntity, new Transform { Position = new Vector3(0, 5, 10) });
             Camera Cam = new Camera();
             ECSManager.Instance.AddComponent(CameraEntity, Cam);
         }
@@ -73,11 +72,12 @@ namespace Engine
         private void CreateDirectionalLight()
         {
             DirectionalLightEntity = ECSManager.Instance.CreateEntity();
+            Transform _Transform = ECSManager.Instance.GetComponent<Transform>(DirectionalLightEntity);
+            _Transform.Rotation = Quaternion.CreateFromYawPitchRoll(45 * (MathF.PI / 180),45 * (MathF.PI / 180), 0);
             LightComponent DirectionalLight = new LightComponent
             {
                 LightType = LightType.Directional,
                 Color = Color.White,
-                Direction = new Vector3(1, 1, 1),
                 Intensity = 2
             };
             ECSManager.Instance.AddComponent(DirectionalLightEntity, DirectionalLight);
@@ -94,11 +94,9 @@ namespace Engine
                 DiffuseTexture = CheckerTex,
             };
 
-            ECSManager.Instance.AddComponent(FloorObj, new Transform
-            {
-                Position = new Vector3(0, -2, 0),
-                Scale = new Vector3(100, 1, 100)
-            });
+            Transform _Transform = ECSManager.Instance.GetComponent<Transform>(FloorObj);
+            _Transform.Position = new Vector3(0, -2, 0);
+            _Transform.Scale = new Vector3(100, 1, 100);
             ECSManager.Instance.AddComponent(FloorObj, new MeshRenderer(FloorModel, [ FloorMaterial ]));
             ECSManager.Instance.AddComponent(FloorObj, new RigidBody
             {
@@ -118,12 +116,12 @@ namespace Engine
             Texture2D CheckerTex = Content.Load<Texture2D>("GameContent/Textures/Default/checkerboard");
             Material SphereMaterial = new Material {DiffuseTexture = CheckerTex,  DiffuseColor = Color };
 
-            ECSManager.Instance.AddComponent(SphereObj, new Transform
-            {
-                Position = Position,
-                Rotation = Quaternion.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z),
-                Scale = new Vector3(Scale, Scale, Scale)
-            });
+
+            Transform _Transform = ECSManager.Instance.GetComponent<Transform>(SphereObj);
+            _Transform.Position = Position;
+            _Transform.Rotation = Quaternion.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z);
+            _Transform.Scale = new Vector3(Scale, Scale, Scale);
+
             ECSManager.Instance.AddComponent(SphereObj, new MeshRenderer(SphereModel, [ SphereMaterial ]));
             ECSManager.Instance.AddComponent(SphereObj, new RigidBody
             {
@@ -141,11 +139,9 @@ namespace Engine
         private void CreatePlayer()
         {
             PlayerEntity = ECSManager.Instance.CreateEntity();
-            ECSManager.Instance.AddComponent(PlayerEntity, new Transform
-            {
-                Position = Vector3.Up * 10,
-                Rotation = Quaternion.Identity
-            });
+
+            Transform _Transform = ECSManager.Instance.GetComponent<Transform>(PlayerEntity);
+            _Transform.Position = Vector3.Up * 10;
 
             RigidBody PlayerBody = new RigidBody
             {
