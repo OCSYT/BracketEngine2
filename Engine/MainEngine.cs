@@ -25,9 +25,9 @@ namespace Engine
             // Call functions to initialize each object
             CreateCamera();
             CreateFloor();
-            CreatePointLight(new Vector3(0, 25, 0), Color.Red);
-            CreatePointLight(new Vector3(25, 25, 0), Color.Green);
-            CreatePointLight(new Vector3(0, 25, 25), Color.Blue);
+            CreatePointLight(new Vector3(0, 25, -50), Color.Red);
+            CreatePointLight(new Vector3(50, 25, 0), Color.Green);
+            CreatePointLight(new Vector3(0, 25, 50), Color.Blue);
             CreateSphere(new Vector3(-10, 10, -10), new Vector3(45, 0, 0), 3, Color.Cyan);
             CreateSphere(new Vector3(5, 10, -5), new Vector3(0, 45, 0), 2, Color.Red);
             CreateSphere(new Vector3(-15, 10, 15), new Vector3(0, 0, 90), 4, Color.Green);
@@ -45,7 +45,7 @@ namespace Engine
         {
             foreach(Transform pointlight in PointTransforms)
             {
-                pointlight.Position = Vector3.Transform(pointlight.Position, Quaternion.CreateFromYawPitchRoll(5 * (MathF.PI / 180), 0, 0));
+                pointlight.Position = Vector3.Transform(pointlight.Position, Quaternion.CreateFromYawPitchRoll(1 * (MathF.PI / 180), 0, 0));
             }
         }
 
@@ -64,7 +64,6 @@ namespace Engine
             }
         }
 
-
         //Spawning Objects
 
         // Function to create Camera
@@ -76,6 +75,7 @@ namespace Engine
         }
 
         private void CreatePointLight(Vector3 Position, Color Color, float Range = 50)
+
         {
             int PointLightEntity = ECSManager.Instance.CreateEntity();
             Transform _Transform = ECSManager.Instance.GetComponent<Transform>(PointLightEntity);
