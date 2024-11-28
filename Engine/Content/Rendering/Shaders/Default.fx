@@ -106,10 +106,10 @@ float4 PS(VertexOutput input) : COLOR
 
     // Combine texture color with lighting and emission
     float4 Light = float4(LightColor, 1);
-    float4 finalColor = (textureColor * DiffuseColor * float4(1, 1, 1, Alpha) * Light)
+    float4 finalColor = (textureColor * DiffuseColor * Light)
     + (emissiontexColor * EmissionColor);
 
-    return finalColor;
+    return float4(finalColor.rgb, clamp(finalColor.a, 0, 1) * Alpha);
 }
 
 // Technique for applying the shaders
