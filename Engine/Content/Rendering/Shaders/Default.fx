@@ -18,11 +18,6 @@ sampler2D EmissionTextureSampler = sampler_state
 
 float4 DiffuseColor;
 float4 EmissionColor;
-
-float4 DefaultDiffuseColor = float4(1, 1, 1, 1);
-float4 DefaultEmissionColor = float4(1, 1, 1, 1);
-
-
 float3 dirLightDirection[8];
 float dirLightIntensity[8];
 float3 dirLightColor[8];
