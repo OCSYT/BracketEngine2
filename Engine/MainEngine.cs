@@ -1,15 +1,15 @@
-﻿using Engine.Core.Components;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Engine.Core.ECS;
 using Engine.Core.Physics;
-using Engine.Core.Components.Physics;
 using Engine.Core;
 using Engine.Components;
 using System;
 using Engine.Core.Rendering;
+using Engine.Core.Components;
 using Engine.Core.Components.Rendering;
+using Engine.Core.Components.Physics;
 
 namespace Engine
 {
@@ -37,9 +37,9 @@ namespace Engine
         {
             UIControls.DisplayFramerate(CurrentFrameRate);
         }
+
         public override void FixedUpdate(GameTime gameTime)
         {
-
         }
 
 
@@ -73,13 +73,14 @@ namespace Engine
         private void CreateDirectionalLight()
         {
             DirectionalLightEntity = ECSManager.Instance.CreateEntity();
-            ECSManager.Instance.AddComponent(DirectionalLightEntity, new LightComponent
+            LightComponent DirectionalLight = new LightComponent
             {
                 LightType = LightType.Directional,
                 Color = Color.White,
-                Direction = new Vector3(-1, -1, -1),
-                Intensity = 1
-            });
+                Direction = new Vector3(1, 1, 1),
+                Intensity = 2
+            };
+            ECSManager.Instance.AddComponent(DirectionalLightEntity, DirectionalLight);
         }
 
         // Function to create the Floor object

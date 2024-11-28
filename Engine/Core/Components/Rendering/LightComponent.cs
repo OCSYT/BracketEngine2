@@ -1,11 +1,14 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Engine.Core.Rendering;
 using Engine.Core.ECS;
-namespace Engine.Core.Components
+
+namespace Engine.Core.Components.Rendering
 {
     public enum LightType
     {
-        Directional
+        Directional,
+        Point
     }
 
     public class LightComponent : Component
@@ -16,49 +19,40 @@ namespace Engine.Core.Components
         public Vector3 Direction { get; set; } = Vector3.Down;
         public float Range { get; set; } = 10.0f;
         public float SpotAngle { get; set; } = MathHelper.PiOver4;
-
+        public Vector3 Position { get; set; } = Vector3.Zero;
         public LightComponent()
         {
-
+            LightManager.Instance.RegisterLight(this);
         }
-        public LightComponent(LightType lightType, Color color, Vector3 direction, float intensity)
+
+        public LightComponent(
+            LightType lightType,
+            Color color,
+            Vector3 positionOrDirection,
+            float intensity,
+            float range = 10.0f
+        )
         {
             LightType = lightType;
             Color = color;
-            Direction = direction;
             Intensity = intensity;
+
+            if (lightType == LightType.Directional)
+            {
+                Direction = positionOrDirection;
+            }
+            else if (lightType == LightType.Point)
+            {
+                Position = positionOrDirection;
+                Range = range;
+            }
+
+            LightManager.Instance.RegisterLight(this);
         }
 
-        public override void Render(BasicEffect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
+        public override void OnDestroy()
         {
-
-            effect.LightingEnabled = true;
-
-            if (LightType == LightType.Directional)
-            {
-                for (int i = 0; i < 4; i++)
-                {
-                    var lightSlot = GetDirectionalLightSlot(i, effect);
-                    if (lightSlot != null)
-                    {
-                        lightSlot.Enabled = true;
-                        lightSlot.DiffuseColor = Color.ToVector3() * Intensity;
-                        lightSlot.Direction = Direction;
-                        break;
-                    }
-                }
-            }
-        }
-
-        private DirectionalLight GetDirectionalLightSlot(int slotIndex, BasicEffect effect)
-        {
-            switch (slotIndex)
-            {
-                case 0: return effect.DirectionalLight0;
-                case 1: return effect.DirectionalLight1;
-                case 2: return effect.DirectionalLight2;
-                default: return null;
-            }
+            LightManager.Instance.UnregisterLight(this);
         }
     }
 }

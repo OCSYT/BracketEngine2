@@ -9,10 +9,10 @@ namespace Engine.Core.Rendering
     public class Material
     {
         public Texture2D DiffuseTexture { get; set; }
+        public Texture2D EmissionTexture { get; set; }
         public Effect Shader { get; set; }
         public Color DiffuseColor { get; set; } = Color.White;
-        public Color Specular { get; set; } = Color.Black;
-        public Color Emissive { get; set; } = Color.Black;
+        public Color EmissionColor { get; set; } = Color.Black;
         public Dictionary<string, object> ShaderParams { get; set; } = new Dictionary<string, object>();
         public static Material Default { get; } = new Material();
         public float Alpha { get; set; } = 1;
@@ -22,18 +22,18 @@ namespace Engine.Core.Rendering
         {
         }
 
-        public Material(Texture2D diffuseTexture,
+        public Material(Texture2D diffuseTexture = null,
                         Color diffuseColor = default,
-                        Color specular = default,
+                        Texture2D emissionTexture = null,
                         Color emissive = default,
                         Effect shader = null,
                         float alpha = 1,
                         bool transparent = false)
         {
             DiffuseTexture = diffuseTexture;
+            EmissionTexture = emissionTexture;
             DiffuseColor = diffuseColor == default ? Color.White : diffuseColor;
-            Specular = specular == default ? Color.Black : specular;
-            Emissive = emissive == default ? Color.Black : emissive;
+            EmissionColor = emissive == default ? Color.Black : emissive;
             Shader = shader;
             Alpha = alpha;
             Transparent = transparent;
@@ -46,13 +46,6 @@ namespace Engine.Core.Rendering
             EngineManager.Instance.GraphicsDevice.BlendState = BlendState.AlphaBlend;
             if (!fallback)
             {
-                try
-                {
-                    Matrix worldViewProjection = basicEffect.World * basicEffect.View * basicEffect.Projection;
-                    effect.Parameters["WorldViewProjection"]?.SetValue(worldViewProjection);
-                }
-                catch { }
-
                 try
                 {
                     foreach (KeyValuePair<string, object> kvp in ShaderParams)
@@ -121,29 +114,36 @@ namespace Engine.Core.Rendering
             }
             else
             {
-                BasicEffect basicEffectInstance = effect as BasicEffect;
                 if (Transparent)
                 {
-                    basicEffectInstance.Alpha = Alpha;
+                    effect.Parameters["Alpha"].SetValue(Alpha);
                 }
                 else
                 {
-                    basicEffectInstance.Alpha = 1;
+                    effect.Parameters["Alpha"].SetValue(1);
                 }
-
-                basicEffectInstance.EmissiveColor = Emissive.ToVector3();
-                basicEffectInstance.SpecularColor = Specular.ToVector3();
-                basicEffectInstance.DiffuseColor = DiffuseColor.ToVector3();
                 if (DiffuseTexture != null)
                 {
-                    basicEffectInstance.TextureEnabled = true;
-                    basicEffectInstance.Texture = DiffuseTexture;
+                    effect.Parameters["DiffuseTexture"].SetValue(DiffuseTexture);
                 }
                 else
                 {
-                    basicEffectInstance.TextureEnabled = false;
+                    effect.Parameters["DiffuseTexture"].SetValue(EngineManager.Instance.WhiteTex);
                 }
+                if(EmissionTexture != null)
+                {
+                    effect.Parameters["EmissionTexture"].SetValue(EmissionTexture);
+                }
+                else
+                {
+                    effect.Parameters["EmissionTexture"].SetValue(EngineManager.Instance.WhiteTex);
+                }
+                effect.Parameters["DiffuseColor"].SetValue(DiffuseColor.ToVector4());
+                effect.Parameters["EmissionColor"].SetValue(EmissionColor.ToVector4());
+
             }
         }
+
+
     }
 }

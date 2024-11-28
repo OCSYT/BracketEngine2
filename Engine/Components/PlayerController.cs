@@ -2,9 +2,9 @@
 using Microsoft.Xna.Framework.Input;
 using Engine.Core.ECS;
 using Engine.Core.Physics;
+using Engine.Core;
 using Engine.Core.Components;
 using Engine.Core.Components.Physics;
-using Engine.Core;
 using Engine.Core.Components.Rendering;
 
 namespace Engine.Components

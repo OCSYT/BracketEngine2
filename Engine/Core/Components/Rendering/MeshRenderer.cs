@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Engine.Core.ECS;
 using Engine.Core.Rendering;
+using Engine.Core.Components;
 
 namespace Engine.Core.Components.Rendering
 {
@@ -12,7 +13,7 @@ namespace Engine.Core.Components.Rendering
         public Model Model { get; set; }
         public StaticMesh StaticMesh { get; set; }
         public Material[] Materials { get; set; }
-        private Dictionary<int, Effect> EffectCache = new Dictionary<int, Effect>();
+        public Dictionary<int, Effect> EffectCache = new Dictionary<int, Effect>();
         private Dictionary<int, Material> LastMaterialCache = new Dictionary<int, Material>();
 
         public MeshRenderer(Model model, Material[] materials = null)
@@ -38,6 +39,10 @@ namespace Engine.Core.Components.Rendering
         {
             var transform = ECSManager.Instance.GetComponent<Transform>(EntityId);
             if (transform == null)
+            {
+                return;
+            }
+            if (EngineManager.Instance.DefaultShader == null)
             {
                 return;
             }
@@ -73,7 +78,7 @@ namespace Engine.Core.Components.Rendering
                                     EffectCache.Remove(i);
                                 }
 
-                                partEffect = material.Shader?.Clone() ?? effect.Clone();
+                                partEffect = material.Shader?.Clone() ?? EngineManager.Instance.DefaultShader.Clone();
                                 EffectCache[i] = partEffect;
                                 LastMaterialCache[i] = material;
                             }
@@ -89,7 +94,7 @@ namespace Engine.Core.Components.Rendering
                         {
                             if (!EffectCache.ContainsKey(i))
                             {
-                                partEffect = effect.Clone();
+                                partEffect = EngineManager.Instance.DefaultShader.Clone();
                                 EffectCache[i] = partEffect;
                             }
                             else
@@ -101,12 +106,18 @@ namespace Engine.Core.Components.Rendering
                             Material.Default.ApplyEffectParameters(partEffect, effect, true);
                         }
 
-                        if (partEffect is BasicEffect basicEffect)
+                        Matrix worldViewProjection = worldMatrix * viewMatrix * projectionMatrix;
+
+
+                        partEffect.Parameters["World"]?.SetValue(worldMatrix);
+                        partEffect.Parameters["View"]?.SetValue(viewMatrix);
+                        partEffect.Parameters["Projection"]?.SetValue(projectionMatrix);
+
+                        foreach (var pass in partEffect.CurrentTechnique.Passes)
                         {
-                            basicEffect.World = worldMatrix;
-                            basicEffect.View = viewMatrix;
-                            basicEffect.Projection = projectionMatrix;
+                            pass.Apply();
                         }
+
                     }
 
                     mesh.Draw();
@@ -144,7 +155,7 @@ namespace Engine.Core.Components.Rendering
                                 {
                                     EffectCache.Remove(i);
                                 }
-                                subMeshEffect = material.Shader?.Clone() ?? effect.Clone();
+                                subMeshEffect = material.Shader?.Clone() ?? EngineManager.Instance.DefaultShader.Clone();
                                 EffectCache[i] = subMeshEffect;
                                 LastMaterialCache[i] = material;
                             }
@@ -158,7 +169,7 @@ namespace Engine.Core.Components.Rendering
                         {
                             if (!EffectCache.ContainsKey(i))
                             {
-                                subMeshEffect = effect.Clone();
+                                subMeshEffect = EngineManager.Instance.DefaultShader.Clone();
                                 EffectCache[i] = subMeshEffect;
                             }
                             else
@@ -168,14 +179,17 @@ namespace Engine.Core.Components.Rendering
 
                             Material.Default.ApplyEffectParameters(subMeshEffect, effect, true);
                         }
-                        if (subMeshEffect is BasicEffect basicEffect)
-                        {
-                            basicEffect.World = worldMatrix;
-                            basicEffect.View = viewMatrix;
-                            basicEffect.Projection = projectionMatrix;
-                        }
 
-                        subMeshEffect.CurrentTechnique.Passes[0].Apply();
+
+                        subMeshEffect.Parameters["World"]?.SetValue(worldMatrix);
+                        subMeshEffect.Parameters["View"]?.SetValue(viewMatrix);
+                        subMeshEffect.Parameters["Projection"]?.SetValue(projectionMatrix);
+
+
+                        foreach (var pass in subMeshEffect.CurrentTechnique.Passes)
+                        {
+                            pass.Apply();
+                        }
 
                         EngineManager.Instance.Graphics.GraphicsDevice.DrawIndexedPrimitives(
                             PrimitiveType.TriangleList,

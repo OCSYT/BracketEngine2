@@ -32,3 +32,9 @@
 /processorParam:TextureFormat=Color
 /build:GameContent/Textures/Default/checkerboard.png
 
+#begin Rendering/Shaders/Default.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Rendering/Shaders/Default.fx
+

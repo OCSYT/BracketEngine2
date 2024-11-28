@@ -11,6 +11,21 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Content\GameContent\Audio\**" />
+	  <Compile Remove="Content\GameContent\Models\**" />
+	  <Compile Remove="Content\GameContent\Shaders\**" />
+	  <Compile Remove="Content\GameContent\UI\**" />
+	  <EmbeddedResource Remove="Content\GameContent\Audio\**" />
+	  <EmbeddedResource Remove="Content\GameContent\Models\**" />
+	  <EmbeddedResource Remove="Content\GameContent\Shaders\**" />
+	  <EmbeddedResource Remove="Content\GameContent\UI\**" />
+	  <None Remove="Content\GameContent\Audio\**" />
+	  <None Remove="Content\GameContent\Models\**" />
+	  <None Remove="Content\GameContent\Shaders\**" />
+	  <None Remove="Content\GameContent\UI\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Content Include="Icons\Icon.ico" />
 		<EmbeddedResource Include="Icons\Icon.bmp">
 			<LogicalName>Icon.bmp</LogicalName>
@@ -26,10 +41,7 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <Folder Include="Content\GameContent\Audio\" />
-	  <Folder Include="Content\GameContent\Models\" />
-	  <Folder Include="Content\GameContent\UI\" />
-	  <Folder Include="Content\GameContent\Shaders\" />
+	  <Folder Include="Content\Rendering\Shaders\" />
 	</ItemGroup>
 
 	<Target Name="BuildContent" BeforeTargets="Build">

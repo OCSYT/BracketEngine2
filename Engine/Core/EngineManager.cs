@@ -9,6 +9,7 @@ using Engine.Core.ECS;
 using Engine.Core.Physics;
 using Engine.Core.Audio;
 using System.Runtime.InteropServices;
+using Engine.Core.Rendering;
 namespace Engine.Core
 {
     public class EngineManager : Game
@@ -50,6 +51,9 @@ namespace Engine.Core
         public float CurrentFrameRate = 0f;
         public UIControls UIControls;
         public bool Debug = false;
+        public Effect DefaultShader;
+        public Texture2D WhiteTex;
+        public Texture2D BlackTex;
         protected EngineManager()
         {
             if (_instance != null)
@@ -82,7 +86,7 @@ namespace Engine.Core
         protected override void LoadContent()
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
-
+            DefaultShader = Content.Load<Effect>("Rendering/Shaders/Default");
             Start();
             if (Debug)
             {
@@ -95,6 +99,18 @@ namespace Engine.Core
         {
             Graphics.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             Render(gameTime);
+            if (WhiteTex == null && BlackTex == null)
+            {
+                Texture2D WhiteTexture = new Texture2D(GraphicsDevice, 1, 1);
+                Color[] WhiteData = new Color[1] { Color.White };
+                WhiteTexture.SetData(WhiteData);
+                WhiteTex = WhiteTexture;
+                Texture2D BlackTexture = new Texture2D(GraphicsDevice, 1, 1);
+                Color[] BlackData = new Color[1] { Color.Black };
+                BlackTexture.SetData(BlackData);
+                BlackTex = BlackTexture;
+            }
+
             Graphics.GraphicsDevice.DepthStencilState = DepthStencilState.None;
             SpriteBatch.Begin();
             DrawGUI(gameTime);
@@ -129,7 +145,7 @@ namespace Engine.Core
             var elapsedTime = (currentTime - LastTime).TotalSeconds;
             LastTime = currentTime;
             Accumulator += (float)elapsedTime;
-
+            LightManager.Instance.UpdateLights();
             MainUpdate(gameTime);
             ECSManager.Instance.CallMainUpdateOnComponents(gameTime);
 

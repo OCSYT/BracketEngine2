@@ -33,7 +33,10 @@ namespace Engine.Core.ECS
         public virtual void OnDestroy()
         {
         }
-
+        public void DestroyEntity()
+        {
+            ECSManager.Instance.RemoveEntity(EntityId);
+        }
         public void SetEntityId(int entityId)
         {
             EntityId = entityId;
