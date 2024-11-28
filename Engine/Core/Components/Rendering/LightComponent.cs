@@ -20,8 +20,13 @@ namespace Engine.Core.Components.Rendering
         public float SpotAngle { get; set; } = MathHelper.PiOver4;
         public Vector3 Position { get; private set; } = Vector3.Zero;
 
-        // Default constructor
+
         public LightComponent()
+        {
+
+        }
+
+        public override void Start()
         {
             LightManager.Instance.RegisterLight(this);
         }

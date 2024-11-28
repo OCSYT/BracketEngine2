@@ -17,14 +17,15 @@ namespace Engine
     {
         private int CameraEntity;
         private int PlayerEntity;
-        private int DirectionalLightEntity;
 
         public override void Start()
         {
             // Call functions to initialize each object
             CreateCamera();
-            CreateDirectionalLight();
             CreateFloor();
+            CreatePointLight(new Vector3(0, 25, 0), Color.Red);
+            CreatePointLight(new Vector3(25, 25, 0), Color.Green);
+            CreatePointLight(new Vector3(0, 25, 25), Color.Blue);
             CreateSphere(new Vector3(-10, 10, -10), new Vector3(45, 0, 0), 3, Color.Cyan);
             CreateSphere(new Vector3(5, 10, -5), new Vector3(0, 45, 0), 2, Color.Red);
             CreateSphere(new Vector3(-15, 10, 15), new Vector3(0, 0, 90), 4, Color.Green);
@@ -68,19 +69,19 @@ namespace Engine
             ECSManager.Instance.AddComponent(CameraEntity, Cam);
         }
 
-        // Function to create Directional Light
-        private void CreateDirectionalLight()
+        private void CreatePointLight(Vector3 Position, Color Color, float Range = 50)
         {
-            DirectionalLightEntity = ECSManager.Instance.CreateEntity();
-            Transform _Transform = ECSManager.Instance.GetComponent<Transform>(DirectionalLightEntity);
-            _Transform.Rotation = Quaternion.CreateFromYawPitchRoll(45 * (MathF.PI / 180),45 * (MathF.PI / 180), 0);
-            LightComponent DirectionalLight = new LightComponent
+            int PointLightEntity = ECSManager.Instance.CreateEntity();
+            Transform _Transform = ECSManager.Instance.GetComponent<Transform>(PointLightEntity);
+            _Transform.Position = Position;
+            LightComponent PointLight = new LightComponent
             {
-                LightType = LightType.Directional,
-                Color = Color.White,
-                Intensity = 2
+                LightType = LightType.Point,
+                Color = Color,
+                Intensity = 25,
+                Range = Range
             };
-            ECSManager.Instance.AddComponent(DirectionalLightEntity, DirectionalLight);
+            ECSManager.Instance.AddComponent(PointLightEntity, PointLight);
         }
 
         // Function to create the Floor object
