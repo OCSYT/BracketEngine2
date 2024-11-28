@@ -1,4 +1,3 @@
-// Matrix variables
 float4x4 World;
 float4x4 View;
 float4x4 Projection;
@@ -86,16 +85,14 @@ float4 PS(VertexOutput input) : COLOR
 
     for (int i = 0; i < 8; i++)
     {
-        // Directional light calculations (diffuse)
         float dirLightDot = max(dot(normalizedNormal, normalize(dirLightDirection[i])), 0.0);
         float3 dirLightContribution = dirLightColor[i] * dirLightIntensity[i] * dirLightDot;
         LightColor += dirLightContribution;
-        
-        // Point light calculations (diffuse) with attenuation
+       
         float3 lightDir = normalize(pointLightPositions[i] - input.WorldPosition.xyz);
         float distance = length(pointLightPositions[i] - input.WorldPosition.xyz);
         float attenuation = 1.0 / (1.0 + 0.1 * distance + 0.01 * distance * distance);
-        attenuation = min(attenuation, 1.0); // Clamp to avoid over-brightening
+        attenuation = min(attenuation, 1.0);
 
         float pointLightDot = max(dot(normalizedNormal, lightDir), 0.0);
         float3 pointLightContribution = pointLightColors[i] * pointLightIntensities[i] * pointLightDot * attenuation;
@@ -103,8 +100,6 @@ float4 PS(VertexOutput input) : COLOR
     }
 
     LightColor = clamp(LightColor, 0.0, 1.0);
-
-    // Combine texture color with lighting and emission
     float4 Light = float4(LightColor, 1);
     float4 finalColor = (textureColor * DiffuseColor * Light)
     + (emissiontexColor * EmissionColor);
@@ -112,7 +107,6 @@ float4 PS(VertexOutput input) : COLOR
     return float4(finalColor.rgb, clamp(finalColor.a, 0, 1) * Alpha);
 }
 
-// Technique for applying the shaders
 technique BasicShader
 {
     pass P0
