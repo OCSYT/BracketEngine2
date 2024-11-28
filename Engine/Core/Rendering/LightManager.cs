@@ -74,65 +74,53 @@ namespace Engine.Core.Rendering
             }
         }
 
-        public void UpdateLights()
+        public void UpdateLights(ref Effect effect)
         {
-            var entitiesWithRenderers = ECSManager.Instance.GetEntitiesWithComponent<MeshRenderer>();
 
             // Ensure thread safety when modifying shared light data
             lock (_directionalLightsLock)
             {
                 lock (_pointLightsLock)
                 {
-                    Parallel.ForEach(entitiesWithRenderers, renderEntity =>
+                    try
                     {
-                        MeshRenderer renderer = ECSManager.Instance.GetComponent<MeshRenderer>(renderEntity);
-                        if (renderer != null)
+                        // Copy directional light data safely
+                        Vector3[] directions = new Vector3[MaxDirectionalLights];
+                        float[] intensities = new float[MaxDirectionalLights];
+                        Vector3[] colors = new Vector3[MaxDirectionalLights];
+                        for (int i = 0; i < DirectionalLights.Count && i < MaxDirectionalLights; i++)
                         {
-                            foreach (Effect effect in renderer.EffectCache.Values)
-                            {
-                                try
-                                {
-                                    // Copy directional light data safely
-                                    Vector3[] directions = new Vector3[MaxDirectionalLights];
-                                    float[] intensities = new float[MaxDirectionalLights];
-                                    Vector3[] colors = new Vector3[MaxDirectionalLights];
-                                    for (int i = 0; i < DirectionalLights.Count && i < MaxDirectionalLights; i++)
-                                    {
-                                        var light = DirectionalLights[i];
-                                        directions[i] = light.Direction;
-                                        intensities[i] = light.Intensity;
-                                        colors[i] = light.Color.ToVector3();
-                                    }
-
-                                    // Copy point light data safely
-                                    Vector3[] pointPositions = new Vector3[MaxPointLights];
-                                    float[] pointIntensities = new float[MaxPointLights];
-                                    Vector3[] pointColors = new Vector3[MaxPointLights];
-                                    for (int i = 0; i < PointLights.Count && i < MaxPointLights; i++)
-                                    {
-                                        var light = PointLights[i];
-                                        pointPositions[i] = light.Position;
-                                        pointIntensities[i] = light.Intensity;
-                                        pointColors[i] = light.Color.ToVector3();
-                                    }
-
-                                    // Set shader parameters
-                                    effect.Parameters["dirLightDirection"].SetValue(directions);
-                                    effect.Parameters["dirLightIntensity"].SetValue(intensities);
-                                    effect.Parameters["dirLightColor"].SetValue(colors);
-
-                                    effect.Parameters["pointLightPositions"].SetValue(pointPositions);
-                                    effect.Parameters["pointLightIntensities"].SetValue(pointIntensities);
-                                    effect.Parameters["pointLightColors"].SetValue(pointColors);
-                                }
-                                catch (Exception ex)
-                                {
-                                    // Consider logging the exception for debugging
-                                    Console.WriteLine($"Error updating lights: {ex.Message}");
-                                }
-                            }
+                            var light = DirectionalLights[i];
+                            directions[i] = light.Direction;
+                            intensities[i] = light.Intensity;
+                            colors[i] = light.Color.ToVector3();
                         }
-                    });
+
+                        // Copy point light data safely
+                        Vector3[] pointPositions = new Vector3[MaxPointLights];
+                        float[] pointIntensities = new float[MaxPointLights];
+                        Vector3[] pointColors = new Vector3[MaxPointLights];
+                        for (int i = 0; i < PointLights.Count && i < MaxPointLights; i++)
+                        {
+                            var light = PointLights[i];
+                            pointPositions[i] = light.Position;
+                            pointIntensities[i] = light.Intensity;
+                            pointColors[i] = light.Color.ToVector3();
+                        }
+
+                        // Set shader parameters
+                        effect.Parameters["dirLightDirection"]?.SetValue(directions);
+                        effect.Parameters["dirLightIntensity"]?.SetValue(intensities);
+                        effect.Parameters["dirLightColor"]?.SetValue(colors);
+
+                        effect.Parameters["pointLightPositions"]?.SetValue(pointPositions);
+                        effect.Parameters["pointLightIntensities"]?.SetValue(pointIntensities);
+                        effect.Parameters["pointLightColors"]?.SetValue(pointColors);
+                    }
+                    catch
+                    {
+
+                    }
                 }
             }
         }

@@ -40,7 +40,7 @@ namespace Engine.Core.Rendering
             Lighting = lighting;
         }
 
-        public void ApplyEffectParameters(Effect effect, BasicEffect basicEffect, bool fallback)
+        public void ApplyEffectParameters(Effect effect, bool fallback)
         {
             if (effect == null) return;
 

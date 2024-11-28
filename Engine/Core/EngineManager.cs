@@ -164,7 +164,6 @@ namespace Engine.Core
                 TotalTime += FixedTimeStep;
             }
 
-            LightManager.Instance.UpdateLights();
             SoundManager.Instance.Update();
             base.Update(gameTime);
         }

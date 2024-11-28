@@ -66,6 +66,7 @@ namespace Engine.Core.Components.Rendering
 
                         if (Materials != null && i < Materials.Length && Materials[i] != null)
                         {
+                            bool RenderShader = false;
                             var material = Materials[i];
 
                             if (
@@ -76,6 +77,10 @@ namespace Engine.Core.Components.Rendering
                                 if (EffectCache.ContainsKey(i))
                                 {
                                     EffectCache.Remove(i);
+                                }
+                                if (material.Shader == null)
+                                {
+                                    RenderShader = true;
                                 }
 
                                 partEffect = material.Shader?.Clone() ?? EngineManager.Instance.DefaultShader.Clone();
@@ -88,7 +93,7 @@ namespace Engine.Core.Components.Rendering
                             }
 
                             part.Effect = partEffect;
-                            material.ApplyEffectParameters(partEffect, effect, true);
+                            material.ApplyEffectParameters(partEffect, RenderShader);
                         }
                         else
                         {
@@ -103,15 +108,22 @@ namespace Engine.Core.Components.Rendering
                             }
 
                             part.Effect = partEffect;
-                            Material.Default.ApplyEffectParameters(partEffect, effect, true);
+                            Material.Default.ApplyEffectParameters(partEffect, true);
                         }
 
                         Matrix worldViewProjection = worldMatrix * viewMatrix * projectionMatrix;
 
+                        LightManager.Instance.UpdateLights(ref partEffect);
+                        try
+                        {
+                            partEffect.Parameters["World"]?.SetValue(worldMatrix);
+                            partEffect.Parameters["View"]?.SetValue(viewMatrix);
+                            partEffect.Parameters["Projection"]?.SetValue(projectionMatrix);
+                        }
+                        catch
+                        {
 
-                        partEffect.Parameters["World"]?.SetValue(worldMatrix);
-                        partEffect.Parameters["View"]?.SetValue(viewMatrix);
-                        partEffect.Parameters["Projection"]?.SetValue(projectionMatrix);
+                        }
 
                         foreach (var pass in partEffect.CurrentTechnique.Passes)
                         {
@@ -144,7 +156,7 @@ namespace Engine.Core.Components.Rendering
                         if (Materials != null && i < materialCount && Materials[i] != null)
                         {
                             var material = Materials[i];
-
+                            bool RenderShader = false;
                             if (
                                 !EffectCache.ContainsKey(i)
                                 || EffectCache[i] == null
@@ -155,6 +167,11 @@ namespace Engine.Core.Components.Rendering
                                 {
                                     EffectCache.Remove(i);
                                 }
+                                if (material.Shader == null)
+                                {
+                                    
+                                    RenderShader = true;
+                                }
                                 subMeshEffect = material.Shader?.Clone() ?? EngineManager.Instance.DefaultShader.Clone();
                                 EffectCache[i] = subMeshEffect;
                                 LastMaterialCache[i] = material;
@@ -163,7 +180,7 @@ namespace Engine.Core.Components.Rendering
                             {
                                 subMeshEffect = EffectCache[i];
                             }
-                            material.ApplyEffectParameters(subMeshEffect, effect, true);
+                            material.ApplyEffectParameters(subMeshEffect, RenderShader);
                         }
                         else
                         {
@@ -177,14 +194,20 @@ namespace Engine.Core.Components.Rendering
                                 subMeshEffect = EffectCache[i];
                             }
 
-                            Material.Default.ApplyEffectParameters(subMeshEffect, effect, true);
+                            Material.Default.ApplyEffectParameters(subMeshEffect, true);
                         }
 
+                        LightManager.Instance.UpdateLights(ref subMeshEffect);
+                        try
+                        {
+                            subMeshEffect.Parameters["World"]?.SetValue(worldMatrix);
+                            subMeshEffect.Parameters["View"]?.SetValue(viewMatrix);
+                            subMeshEffect.Parameters["Projection"]?.SetValue(projectionMatrix);
+                        }
+                        catch
+                        {
 
-                        subMeshEffect.Parameters["World"]?.SetValue(worldMatrix);
-                        subMeshEffect.Parameters["View"]?.SetValue(viewMatrix);
-                        subMeshEffect.Parameters["Projection"]?.SetValue(projectionMatrix);
-
+                        }
 
                         foreach (var pass in subMeshEffect.CurrentTechnique.Passes)
                         {

@@ -6,6 +6,8 @@ using Engine.Core.Physics;
 using Engine.Core;
 using Engine.Components;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using Engine.Core.Rendering;
 using Engine.Core.Components;
 using Engine.Core.Components.Rendering;
@@ -17,7 +19,7 @@ namespace Engine
     {
         private int CameraEntity;
         private int PlayerEntity;
-
+        public List<Transform> PointTransforms = new List<Transform>();
         public override void Start()
         {
             // Call functions to initialize each object
@@ -41,6 +43,10 @@ namespace Engine
 
         public override void FixedUpdate(GameTime gameTime)
         {
+            foreach(Transform pointlight in PointTransforms)
+            {
+                pointlight.Position = Vector3.Transform(pointlight.Position, Quaternion.CreateFromYawPitchRoll(5 * (MathF.PI / 180), 0, 0));
+            }
         }
 
 
@@ -73,6 +79,7 @@ namespace Engine
         {
             int PointLightEntity = ECSManager.Instance.CreateEntity();
             Transform _Transform = ECSManager.Instance.GetComponent<Transform>(PointLightEntity);
+            PointTransforms.Add(_Transform);
             _Transform.Position = Position;
             LightComponent PointLight = new LightComponent
             {
