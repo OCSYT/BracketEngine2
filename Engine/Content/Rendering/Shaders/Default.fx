@@ -2,6 +2,7 @@ float4x4 World;
 float4x4 View;
 float4x4 Projection;
 float Alpha = 1;
+int Lighting = 1;
 
 Texture2D DiffuseTexture;
 sampler2D DiffuseTextureSampler = sampler_state
@@ -83,22 +84,29 @@ float4 PS(VertexOutput input) : COLOR
 
     float3 LightColor = float3(0, 0, 0);
 
-    for (int i = 0; i < 8; i++)
+    if (Lighting == 1)
     {
-        float dirLightDot = max(dot(normalizedNormal, normalize(dirLightDirection[i])), 0.0);
-        float3 dirLightContribution = dirLightColor[i] * dirLightIntensity[i] * dirLightDot;
-        LightColor += dirLightContribution;
+    
+        for (int i = 0; i < 8; i++)
+        {
+            float dirLightDot = max(dot(normalizedNormal, normalize(dirLightDirection[i])), 0.0);
+            float3 dirLightContribution = dirLightColor[i] * dirLightIntensity[i] * dirLightDot;
+            LightColor += dirLightContribution;
        
-        float3 lightDir = normalize(pointLightPositions[i] - input.WorldPosition.xyz);
-        float distance = length(pointLightPositions[i] - input.WorldPosition.xyz);
-        float attenuation = 1.0 / (1.0 + 0.1 * distance + 0.01 * distance * distance);
-        attenuation = min(attenuation, 1.0);
+            float3 lightDir = normalize(pointLightPositions[i] - input.WorldPosition.xyz);
+            float distance = length(pointLightPositions[i] - input.WorldPosition.xyz);
+            float attenuation = 1.0 / (1.0 + 0.1 * distance + 0.01 * distance * distance);
+            attenuation = min(attenuation, 1.0);
 
-        float pointLightDot = max(dot(normalizedNormal, lightDir), 0.0);
-        float3 pointLightContribution = pointLightColors[i] * pointLightIntensities[i] * pointLightDot * attenuation;
-        LightColor += pointLightContribution;
+            float pointLightDot = max(dot(normalizedNormal, lightDir), 0.0);
+            float3 pointLightContribution = pointLightColors[i] * pointLightIntensities[i] * pointLightDot * attenuation;
+            LightColor += pointLightContribution;
+        }
     }
-
+    else
+    {
+        LightColor = float3(1, 1, 1);
+    }
     LightColor = clamp(LightColor, 0.0, 1.0);
     float4 Light = float4(LightColor, 1);
     float4 finalColor = (textureColor * DiffuseColor * Light)

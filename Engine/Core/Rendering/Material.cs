@@ -17,7 +17,7 @@ namespace Engine.Core.Rendering
         public static Material Default { get; } = new Material();
         public float Alpha { get; set; } = 1;
         public bool Transparent { get; set; } = false;
-
+        public bool Lighting { get; set; } = true;
         public Material()
         {
         }
@@ -28,7 +28,7 @@ namespace Engine.Core.Rendering
                         Color emissive = default,
                         Effect shader = null,
                         float alpha = 1,
-                        bool transparent = false)
+                        bool transparent = false, bool lighting = true)
         {
             DiffuseTexture = diffuseTexture;
             EmissionTexture = emissionTexture;
@@ -37,6 +37,7 @@ namespace Engine.Core.Rendering
             Shader = shader;
             Alpha = alpha;
             Transparent = transparent;
+            Lighting = lighting;
         }
 
         public void ApplyEffectParameters(Effect effect, BasicEffect basicEffect, bool fallback)
@@ -114,6 +115,7 @@ namespace Engine.Core.Rendering
             }
             else
             {
+                effect.Parameters["Lighting"].SetValue(Lighting ? 1 : 0);
                 if (Transparent)
                 {
                     effect.Parameters["Alpha"].SetValue(Alpha);
