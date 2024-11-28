@@ -46,7 +46,7 @@ namespace Engine
 
         public override void Render(GameTime GameTime)
         {
-            Graphics.GraphicsDevice.Clear(Color.SkyBlue);
+            Graphics.GraphicsDevice.Clear(Color.Black);
             BasicEffect Effect = new BasicEffect(Graphics.GraphicsDevice) { AmbientLightColor = Vector3.One / 4 };
             var CameraObj = ECSManager.Instance.GetComponent<Camera>(CameraEntity);
 
