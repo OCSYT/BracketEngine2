@@ -131,7 +131,6 @@ namespace Engine.Core
                 FrameCount = 0;
                 ElapsedTime = 0f;
             }
-            LightManager.Instance.UpdateLights();
             base.Draw(gameTime);
         }
 
@@ -151,6 +150,7 @@ namespace Engine.Core
 
             if (Accumulator >= FixedTimeStep)
             {
+
                 lock (PhyicsLock)
                 {
                     PhysicsManager.Instance.PhysicsUpdate(FixedTimeStep);
@@ -164,6 +164,7 @@ namespace Engine.Core
                 TotalTime += FixedTimeStep;
             }
 
+            LightManager.Instance.UpdateLights();
             SoundManager.Instance.Update();
             base.Update(gameTime);
         }
