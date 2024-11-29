@@ -50,6 +50,7 @@ VertexOutput VS(VertexInput input)
     VertexOutput output;
 
     float4 worldPosition = mul(input.Position, World);
+    
     output.WorldPosition = worldPosition;
 
     output.Position = mul(worldPosition, mul(View, Projection));
