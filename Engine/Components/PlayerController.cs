@@ -26,7 +26,8 @@ namespace Engine.Components
         private Vector3 RightDir = Vector3.Right;
         public float MaxVelocity = 50;
         public float YVel = 0;
-        public PlayerController(RigidBody Body, Camera CameraObj, float Sensitivity = 1, float Speed = 50, float Jump = 5, float MaxVelocity = 100)
+        public float Height = 4;
+        public PlayerController(RigidBody Body, Camera CameraObj, float Sensitivity = 1, float Speed = 50, float Jump = 5, float MaxVelocity = 100, float Height = 4)
         {
             this.Body = Body;
             this.CameraObj = CameraObj;
@@ -34,6 +35,7 @@ namespace Engine.Components
             this.Speed = Speed;
             this.Jump = Jump;
             this.MaxVelocity = MaxVelocity;
+            this.Height = Height;
         }
 
         public override void Start()
@@ -114,6 +116,7 @@ namespace Engine.Components
 
             if (HitResult.HasHit)
             {
+                LocalTransform.Position = new Vector3(LocalTransform.Position.X, HitResult.HitPoint.Y + Height, LocalTransform.Position.Z);
                 YVel = 0;
                 if (State.IsKeyDown(Keys.Space))
                 {
