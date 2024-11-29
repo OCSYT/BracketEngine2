@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 using Engine.Core.ECS;
 using Engine.Core.Rendering;
@@ -13,8 +12,8 @@ namespace Engine.Core.Components.Rendering
         public Model Model { get; set; }
         public StaticMesh StaticMesh { get; set; }
         public Material[] Materials { get; set; }
-        public Dictionary<int, Effect> EffectCache = new Dictionary<int, Effect>();
-        private Dictionary<int, Material> LastMaterialCache = new Dictionary<int, Material>();
+        private readonly Dictionary<int, Effect> _effectCache = new();
+        private readonly Dictionary<int, Material> _lastMaterialCache = new();
 
         public MeshRenderer(Model model, Material[] materials = null)
         {
@@ -30,22 +29,10 @@ namespace Engine.Core.Components.Rendering
             Materials = materials ?? new Material[staticMesh.SubMeshes.Count];
         }
 
-        public override void Render(
-            BasicEffect effect,
-            Matrix viewMatrix,
-            Matrix projectionMatrix,
-            GameTime gameTime
-        )
+        public override void Render(BasicEffect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
         {
             var transform = ECSManager.Instance.GetComponent<Transform>(EntityId);
-            if (transform == null)
-            {
-                return;
-            }
-            if (EngineManager.Instance.DefaultShader == null)
-            {
-                return;
-            }
+            if (transform == null || EngineManager.Instance.DefaultShader == null) return;
 
             var worldMatrix = transform.GetWorldMatrix();
             var viewProjectionMatrix = viewMatrix * projectionMatrix;
@@ -53,178 +40,117 @@ namespace Engine.Core.Components.Rendering
 
             if (Model != null)
             {
-                foreach (var mesh in Model.Meshes)
-                {
-                    var boundingSphere = mesh.BoundingSphere.Transform(worldMatrix);
-                    if (!frustum.Intersects(boundingSphere))
-                        continue;
-
-                    for (int i = 0; i < mesh.MeshParts.Count; i++)
-                    {
-                        var part = mesh.MeshParts[i];
-                        Effect partEffect = null;
-
-                        if (Materials != null && i < Materials.Length && Materials[i] != null)
-                        {
-                            bool RenderShader = false;
-                            var material = Materials[i];
-
-                            if (
-                                !LastMaterialCache.ContainsKey(i)
-                                || LastMaterialCache[i] != material
-                            )
-                            {
-                                if (EffectCache.ContainsKey(i))
-                                {
-                                    EffectCache.Remove(i);
-                                }
-                                if (material.Shader == null)
-                                {
-                                    RenderShader = true;
-                                }
-
-                                partEffect = material.Shader?.Clone() ?? EngineManager.Instance.DefaultShader.Clone();
-                                EffectCache[i] = partEffect;
-                                LastMaterialCache[i] = material;
-                            }
-                            else
-                            {
-                                partEffect = EffectCache[i];
-                            }
-
-                            part.Effect = partEffect;
-                            material.ApplyEffectParameters(partEffect, RenderShader);
-                        }
-                        else
-                        {
-                            if (!EffectCache.ContainsKey(i))
-                            {
-                                partEffect = EngineManager.Instance.DefaultShader.Clone();
-                                EffectCache[i] = partEffect;
-                            }
-                            else
-                            {
-                                partEffect = EffectCache[i];
-                            }
-
-                            part.Effect = partEffect;
-                            Material.Default.ApplyEffectParameters(partEffect, true);
-                        }
-
-                        Matrix worldViewProjection = worldMatrix * viewMatrix * projectionMatrix;
-
-                        LightManager.Instance.UpdateLights(ref partEffect);
-                        try
-                        {
-                            partEffect.Parameters["World"]?.SetValue(worldMatrix);
-                            partEffect.Parameters["View"]?.SetValue(viewMatrix);
-                            partEffect.Parameters["Projection"]?.SetValue(projectionMatrix);
-                        }
-                        catch
-                        {
-
-                        }
-
-                        foreach (var pass in partEffect.CurrentTechnique.Passes)
-                        {
-                            pass.Apply();
-                        }
-
-                    }
-
-                    mesh.Draw();
-                }
+                RenderModel(worldMatrix, viewMatrix, projectionMatrix, frustum);
             }
             else if (StaticMesh != null)
             {
-                int subMeshCount = StaticMesh.SubMeshes.Count;
-                int materialCount = Materials?.Length ?? 0;
+                RenderStaticMesh(worldMatrix, viewMatrix, projectionMatrix, frustum);
+            }
+        }
 
-                for (int i = 0; i < subMeshCount; i++)
+        private void RenderModel(Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, BoundingFrustum frustum)
+        {
+            var defaultShader = EngineManager.Instance.DefaultShader;
+
+            foreach (var mesh in Model.Meshes)
+            {
+                if (!frustum.Intersects(mesh.BoundingSphere.Transform(worldMatrix))) continue;
+
+                foreach (var part in mesh.MeshParts)
                 {
-                    var subMesh = StaticMesh.SubMeshes[i];
-                    if (frustum.Intersects(subMesh.BoundingSphere.Transform(worldMatrix)))
+                    int partIndex = mesh.MeshParts.IndexOf(part);
+                    var effect = GetOrCreateEffect(partIndex, Materials, defaultShader);
+
+                    part.Effect = effect;
+                    ApplyEffectParameters(effect, worldMatrix, viewMatrix, projectionMatrix, Materials?[partIndex]);
+
+                    foreach (var pass in effect.CurrentTechnique.Passes)
                     {
-                        EngineManager.Instance.Graphics.GraphicsDevice.SetVertexBuffer(
-                            subMesh.VertexBuffer
-                        );
-                        EngineManager.Instance.Graphics.GraphicsDevice.Indices =
-                            subMesh.IndexBuffer;
-
-                        Effect subMeshEffect = null;
-
-                        if (Materials != null && i < materialCount && Materials[i] != null)
-                        {
-                            var material = Materials[i];
-                            bool RenderShader = false;
-                            if (
-                                !EffectCache.ContainsKey(i)
-                                || EffectCache[i] == null
-                                || LastMaterialCache[i] != material
-                            )
-                            {
-                                if (EffectCache.ContainsKey(i))
-                                {
-                                    EffectCache.Remove(i);
-                                }
-                                if (material.Shader == null)
-                                {
-                                    
-                                    RenderShader = true;
-                                }
-                                subMeshEffect = material.Shader?.Clone() ?? EngineManager.Instance.DefaultShader.Clone();
-                                EffectCache[i] = subMeshEffect;
-                                LastMaterialCache[i] = material;
-                            }
-                            else
-                            {
-                                subMeshEffect = EffectCache[i];
-                            }
-                            material.ApplyEffectParameters(subMeshEffect, RenderShader);
-                        }
-                        else
-                        {
-                            if (!EffectCache.ContainsKey(i))
-                            {
-                                subMeshEffect = EngineManager.Instance.DefaultShader.Clone();
-                                EffectCache[i] = subMeshEffect;
-                            }
-                            else
-                            {
-                                subMeshEffect = EffectCache[i];
-                            }
-
-                            Material.Default.ApplyEffectParameters(subMeshEffect, true);
-                        }
-
-                        LightManager.Instance.UpdateLights(ref subMeshEffect);
-                        try
-                        {
-                            subMeshEffect.Parameters["World"]?.SetValue(worldMatrix);
-                            subMeshEffect.Parameters["View"]?.SetValue(viewMatrix);
-                            subMeshEffect.Parameters["Projection"]?.SetValue(projectionMatrix);
-                        }
-                        catch
-                        {
-
-                        }
-
-                        foreach (var pass in subMeshEffect.CurrentTechnique.Passes)
-                        {
-                            pass.Apply();
-                        }
-
-                        EngineManager.Instance.Graphics.GraphicsDevice.DrawIndexedPrimitives(
-                            PrimitiveType.TriangleList,
-                            0,
-                            0,
-                            subMesh.NumIndices / 3
-                        );
-
-                        EngineManager.Instance.Graphics.GraphicsDevice.SetVertexBuffer(null);
-                        EngineManager.Instance.Graphics.GraphicsDevice.Indices = null;
+                        pass.Apply();
                     }
                 }
+
+                mesh.Draw();
+            }
+        }
+
+        private void RenderStaticMesh(Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, BoundingFrustum frustum)
+        {
+            var defaultShader = EngineManager.Instance.DefaultShader;
+            var device = EngineManager.Instance.Graphics.GraphicsDevice;
+
+            foreach (var subMesh in StaticMesh.SubMeshes)
+            {
+                int subMeshIndex = StaticMesh.SubMeshes.IndexOf(subMesh);
+
+                if (!frustum.Intersects(subMesh.BoundingSphere.Transform(worldMatrix))) continue;
+
+                device.SetVertexBuffer(subMesh.VertexBuffer);
+                device.Indices = subMesh.IndexBuffer;
+
+                var effect = GetOrCreateEffect(subMeshIndex, Materials, defaultShader);
+                ApplyEffectParameters(effect, worldMatrix, viewMatrix, projectionMatrix, Materials?[subMeshIndex]);
+
+                foreach (var pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                }
+
+                device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, subMesh.NumIndices / 3);
+            }
+
+            // Reset device state to avoid conflicts in subsequent renders
+            device.SetVertexBuffer(null);
+            device.Indices = null;
+        }
+
+        private Effect GetOrCreateEffect(int index, Material[] materials, Effect defaultShader)
+        {
+            if (materials != null && index < materials.Length && materials[index] != null)
+            {
+                var material = materials[index];
+
+                if (!_lastMaterialCache.TryGetValue(index, out var cachedMaterial) || cachedMaterial != material)
+                {
+                    _effectCache[index] = material.Shader?.Clone() ?? defaultShader.Clone();
+                    _lastMaterialCache[index] = material;
+                }
+
+                return _effectCache[index];
+            }
+
+            if (!_effectCache.TryGetValue(index, out var effect))
+            {
+                effect = defaultShader.Clone();
+                _effectCache[index] = effect;
+            }
+
+            return effect;
+        }
+
+        private void ApplyEffectParameters(Effect effect, Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, Material material)
+        {
+            if (effect == null) return;
+
+            LightManager.Instance.UpdateLights(ref effect);
+
+            try
+            {
+                effect.Parameters["World"]?.SetValue(worldMatrix);
+                effect.Parameters["View"]?.SetValue(viewMatrix);
+                effect.Parameters["Projection"]?.SetValue(projectionMatrix);
+            }
+            catch
+            {
+
+            }
+            if (material != null)
+            {
+                material.ApplyEffectParameters(effect, material.Shader == null);
+            }
+            else
+            {
+                Material.Default.ApplyEffectParameters(effect, true);
             }
         }
     }
