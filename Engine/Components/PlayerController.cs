@@ -6,6 +6,7 @@ using Engine.Core;
 using Engine.Core.Components;
 using Engine.Core.Components.Physics;
 using Engine.Core.Components.Rendering;
+using static Engine.Core.Physics.PhysicsManager;
 
 namespace Engine.Components
 {
@@ -24,7 +25,7 @@ namespace Engine.Components
         private Vector3 ForwardDir = Vector3.Forward;
         private Vector3 RightDir = Vector3.Right;
         public float MaxVelocity = 50;
-
+        public float YVel = 0;
         public PlayerController(RigidBody Body, Camera CameraObj, float Sensitivity = 1, float Speed = 50, float Jump = 5, float MaxVelocity = 100)
         {
             this.Body = Body;
@@ -111,18 +112,23 @@ namespace Engine.Components
                 LocalVel *= MaxVelocity;
             }
 
-            LocalVel += Vector3.Up * Body.BulletRigidBody.LinearVelocity.Y;
+            if (HitResult.HasHit)
+            {
+                YVel = 0;
+                if (State.IsKeyDown(Keys.Space))
+                {
+                    YVel += 10 * Jump;
+                }
+            }
+            else
+            {
+                YVel += PhysicsManager.Instance.Gravity.Y/20* Jump;
+            }
+
+            LocalVel += Vector3.Up * YVel;
             Body.BulletRigidBody.LinearVelocity =
                 new BulletSharp.Math.Vector3(LocalVel.X, LocalVel.Y, LocalVel.Z);
 
-            if (HitResult.HasHit)
-            {
-                if (State.IsKeyDown(Keys.Space))
-                {
-                    Body.ApplyImpulse(Vector3.Up * -PhysicsManager.Instance.Gravity.Y / 2 * 100);
-                }
-            }
-            Body.ApplyImpulse(-Vector3.Up * -PhysicsManager.Instance.Gravity.Y / 2 * 100 / Jump);
 
             CamTransform.Position = LocalTransform.Position + Vector3.Up * 2;
         }
