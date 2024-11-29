@@ -40,15 +40,15 @@ namespace Engine.Core.Components.Rendering
 
             if (Model != null)
             {
-                RenderModel(worldMatrix, viewMatrix, projectionMatrix, frustum);
+                RenderModel(worldMatrix, viewMatrix, projectionMatrix, frustum, gameTime);
             }
             else if (StaticMesh != null)
             {
-                RenderStaticMesh(worldMatrix, viewMatrix, projectionMatrix, frustum);
+                RenderStaticMesh(worldMatrix, viewMatrix, projectionMatrix, frustum, gameTime);
             }
         }
 
-        private void RenderModel(Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, BoundingFrustum frustum)
+        private void RenderModel(Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, BoundingFrustum frustum, GameTime gameTime)
         {
             var defaultShader = EngineManager.Instance.DefaultShader;
 
@@ -62,7 +62,7 @@ namespace Engine.Core.Components.Rendering
                     var effect = GetOrCreateEffect(partIndex, Materials, defaultShader);
 
                     part.Effect = effect;
-                    ApplyEffectParameters(effect, worldMatrix, viewMatrix, projectionMatrix, Materials?[partIndex]);
+                    ApplyEffectParameters(effect, worldMatrix, viewMatrix, projectionMatrix, Materials?[partIndex], (float)gameTime.TotalGameTime.TotalSeconds);
 
                     foreach (var pass in effect.CurrentTechnique.Passes)
                     {
@@ -74,7 +74,7 @@ namespace Engine.Core.Components.Rendering
             }
         }
 
-        private void RenderStaticMesh(Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, BoundingFrustum frustum)
+        private void RenderStaticMesh(Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, BoundingFrustum frustum, GameTime gameTime)
         {
             var defaultShader = EngineManager.Instance.DefaultShader;
             var device = EngineManager.Instance.Graphics.GraphicsDevice;
@@ -89,7 +89,7 @@ namespace Engine.Core.Components.Rendering
                 device.Indices = subMesh.IndexBuffer;
 
                 var effect = GetOrCreateEffect(subMeshIndex, Materials, defaultShader);
-                ApplyEffectParameters(effect, worldMatrix, viewMatrix, projectionMatrix, Materials?[subMeshIndex]);
+                ApplyEffectParameters(effect, worldMatrix, viewMatrix, projectionMatrix, Materials?[subMeshIndex], (float)gameTime.TotalGameTime.TotalSeconds);
 
                 foreach (var pass in effect.CurrentTechnique.Passes)
                 {
@@ -128,11 +128,20 @@ namespace Engine.Core.Components.Rendering
             return effect;
         }
 
-        private void ApplyEffectParameters(Effect effect, Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, Material material)
+        private void ApplyEffectParameters(Effect effect, Matrix worldMatrix, Matrix viewMatrix, Matrix projectionMatrix, Material material, float currentTime)
         {
             if (effect == null) return;
 
             LightManager.Instance.UpdateLights(ref effect);
+
+            try
+            {
+                effect.Parameters["Time"]?.SetValue(currentTime);
+            }
+            catch
+            {
+
+            }
 
             try
             {
