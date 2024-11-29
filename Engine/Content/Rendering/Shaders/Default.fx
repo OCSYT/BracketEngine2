@@ -103,6 +103,7 @@ float4 PS(VertexOutput input) : COLOR
     {
         LightColor = float3(1, 1, 1);
     }
+    
     LightColor = clamp(LightColor, 0.0, 1.0);
     float4 Light = float4(LightColor, 1);
     float4 finalColor = (textureColor * DiffuseColor * Light)
