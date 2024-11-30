@@ -18,14 +18,14 @@ sampler2D EmissionTextureSampler = sampler_state
 
 float4 DiffuseColor;
 float4 EmissionColor;
-float3 dirLightDirection[8];
-float dirLightIntensity[8];
-float3 dirLightColor[8];
+float3 dirLightDirection[16];
+float dirLightIntensity[16];
+float3 dirLightColor[16];
 
 
-float3 pointLightPositions[8];
-float pointLightIntensities[8];
-float3 pointLightColors[8];
+float3 pointLightPositions[16];
+float pointLightIntensities[16];
+float3 pointLightColors[16];
 
 struct VertexInput
 {
@@ -83,7 +83,7 @@ float4 PS(VertexOutput input) : COLOR
     if (Lighting == 1)
     {
     
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 16; i++)
         {
             float dirLightDot = max(dot(normalizedNormal, normalize(dirLightDirection[i])), 0.0);
             float3 dirLightContribution = dirLightColor[i] * dirLightIntensity[i] * dirLightDot;

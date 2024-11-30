@@ -11,8 +11,8 @@ namespace Engine.Core.Rendering
 {
     public class LightManager
     {
-        private const int MaxDirectionalLights = 8;
-        private const int MaxPointLights = 8;
+        private const int MaxDirectionalLights = 16;
+        private const int MaxPointLights = 16;
 
         private static LightManager _instance;
 
@@ -88,26 +88,25 @@ namespace Engine.Core.Rendering
                         Vector3[] directions = new Vector3[MaxDirectionalLights];
                         float[] intensities = new float[MaxDirectionalLights];
                         Vector3[] colors = new Vector3[MaxDirectionalLights];
-                        for (int i = 0; i < DirectionalLights.Count && i < MaxDirectionalLights; i++)
+                        Parallel.For(0, Math.Min(DirectionalLights.Count, MaxDirectionalLights), i =>
                         {
                             var light = DirectionalLights[i];
                             directions[i] = light.Direction;
                             intensities[i] = light.Intensity;
                             colors[i] = light.Color.ToVector3();
-                        }
+                        });
 
                         // Copy point light data safely
                         Vector3[] pointPositions = new Vector3[MaxPointLights];
                         float[] pointIntensities = new float[MaxPointLights];
                         Vector3[] pointColors = new Vector3[MaxPointLights];
-                        for (int i = 0; i < PointLights.Count && i < MaxPointLights; i++)
+                        Parallel.For(0, Math.Min(PointLights.Count, MaxPointLights), i =>
                         {
                             var light = PointLights[i];
                             pointPositions[i] = light.Position;
                             pointIntensities[i] = light.Intensity;
                             pointColors[i] = light.Color.ToVector3();
-                        }
-
+                        });
                         // Set shader parameters
                         effect.Parameters["dirLightDirection"]?.SetValue(directions);
                         effect.Parameters["dirLightIntensity"]?.SetValue(intensities);

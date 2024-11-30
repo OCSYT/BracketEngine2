@@ -10,8 +10,22 @@ namespace Engine
     {
         public static void Main()
         {
-            MainEngine GameEngine = new MainEngine();
-            GameEngine.Run();
+            try
+            {
+                MainEngine GameEngine = new MainEngine();
+                GameEngine.Run();
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("An error occurred:");
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+            }
+            finally
+            {
+                Console.WriteLine("Press Enter to close the console.");
+                Console.ReadLine();
+            }
         }
     }
 }

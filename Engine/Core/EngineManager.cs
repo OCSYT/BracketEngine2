@@ -15,7 +15,7 @@ namespace Engine.Core
     public class EngineManager : Game
     {
 
-        [DllImport("kernel32.dll")]
+        [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool AllocConsole();
 
         private static EngineManager _instance;
@@ -87,7 +87,7 @@ namespace Engine.Core
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             DefaultShader = Content.Load<Effect>("Rendering/Shaders/Default");
-            Start();
+            Start();    
             if (Debug)
             {
                 AllocConsole();

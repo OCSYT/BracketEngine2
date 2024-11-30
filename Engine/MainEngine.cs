@@ -91,6 +91,23 @@ namespace Engine
             ECSManager.Instance.AddComponent(PointLightEntity, PointLight);
         }
 
+        private void CreateDirLight(Vector3 Position, Color Color, float Range = 50)
+
+        {
+            int PointLightEntity = ECSManager.Instance.CreateEntity();
+            Transform _Transform = ECSManager.Instance.GetComponent<Transform>(PointLightEntity);
+            PointTransforms.Add(_Transform);
+            _Transform.Position = Position;
+            LightComponent PointLight = new LightComponent
+            {
+                LightType = LightType.Directional,
+                Color = Color,
+                Intensity = 25,
+                Range = Range
+            };
+            ECSManager.Instance.AddComponent(PointLightEntity, PointLight);
+        }
+
         // Function to create the Floor object
         private void CreateFloor()
         {
