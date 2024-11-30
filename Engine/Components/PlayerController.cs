@@ -12,8 +12,8 @@ namespace Engine.Components
 {
     public class PlayerController : Component
     {
-        private RigidBody Body;
-        private Camera CameraObj;
+        public RigidBody Body;
+        public Camera CameraObj;
         public float Sensitivity = 1;
         private float MouseX = 0;
         private float MouseY = 0;
@@ -27,7 +27,11 @@ namespace Engine.Components
         public float MaxVelocity = 50;
         public float YVel = 0;
         public float Height = 4;
-        public PlayerController(RigidBody Body, Camera CameraObj, float Sensitivity = 1, float Speed = 50, float Jump = 5, float MaxVelocity = 100, float Height = 4)
+        public PlayerController()
+        {
+
+        }
+        public PlayerController(RigidBody Body, Camera CameraObj, float Sensitivity = 1, float Speed = 50, float Jump = 5, float MaxVelocity = 100, float Height = 5)
         {
             this.Body = Body;
             this.CameraObj = CameraObj;

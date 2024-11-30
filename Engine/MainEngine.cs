@@ -23,7 +23,6 @@ namespace Engine
         public override void Start()
         {
             // Call functions to initialize each object
-            CreateCamera();
             CreateFloor();
             CreatePointLight(new Vector3(0, 25, -50), Color.Red);
             CreatePointLight(new Vector3(50, 25, 0), Color.Green);
@@ -33,6 +32,7 @@ namespace Engine
             CreateSphere(new Vector3(-15, 10, 15), new Vector3(0, 0, 90), 4, Color.Green);
             CreateSphere(new Vector3(20, 10, 20), new Vector3(90, 0, 0), 1.5f, Color.Yellow);
             CreateSphere(new Vector3(0, 10, 20), new Vector3(0, 90, 0), 2.5f, Color.Blue);
+            CreateCamera();
             CreatePlayer();
         }
 
@@ -146,6 +146,7 @@ namespace Engine
         // Function to create Player object
         private void CreatePlayer()
         {
+            float PlayerHeight = 5;
             PlayerEntity = ECSManager.Instance.CreateEntity();
 
             Transform _Transform = ECSManager.Instance.GetComponent<Transform>(PlayerEntity);
@@ -154,13 +155,18 @@ namespace Engine
             RigidBody PlayerBody = new RigidBody
             {
                 Mass = 70,
-                Shapes = new[] { new BulletSharp.CapsuleShape(1, 5) },
+                Shapes = new[] { new BulletSharp.CapsuleShape(1, PlayerHeight) },
                 CollisionGroup = PhysicsManager.CreateCollisionMask([2]),
                 CollisionMask = PhysicsManager.CreateCollisionMask([1]),
             };
 
             ECSManager.Instance.AddComponent(PlayerEntity, PlayerBody);
-            PlayerController Controller = new PlayerController(PlayerBody, ECSManager.Instance.GetComponent<Camera>(CameraEntity), 1, 50, 5);
+            PlayerController Controller = new PlayerController()
+            {
+                Body = PlayerBody,
+                CameraObj = ECSManager.Instance.GetComponent<Camera>(CameraEntity),
+                Height = PlayerHeight
+            };
             ECSManager.Instance.AddComponent(PlayerEntity, Controller);
         }
 
