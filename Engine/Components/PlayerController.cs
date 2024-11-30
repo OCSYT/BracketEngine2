@@ -70,7 +70,7 @@ namespace Engine.Components
 
             PhysicsManager.HitResult HitResult =
                 PhysicsManager.Instance.Raycast(LocalTransform.Position,
-                LocalTransform.Position + Vector3.Down * 5, PhysicsManager.CreateCollisionMask([2]),
+                LocalTransform.Position + Vector3.Down * Height, PhysicsManager.CreateCollisionMask([2]),
                 PhysicsManager.CreateCollisionMask([1]));
 
             KeyboardState State = Keyboard.GetState();
