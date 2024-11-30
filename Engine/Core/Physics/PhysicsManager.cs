@@ -55,16 +55,19 @@ namespace Engine.Core.Physics
             public bool HasHit { get; set; }
             public Microsoft.Xna.Framework.Vector3 HitPoint { get; set; }
             public Microsoft.Xna.Framework.Vector3 HitNormal { get; set; }
+            public CollisionObject HitObject { get; set; }
 
             public HitResult(
                 bool hasHit,
                 Microsoft.Xna.Framework.Vector3 hitPoint,
-                Microsoft.Xna.Framework.Vector3 hitNormal
+                Microsoft.Xna.Framework.Vector3 hitNormal,
+                CollisionObject hitObject
             )
             {
                 HasHit = hasHit;
                 HitPoint = hitPoint;
                 HitNormal = hitNormal;
+                HitObject = hitObject;
             }
         }
 
@@ -99,14 +102,14 @@ namespace Engine.Core.Physics
                     rayCallback.HitNormalWorld.Y,
                     rayCallback.HitNormalWorld.Z
                 );
-
-                return new HitResult(true, hitPoint, hitNormal);
+                return new HitResult(true, hitPoint, hitNormal, rayCallback.CollisionObject);
             }
 
             return new HitResult(
                 false,
                 Microsoft.Xna.Framework.Vector3.Zero,
-                Microsoft.Xna.Framework.Vector3.Zero
+                Microsoft.Xna.Framework.Vector3.Zero,
+                null
             );
         }
         public static int CreateCollisionMask(int[] collisionGroups, bool include = true)
