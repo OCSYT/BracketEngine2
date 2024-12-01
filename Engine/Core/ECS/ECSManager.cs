@@ -7,8 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Engine.Core.ECS { 
-   public interface IComponentLifecycle
+namespace Engine.Core.ECS
+{
+    public interface IComponentLifecycle
     {
         void Awake();
         void Start();
@@ -135,10 +136,10 @@ namespace Engine.Core.ECS {
         {
             ProcessTimedRemovals(gameTime);
 
-            Parallel.ForEach(_lifecycleComponents.Values.SelectMany(lifecycleList => lifecycleList), lifecycle =>
+            foreach (var lifecycle in _lifecycleComponents.Values.SelectMany(lifecycleList => lifecycleList))
             {
                 lifecycle.FixedUpdate(gameTime);
-            });
+            }
         }
 
         public void CallMainUpdateOnComponents(GameTime gameTime)
@@ -149,10 +150,10 @@ namespace Engine.Core.ECS {
             }
             _startQueuedComponents.Clear();
 
-            Parallel.ForEach(_lifecycleComponents.Values.SelectMany(lifecycleList => lifecycleList), lifecycle =>
+            foreach (var lifecycle in _lifecycleComponents.Values.SelectMany(lifecycleList => lifecycleList))
             {
                 lifecycle.MainUpdate(gameTime);
-            });
+            }
         }
 
         public void CallRenderOnComponents(BasicEffect basicEffect, Matrix viewMatrix, Matrix projectionMatrix, GameTime GameTime)
