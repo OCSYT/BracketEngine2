@@ -8,7 +8,6 @@ namespace Engine.Core.Rendering
 {
     public class Material
     {
-        public Color AmbientColor { get; set; } = new Color(0.21f, 0.21f, 0.21f);
         public Texture2D DiffuseTexture { get; set; }
         public Texture2D EmissionTexture { get; set; }
         public Effect Shader { get; set; }
@@ -40,7 +39,6 @@ namespace Engine.Core.Rendering
             Alpha = alpha;
             Transparent = transparent;
             Lighting = lighting;
-            AmbientColor = ambientColor;
         }
 
         public void ApplyEffectParameters(Effect effect, bool fallback)
@@ -118,7 +116,6 @@ namespace Engine.Core.Rendering
             }
             else
             {
-                effect.Parameters["AmbientColor"]?.SetValue(AmbientColor.ToVector4());
                 effect.Parameters["Lighting"]?.SetValue(Lighting ? 1 : 0);
                 if (Transparent)
                 {
@@ -136,7 +133,7 @@ namespace Engine.Core.Rendering
                 {
                     effect.Parameters["DiffuseTexture"]?.SetValue(EngineManager.Instance.WhiteTex);
                 }
-                if(EmissionTexture != null)
+                if (EmissionTexture != null)
                 {
                     effect.Parameters["EmissionTexture"]?.SetValue(EmissionTexture);
                 }

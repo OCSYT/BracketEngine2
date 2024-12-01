@@ -13,7 +13,7 @@ namespace Engine.Core.Rendering
     {
         private const int MaxDirectionalLights = 16;
         private const int MaxPointLights = 16;
-
+        public Color AmbientColor = new Color(0.21f, 0.21f, 0.21f);
         private static LightManager _instance;
 
         public static LightManager Instance
@@ -108,6 +108,7 @@ namespace Engine.Core.Rendering
                             pointColors[i] = light.Color.ToVector3();
                         });
                         // Set shader parameters
+                        effect.Parameters["AmbientColor"]?.SetValue(AmbientColor.ToVector4());
                         effect.Parameters["dirLightDirection"]?.SetValue(directions);
                         effect.Parameters["dirLightIntensity"]?.SetValue(intensities);
                         effect.Parameters["dirLightColor"]?.SetValue(colors);
