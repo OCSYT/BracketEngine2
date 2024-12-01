@@ -16,6 +16,7 @@ sampler2D EmissionTextureSampler = sampler_state
     Texture = <EmissionTexture>;
 };
 
+float4 AmbientColor;
 float4 DiffuseColor;
 float4 EmissionColor;
 float3 dirLightDirection[16];
@@ -78,7 +79,7 @@ float4 PS(VertexOutput input) : COLOR
 
     float3 normalizedNormal = normalize(input.WorldNormal);
 
-    float3 LightColor = float3(0, 0, 0);
+    float3 LightColor = AmbientColor.rgb;
 
     if (Lighting == 1)
     {

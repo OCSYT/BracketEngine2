@@ -8,6 +8,7 @@ namespace Engine.Core.Rendering
 {
     public class Material
     {
+        public Color AmbientColor { get; set; } = new Color(0.21f, 0.21f, 0.21f);
         public Texture2D DiffuseTexture { get; set; }
         public Texture2D EmissionTexture { get; set; }
         public Effect Shader { get; set; }
@@ -24,6 +25,7 @@ namespace Engine.Core.Rendering
 
         public Material(Texture2D diffuseTexture = null,
                         Color diffuseColor = default,
+                        Color ambientColor = default,
                         Texture2D emissionTexture = null,
                         Color emissive = default,
                         Effect shader = null,
@@ -38,6 +40,7 @@ namespace Engine.Core.Rendering
             Alpha = alpha;
             Transparent = transparent;
             Lighting = lighting;
+            AmbientColor = ambientColor;
         }
 
         public void ApplyEffectParameters(Effect effect, bool fallback)
@@ -115,33 +118,34 @@ namespace Engine.Core.Rendering
             }
             else
             {
-                effect.Parameters["Lighting"].SetValue(Lighting ? 1 : 0);
+                effect.Parameters["AmbientColor"]?.SetValue(AmbientColor.ToVector4());
+                effect.Parameters["Lighting"]?.SetValue(Lighting ? 1 : 0);
                 if (Transparent)
                 {
-                    effect.Parameters["Alpha"].SetValue(Alpha);
+                    effect.Parameters["Alpha"]?.SetValue(Alpha);
                 }
                 else
                 {
-                    effect.Parameters["Alpha"].SetValue(1);
+                    effect.Parameters["Alpha"]?.SetValue(1);
                 }
                 if (DiffuseTexture != null)
                 {
-                    effect.Parameters["DiffuseTexture"].SetValue(DiffuseTexture);
+                    effect.Parameters["DiffuseTexture"]?.SetValue(DiffuseTexture);
                 }
                 else
                 {
-                    effect.Parameters["DiffuseTexture"].SetValue(EngineManager.Instance.WhiteTex);
+                    effect.Parameters["DiffuseTexture"]?.SetValue(EngineManager.Instance.WhiteTex);
                 }
                 if(EmissionTexture != null)
                 {
-                    effect.Parameters["EmissionTexture"].SetValue(EmissionTexture);
+                    effect.Parameters["EmissionTexture"]?.SetValue(EmissionTexture);
                 }
                 else
                 {
-                    effect.Parameters["EmissionTexture"].SetValue(EngineManager.Instance.WhiteTex);
+                    effect.Parameters["EmissionTexture"]?.SetValue(EngineManager.Instance.WhiteTex);
                 }
-                effect.Parameters["DiffuseColor"].SetValue(DiffuseColor.ToVector4());
-                effect.Parameters["EmissionColor"].SetValue(EmissionColor.ToVector4());
+                effect.Parameters["DiffuseColor"]?.SetValue(DiffuseColor.ToVector4());
+                effect.Parameters["EmissionColor"]?.SetValue(EmissionColor.ToVector4());
 
             }
         }
