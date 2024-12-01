@@ -117,6 +117,5 @@
 - [MonoGame Documentation](https://docs.monogame.net/)
 - [MonoGame.UI.Forms](https://github.com/csharpskolan/MonoGame.UI.Forms)
 - [BulletSharp Documentation](https://andrestraks.github.io/BulletSharp/)
-- [XNA Framework](https://learn.microsoft.com/en-us/previous-versions/aa479572(v=msdn.10))
-- [MonoGame Samples](https://github.com/MonoGame/MonoGameSamples)
+- [MonoGame Samples]([https://github.com/MonoGame/MonoGameSamples](https://docs.monogame.net/articles/samples.html))
 - [ShaderToy](https://www.shadertoy.com/) - Great for learning shaders and effects.
