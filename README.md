@@ -1,43 +1,122 @@
 # Bracket Engine 2
 
-![image](https://github.com/user-attachments/assets/2ad16480-7c1f-4810-9086-ef0b40b6c4d4)
+![Bracket Engine](https://github.com/user-attachments/assets/2ad16480-7c1f-4810-9086-ef0b40b6c4d4)
 
+---
 
 ## Setup
 
-- Clone the repository
-- Open sln file with Visual Studio 2022
-- Set build mode to Release x64
+1. Clone the repository.
+2. Open the `.sln` file with **Visual Studio 2022**.
+3. Set the build mode to **Release x64**.
 
-## Info
-- Main Engine loop is in **MainEngine.cs**
-- UI Form Code is in UI/UIControls.cs
-- Custom Components go in Components Folder
-- Assets such as sounds, images, etc go in the Content Folder `(keep in mind defaultFont.spritefont is required for UI to work)`
-- Core engine code and components is found in Core folder
+---
 
-## Engine Loop
-- Awake (Monogame Initalization)
-- Start (Monogame LoadContent)
-- MainUpdate (Monogame Update)
-- FixedUpdate (Monogame Update running on FixedTimeStep)
-- Render (Monogame Draw)
-- DrawGUI (Monogame Draw - Called after Render after SpriteBatch.Begin)
-- OnDestroy (Monogame UnloadContent)
+## Information Overview
 
-## Component Loop
-- Awake (Called on frame component is created)
-- Start (Called on next frame before MainUpdate and FixedUpdate)
-- MainUpdate (Called on Monogame Update)
-- FixedUpdate (Monogame Update running on FixedTimeStep)
-- Render (Called Manually in Render Function in Engine loop as Camera Matricies need to be defined)
-- DrawGUI (Called after Render - Called after Render after SpriteBatch.Begin)
-- OnDestroy (Called on frame component is destroyed)
+### File Structure
+- **Main Engine Loop**: `MainEngine.cs`
+- **UI Form Code**: `UI/UIControls.cs`
+- **Custom Components**: `Components` folder
+- **Assets (e.g., sounds, images)**: `Content` folder  
+  *Note*: `defaultFont.spritefont` is required for UI functionality.
+- **Core Engine Code & Components**: `Core` folder
+
+---
+
+## Engine Lifecycle
+
+1. **Awake**: MonoGame initialization.
+2. **Start**: MonoGame `LoadContent`.
+3. **MainUpdate**: MonoGame `Update`.
+4. **FixedUpdate**: MonoGame `Update` with `FixedTimeStep`.
+5. **Render**: MonoGame `Draw`.
+6. **DrawGUI**: MonoGame `Draw`, called after `Render` and `SpriteBatch.Begin`.
+7. **OnDestroy**: MonoGame `UnloadContent`.
+
+---
+
+## Component Lifecycle
+
+1. **Awake**: Called on the frame when the component is created.
+2. **Start**: Called on the next frame before `MainUpdate` and `FixedUpdate`.
+3. **MainUpdate**: Called during MonoGame `Update`.
+4. **FixedUpdate**: Runs on MonoGame `Update` with `FixedTimeStep`.
+5. **Render**: Called manually in the engine's `Render` function (requires camera matrices).
+6. **DrawGUI**: Called after `Render` (after `SpriteBatch.Begin`).
+7. **OnDestroy**: Called on the frame the component is destroyed.
+
+---
 
 ## Physics
-- Physics (Handled using BulletSharp) runs on the FixedUpdate loop
 
-## Useful links
-- [Monogame](https://docs.monogame.net/)
-- [Monogame.UI.Forms](https://github.com/csharpskolan/MonoGame.UI.Forms)
-- [BulletSharp](https://andrestraks.github.io/BulletSharp/)
+- Physics is handled using **BulletSharp** and runs in the `FixedUpdate` loop.
+
+---
+
+## Useful Classes
+
+### Core
+- **`Core.EngineManager.cs` (singleton)**  
+  Access key features like `Content` (ContentManager), `DefaultShader` (Effect), `UIControls` (UIControls), and `Graphics` (GraphicsDeviceManager).
+
+### UI
+- **`Core.UI.UIControls.cs`**  
+  Manages renderable UI elements, similar to WinForms.
+
+### ECS
+- **`Core.ECS.ECSManager.cs` (singleton)**  
+  For creating and destroying entities and components.
+- **`Core.ECS.Component.cs`**  
+  *All components should inherit from this class.*  
+  Override methods like `Start`, `MainUpdate`, `FixedUpdate`, etc.
+
+### Rendering
+- **`Core.Rendering.LightManager.cs` (singleton)**  
+  Set ambient light colors.
+- **`Core.Rendering.StaticMesh.cs`**  
+  Generate procedural models compatible with MeshRenderer.
+- **`Core.Rendering.PrimitiveModel.cs`**  
+  Provides functions to create primitives like boxes, spheres, etc.
+- **`Core.Rendering.Material.cs`**  
+  Defines materials for MeshRenderers (uses `DefaultShader` by default).
+
+### Physics
+- **`Core.Rendering.PhysicsManager.cs` (singleton)**  
+  Create collision shapes, masks, and raycasting.
+
+### Audio
+- **`Core.Audio.SoundManager.cs` (singleton)**  
+  Handles sound creation and playback using the content pipeline.
+
+---
+
+## Useful Components
+
+### Core
+- **`Core.Components.Transform.cs`**  
+  Defines 3D position, scale, rotation, and directional vectors (`Up`, `Right`, `Forward`).  
+  *All entities have a `Transform` component by default.*
+
+### Physics
+- **`Core.Components.Physics.Rigidbody.cs`**  
+  Integrates entities with the BulletSharp physics system for interactions.
+
+### Rendering
+- **`Core.Components.Camera.cs`**  
+  Controls the camera in the scene (perspective or orthographic view).
+- **`Core.Components.LightComponent.cs`**  
+  Adds directional and point lights to the scene.
+- **`Core.Components.MeshRenderer.cs`**  
+  Renders models or static meshes with a specified material.
+
+---
+
+## Useful Links
+
+- [MonoGame Documentation](https://docs.monogame.net/)
+- [MonoGame.UI.Forms](https://github.com/csharpskolan/MonoGame.UI.Forms)
+- [BulletSharp Documentation](https://andrestraks.github.io/BulletSharp/)
+- [XNA Framework](https://learn.microsoft.com/en-us/previous-versions/aa479572(v=msdn.10))
+- [MonoGame Samples](https://github.com/MonoGame/MonoGameSamples)
+- [ShaderToy](https://www.shadertoy.com/) - Great for learning shaders and effects.
