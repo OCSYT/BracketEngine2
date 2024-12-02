@@ -10,20 +10,6 @@
 		<ApplicationIcon>Icons\icon.ico</ApplicationIcon>
 	</PropertyGroup>
 
-	<ItemGroup>
-	  <Compile Remove="Content\GameContent\Audio\**" />
-	  <Compile Remove="Content\GameContent\Models\**" />
-	  <Compile Remove="Content\GameContent\Shaders\**" />
-	  <Compile Remove="Content\GameContent\UI\**" />
-	  <EmbeddedResource Remove="Content\GameContent\Audio\**" />
-	  <EmbeddedResource Remove="Content\GameContent\Models\**" />
-	  <EmbeddedResource Remove="Content\GameContent\Shaders\**" />
-	  <EmbeddedResource Remove="Content\GameContent\UI\**" />
-	  <None Remove="Content\GameContent\Audio\**" />
-	  <None Remove="Content\GameContent\Models\**" />
-	  <None Remove="Content\GameContent\Shaders\**" />
-	  <None Remove="Content\GameContent\UI\**" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<Content Include="Icons\Icon.ico" />
@@ -40,14 +26,12 @@
 		<PackageReference Include="MonoGame.UI.Forms" Version="1.0.1" />
 	</ItemGroup>
 	
-	<ItemGroup>
-	  <Folder Include="Content\Rendering\Shaders\" />
-	</ItemGroup>
 
 	<Target Name="BuildContent" BeforeTargets="Build">
 		<Exec Command="dotnet tool restore" />
 		<Exec Command="dotnet mgcb-editor $(ProjectDir)Content/Content.mgcb" />
 		<Exec Command="if exist &quot;$(ProjectDir)ContentXML&quot; rmdir /s /q &quot;$(ProjectDir)ContentXML&quot;" />
 	</Target>
+
 
 </Project>
