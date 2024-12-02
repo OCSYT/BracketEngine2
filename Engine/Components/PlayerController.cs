@@ -137,7 +137,7 @@ namespace Engine.Components
                 new BulletSharp.Math.Vector3(LocalVel.X, LocalVel.Y, LocalVel.Z);
 
 
-            CamTransform.Position = LocalTransform.Position + Vector3.Up * 2;
+            CamTransform.Position = LocalTransform.Position + Vector3.Up * Height/2;
         }
     }
 }
