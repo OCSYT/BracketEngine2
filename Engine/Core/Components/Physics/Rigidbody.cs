@@ -23,7 +23,7 @@ namespace Engine.Core.Components.Physics
         public bool Debug;
         private PhysicsDebugger Debugger;
         public float Mass { get; set; }
-        private Vector3 Inertia;
+        public Vector3 Inertia { get; set; }
         public float Friction { get; set; }
         public float Restitution { get; set; }
         public int CollisionGroup { get; set; }
