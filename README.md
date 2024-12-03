@@ -7,9 +7,16 @@
 ## Setup
 
 *Make sure you have [Visual C++ Redistributable Packages for Visual Studio 2013](https://www.microsoft.com/en-gb/download/details.aspx?id=40784)*
+# Visual Studio 2022
 1. Clone the repository.
 2. Open the `.sln` file with **Visual Studio 2022**.
 3. Set the build mode to **Release x64**.
+4. Build the project
+# Visual Studio Code
+1. Clone the repository.
+2. Open the folder in Visual Studio Code
+3. Install the C# Dev Kit Extension, C# Extension and .NET Install Tool Extension
+4. Build the project with CTRL + ALT + B
 
 ---
 
