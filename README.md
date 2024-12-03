@@ -119,4 +119,4 @@
 - [MonoGame.UI.Forms](https://github.com/csharpskolan/MonoGame.UI.Forms)
 - [BulletSharp Documentation](https://andrestraks.github.io/BulletSharp/)
 - [MonoGame Samples](https://docs.monogame.net/articles/samples.html)
-- [ShaderToy](https://www.shadertoy.com/) - Great for learning shaders and effects.
+- [ShaderToy](https://www.shadertoy.com/)
