@@ -13,7 +13,7 @@ namespace Engine.Core.Rendering
     {
         private const int MaxDirectionalLights = 16;
         private const int MaxPointLights = 16;
-        public Color AmbientColor = new Color(0.21f, 0.21f, 0.21f);
+        public Color AmbientColor = new Color(0.1f, 0.1f, 0.1f);
         private static LightManager _instance;
 
         public static LightManager Instance
