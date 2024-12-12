@@ -58,7 +58,7 @@
 
 ## Physics
 
-- Physics is handled using **BulletSharp** and runs in the `FixedUpdate` loop.
+- Physics is handled using **[BulletSharp](https://andrestraks.github.io/BulletSharp/)** and runs in the `FixedUpdate` loop.
 
 ---
 
@@ -108,7 +108,7 @@
 
 ### Physics
 - **`Core.Components.Physics.Rigidbody.cs`**  
-  Integrates entities with the BulletSharp physics system for interactions.
+  Integrates entities with the [BulletSharp](https://andrestraks.github.io/BulletSharp/) physics system for interactions.
 
 ### Rendering
 - **`Core.Components.Camera.cs`**  
