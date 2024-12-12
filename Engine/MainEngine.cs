@@ -23,7 +23,7 @@ namespace Engine
         public List<Transform> PointTransforms = new List<Transform>();
         public override void Awake()
         {
-            Debug = true;
+            //Debug = true;
         }
         public override void Start()
         {
