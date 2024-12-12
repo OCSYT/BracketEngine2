@@ -120,6 +120,7 @@
 
 ## Animation
 - This engine uses [Aether.Animation](https://github.com/nkast/Aether.Extras/tree/main/Animation) for animations, please refer to it and the built in sample project for reference on usage.
+- **`Core.Components.Meshrenderer.cs`** supports CPU animated models by default.
 
 ---
 
