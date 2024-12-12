@@ -17,7 +17,7 @@ namespace Engine.Core.Rendering
         public void AddSubMesh(VertexBuffer VertexBuffer, IndexBuffer IndexBuffer, int NumVertices, int NumIndices)
         {
             SubMeshes.Add(new SubMesh(VertexBuffer, IndexBuffer, NumVertices, NumIndices));
-            CalculateBoundingSphereForSubMesh(SubMeshes.Count - 1, MainEngine.Instance.Graphics.GraphicsDevice);
+            CalculateBoundingSphereForSubMesh(SubMeshes.Count - 1, EngineManager.Instance.Graphics.GraphicsDevice);
         }
         public void ModifySubMesh(int subMeshIndex, VertexBuffer newVertexBuffer, IndexBuffer newIndexBuffer, int newNumVertices, int newNumIndices)
         {
@@ -30,7 +30,7 @@ namespace Engine.Core.Rendering
                 subMesh.NumVertices = newNumVertices;
                 subMesh.NumIndices = newNumIndices;
 
-                CalculateBoundingSphereForSubMesh(subMeshIndex, MainEngine.Instance.Graphics.GraphicsDevice);
+                CalculateBoundingSphereForSubMesh(subMeshIndex, EngineManager.Instance.Graphics.GraphicsDevice);
             }
             else
             {

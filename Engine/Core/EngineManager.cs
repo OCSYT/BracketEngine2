@@ -4,15 +4,16 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using BulletSharp;
 using System.Threading.Tasks;
-using Engine.UI;
 using Engine.Core.ECS;
 using Engine.Core.Physics;
 using Engine.Core.Audio;
 using System.Runtime.InteropServices;
 using Engine.Core.Rendering;
+using Engine.Game;
+using Myra;
 namespace Engine.Core
 {
-    public class EngineManager : Game
+    public class EngineManager : Microsoft.Xna.Framework.Game
     {
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -49,11 +50,11 @@ namespace Engine.Core
         private int FrameCount = 0;
         private float ElapsedTime = 0f;
         public float CurrentFrameRate = 0f;
-        public UIControls UIControls;
         public bool Debug = false;
         public Effect DefaultShader;
         public Texture2D WhiteTex;
         public Texture2D BlackTex;
+        public UI UIManager = new UI();
         protected EngineManager()
         {
             if (_instance != null)
@@ -67,7 +68,7 @@ namespace Engine.Core
             {
                 SynchronizeWithVerticalRetrace = false
             };
-
+            MyraEnvironment.Game = this;
             InactiveSleepTime = new TimeSpan(0);
             Window.AllowUserResizing = true;
             Content.RootDirectory = "Content";
@@ -75,9 +76,6 @@ namespace Engine.Core
 
         protected override void Initialize()
         {
-            UIControls = new UIControls(this);
-            Components.Add(UIControls);
-
             Awake();
             if (Debug)
             {
@@ -91,7 +89,8 @@ namespace Engine.Core
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             DefaultShader = Content.Load<Effect>("Rendering/Shaders/Default");
-            Start();    
+            Start();
+            UIManager.Start();
             base.LoadContent();
         }
 
@@ -99,6 +98,7 @@ namespace Engine.Core
         {
             Graphics.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             Render(gameTime);
+            UIManager.Render(gameTime);
             if (WhiteTex == null && BlackTex == null)
             {
                 Texture2D WhiteTexture = new Texture2D(GraphicsDevice, 1, 1);
@@ -115,10 +115,6 @@ namespace Engine.Core
             SpriteBatch.Begin();
             DrawGUI(gameTime);
             ECSManager.Instance.CallDrawGUIOnComponents(gameTime);
-            if (UIControls != null)
-            {
-                UIControls.Draw(gameTime);
-            }
             SpriteBatch.End();
             Graphics.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 

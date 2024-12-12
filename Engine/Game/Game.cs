@@ -8,14 +8,16 @@ using Engine.Components;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Engine.Core.Rendering;    
+using Engine.Core.Rendering;
 using Engine.Core.Components;
 using Engine.Core.Components.Rendering;
 using Engine.Core.Components.Physics;
 using Aether.Animation;
-namespace Engine
+using Myra.Graphics2D.UI;
+using Myra;
+namespace Engine.Game
 {
-    public class MainEngine : EngineManager
+    public class Game : EngineManager
     {
         private Entity CameraEntity;
         private Entity PlayerEntity;
@@ -48,7 +50,6 @@ namespace Engine
 
         public override void MainUpdate(GameTime GameTime)
         {
-            UIControls.DisplayFramerate(CurrentFrameRate);
 
             //Update Animations
             AnimPlayer.Update(GameTime.ElapsedGameTime, true, Matrix.Identity);
@@ -62,8 +63,8 @@ namespace Engine
             position *= AnimatedModel.Transform.Scale;
 
             //Transform Position relative to AnimatedModel
-            HandTransform.Position = AnimatedModel.Transform.Position + Vector3.Transform(position + 
-                Vector3.Transform(HandOffset, rotation), 
+            HandTransform.Position = AnimatedModel.Transform.Position + Vector3.Transform(position +
+                Vector3.Transform(HandOffset, rotation),
                 AnimatedModel.Transform.Rotation);
 
             //Transform Rotation relative to AnimatedModel
@@ -132,11 +133,11 @@ namespace Engine
 
             FloorObj.Transform.Position = new Vector3(0, -2, 0);
             FloorObj.Transform.Scale = new Vector3(100, 1, 100);
-            ECSManager.Instance.AddComponent(FloorObj, new MeshRenderer(FloorModel, [ FloorMaterial ]));
+            ECSManager.Instance.AddComponent(FloorObj, new MeshRenderer(FloorModel, [FloorMaterial]));
             ECSManager.Instance.AddComponent(FloorObj, new RigidBody
             {
                 Mass = 0,
-                Shapes = [ new BulletSharp.BoxShape(1, 1, 1) ],
+                Shapes = [new BulletSharp.BoxShape(1, 1, 1)],
                 IsStatic = true,
                 CollisionGroup = PhysicsManager.CreateCollisionMask([1]),
                 CollisionMask = PhysicsManager.CreateCollisionMask([1, 2]),
@@ -149,18 +150,18 @@ namespace Engine
             Entity SphereObj = ECSManager.Instance.CreateEntity();
             StaticMesh SphereModel = PrimitiveModel.CreateSphere(1);
             Texture2D CheckerTex = Content.Load<Texture2D>("GameContent/Textures/Default/checkerboard");
-            Material SphereMaterial = new Material {DiffuseTexture = CheckerTex,  DiffuseColor = Color };
+            Material SphereMaterial = new Material { DiffuseTexture = CheckerTex, DiffuseColor = Color };
 
             SphereObj.Transform.Position = Position;
             SphereObj.Transform.Rotation = Quaternion.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z);
             SphereObj.Transform.Scale = new Vector3(Scale, Scale, Scale);
 
-            ECSManager.Instance.AddComponent(SphereObj, new MeshRenderer(SphereModel, [ SphereMaterial ]));
+            ECSManager.Instance.AddComponent(SphereObj, new MeshRenderer(SphereModel, [SphereMaterial]));
             ECSManager.Instance.AddComponent(SphereObj, new RigidBody
             {
                 Friction = 5,
                 Mass = 1000 * Scale,
-                Shapes = [ new BulletSharp.SphereShape(1) ],
+                Shapes = [new BulletSharp.SphereShape(1)],
                 IsStatic = false,
                 CollisionGroup = PhysicsManager.CreateCollisionMask([1]),
                 CollisionMask = PhysicsManager.CreateCollisionMask([1, 2]),
@@ -170,7 +171,7 @@ namespace Engine
         private Transform CreateHandBox()
         {
             Entity BoxObj = ECSManager.Instance.CreateEntity();
-            StaticMesh BoxModel = PrimitiveModel.CreateBox(1,1,1);
+            StaticMesh BoxModel = PrimitiveModel.CreateBox(1, 1, 1);
             Texture2D CheckerTex = Content.Load<Texture2D>("GameContent/Textures/Default/checkerboard");
             Material BoxMaterial = new Material { DiffuseTexture = CheckerTex, DiffuseColor = Color.Purple };
             BoxObj.Transform.Scale = Vector3.One / 2;

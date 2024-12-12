@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Engine.Game;
 namespace Engine
 {
     public class MainProgram
@@ -12,7 +12,7 @@ namespace Engine
         {
             try
             {
-                MainEngine GameEngine = new MainEngine();
+                Engine.Game.Game GameEngine = new Engine.Game.Game();
                 GameEngine.Run();
             }
             catch(Exception e)

@@ -647,7 +647,7 @@ namespace Engine.Core.Rendering
         )
         {
             var vertexBuffer = new VertexBuffer(
-                MainEngine.Instance.GraphicsDevice,
+                EngineManager.Instance.GraphicsDevice,
                 typeof(VertexPositionNormalTexture),
                 vertices.Length,
                 BufferUsage.None
@@ -655,7 +655,7 @@ namespace Engine.Core.Rendering
             vertexBuffer.SetData(vertices);
 
             var indexBuffer = new IndexBuffer(
-                MainEngine.Instance.GraphicsDevice,
+                EngineManager.Instance.GraphicsDevice,
                 IndexElementSize.SixteenBits,
                 indices.Length,
                 BufferUsage.None
@@ -672,7 +672,7 @@ namespace Engine.Core.Rendering
             {
                 SubMeshes = new List<StaticMesh.SubMesh> { subMesh }
             };
-            Mesh.CalculateBoundingSpheres(MainEngine.Instance.GraphicsDevice);
+            Mesh.CalculateBoundingSpheres(EngineManager.Instance.GraphicsDevice);
             return Mesh;
         }
     }
