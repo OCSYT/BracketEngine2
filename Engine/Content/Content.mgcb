@@ -1,12 +1,12 @@
 
 #----------------------------- Global Properties ----------------------------#
 
-/outputDir:../bin/Release/net9.0/Content
+/outputDir:../bin/Release/net9.0/win-x64/Content
 /intermediateDir:obj/../../ContentXML
 /platform:DesktopGL
 /config:
 /profile:Reach
-/compress:False
+/compress:True
 
 #-------------------------------- References --------------------------------#
 

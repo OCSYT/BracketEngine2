@@ -8,7 +8,13 @@
 		<NoWin32Manifest>true</NoWin32Manifest>
 		<ApplicationIcon>Icons\icon.ico</ApplicationIcon>
 		<DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
-		<CollectBundleResourcesDependsOn>IncludeContent;</CollectBundleResourcesDependsOn>
+		<PublishSingleFile>true</PublishSingleFile>
+		<StartupObject>Engine.MainProgram</StartupObject>
+		<PublishTrimmed>true</PublishTrimmed>
+		<PublishSingleFile>true</PublishSingleFile>
+		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+		<SelfContained>false</SelfContained>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 	</PropertyGroup>
 	
 	<ItemGroup>
