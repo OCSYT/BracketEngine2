@@ -12,17 +12,18 @@ using Engine.Core.Rendering;
 using Engine.Core.Components;
 using Engine.Core.Components.Rendering;
 using Engine.Core.Components.Physics;
-
+using Aether.Animation;
 namespace Engine
 {
     public class MainEngine : EngineManager
     {
         private Entity CameraEntity;
         private Entity PlayerEntity;
+        Animations AnimPlayer;
         public List<Transform> PointTransforms = new List<Transform>();
         public override void Awake()
         {
-            //Debug = true;
+            Debug = true;
         }
         public override void Start()
         {
@@ -36,6 +37,7 @@ namespace Engine
             CreateSphere(new Vector3(-15, 10, 15), new Vector3(0, 0, 90), 4, Color.Green);
             CreateSphere(new Vector3(20, 10, 20), new Vector3(90, 0, 0), 1.5f, Color.Yellow);
             CreateSphere(new Vector3(0, 10, 20), new Vector3(0, 90, 0), 2.5f, Color.Blue);
+            CreateAnimatedModel();
             CreateCamera();
             CreatePlayer();
         }
@@ -43,10 +45,14 @@ namespace Engine
         public override void MainUpdate(GameTime GameTime)
         {
             UIControls.DisplayFramerate(CurrentFrameRate);
+
+            //Update Animations
+            AnimPlayer.Update(GameTime.ElapsedGameTime, true, Matrix.Identity);
         }
 
-        public override void FixedUpdate(GameTime gameTime)
+        public override void FixedUpdate(GameTime GameTime)
         {
+            //Point lights moving
             foreach (Transform pointlight in PointTransforms)
             {
                 pointlight.Position = Vector3.Transform(pointlight.Position, Quaternion.CreateFromYawPitchRoll(1 * (MathF.PI / 180), 0, 0));
@@ -70,7 +76,6 @@ namespace Engine
 
         //Spawning Objects
 
-        // Function to create Camera
         private void CreateCamera()
         {
             CameraEntity = ECSManager.Instance.CreateEntity();
@@ -119,7 +124,7 @@ namespace Engine
             });
         }
 
-        // Function to create Sphere object
+
         private void CreateSphere(Vector3 Position, Vector3 Rotation, float Scale, Color Color)
         {
             Entity SphereObj = ECSManager.Instance.CreateEntity();
@@ -146,7 +151,6 @@ namespace Engine
         }
 
 
-        // Function to create Player object
         private void CreatePlayer()
         {
             float PlayerHeight = 5;
@@ -171,6 +175,19 @@ namespace Engine
                 Height = PlayerHeight
             };
             ECSManager.Instance.AddComponent(PlayerEntity, Controller);
+        }
+
+        public void CreateAnimatedModel()
+        {
+            Entity AnimatedModel = ECSManager.Instance.CreateEntity();
+            Model Model = Content.Load<Model>("GameContent/Walking");
+            AnimPlayer = Model.GetAnimations();
+            Clip WalkClip = AnimPlayer.Clips["mixamo.com"];
+            AnimPlayer.SetClip(WalkClip);
+
+            MeshRenderer Renderer = new MeshRenderer(Model, [new Material { DiffuseColor = Color.Cyan }], AnimPlayer);
+            ECSManager.Instance.AddComponent(AnimatedModel, Renderer);
+            AnimatedModel.Transform.Scale = Vector3.One / 25;
         }
 
     }

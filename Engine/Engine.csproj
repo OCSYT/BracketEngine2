@@ -31,6 +31,21 @@
 		<PackageReference Include="MonoGame.UI.Forms" Version="1.0.1" />
 	</ItemGroup>
 	
+	<ItemGroup>
+	  <Reference Include="Animation">
+	    <HintPath>Aether.Extras\Animation.dll</HintPath>
+	  </Reference>
+	  <Reference Include="AnimationImporters">
+	    <HintPath>Aether.Extras\AnimationImporters.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Graphics">
+	    <HintPath>Aether.Extras\Graphics.dll</HintPath>
+	  </Reference>
+	  <Reference Include="GraphicsImporters">
+	    <HintPath>Aether.Extras\GraphicsImporters.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+	
 	<Target Name="PostBuildCleanup" AfterTargets="Build">
 		<RemoveDir Directories="ContentXML" />
 	</Target>

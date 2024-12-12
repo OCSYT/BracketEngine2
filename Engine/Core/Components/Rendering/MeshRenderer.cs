@@ -7,7 +7,7 @@ using Engine.Core.Components;
 using System.Linq;
 using System;
 using System.Runtime.InteropServices;
-
+using Aether.Animation;
 namespace Engine.Core.Components.Rendering
 {
     public class MeshRenderer : Component
@@ -15,15 +15,16 @@ namespace Engine.Core.Components.Rendering
         public Model Model { get; set; }
         public StaticMesh StaticMesh { get; set; }
         public Material[] Materials { get; set; }
-
+        public Animations AnimationPlayer;
         private readonly Dictionary<int, Effect> _effectCache = new();
         private readonly Dictionary<int, Material> _lastMaterialCache = new();
 
-        public MeshRenderer(Model model, Material[] materials = null)
+        public MeshRenderer(Model model, Material[] materials = null, Animations animationPlayer = null)
         {
             Model = model;
             StaticMesh = null;
             Materials = materials ?? new Material[model?.Meshes.Count ?? 0];
+            AnimationPlayer = animationPlayer;
         }
 
         public MeshRenderer(StaticMesh staticMesh, Material[] materials = null)
@@ -31,6 +32,7 @@ namespace Engine.Core.Components.Rendering
             StaticMesh = staticMesh;
             Model = null;
             Materials = materials ?? new Material[staticMesh.SubMeshes.Count];
+            AnimationPlayer = null;
         }
 
         public override void Render(BasicEffect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
@@ -59,6 +61,10 @@ namespace Engine.Core.Components.Rendering
 
                 foreach (var part in mesh.MeshParts)
                 {
+                    if (AnimationPlayer != null) {
+                        part.UpdateVertices(AnimationPlayer.AnimationTransforms);
+                    }
+
                     int partIndex = mesh.MeshParts.IndexOf(part);
                     var effect = GetOrCreateEffect(partIndex, Materials, defaultShader);
 
