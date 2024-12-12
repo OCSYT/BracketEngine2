@@ -1,22 +1,26 @@
 # Bracket Engine 2
 
-![Bracket Engine](https://github.com/user-attachments/assets/6c82cbc4-44c8-460d-9791-95406c50f541)
-
 ---
 
 ## Setup
 
-*Make sure you have [Visual C++ Redistributable Packages for Visual Studio 2013](https://www.microsoft.com/en-gb/download/details.aspx?id=40784)*
-# Visual Studio 2022
+### Prerequisite
+Ensure you have [Visual C++ Redistributable Packages for Visual Studio 2013](https://www.microsoft.com/en-gb/download/details.aspx?id=40784) installed.
+
+### Visual Studio 2022
 1. Clone the repository.
 2. Open the `.sln` file with **Visual Studio 2022**.
 3. Set the build mode to **Release x64**.
-4. Build the project
-# Visual Studio Code
+4. Build the project.
+
+### Visual Studio Code
 1. Clone the repository.
-2. Open the folder in Visual Studio Code
-3. Install the C# Dev Kit Extension, C# Extension and .NET Install Tool Extension
-4. Build the project with CTRL + ALT + B
+2. Open the folder in **Visual Studio Code**.
+3. Install the following extensions:
+   - **C# Dev Kit Extension**
+   - **C# Extension**
+   - **.NET Install Tool Extension**
+4. Build the project using `CTRL + ALT + B`.
 
 ---
 
@@ -26,7 +30,7 @@
 - **Main Game Loop**: `Game.Game.cs`
 - **UI Loop**: `Game.UI.cs`
 - **Custom Components**: `Components` folder
-- **Assets (e.g., sounds, images)**: `Content` folder  
+- **Assets (e.g., sounds, images)**: `Content` folder
 - **Core Engine Code & Components**: `Core` folder
 
 ---
@@ -45,7 +49,7 @@
 
 ## Component Lifecycle
 
-1. **Awake**: Called on the frame when the component is created.
+1. **Awake**: Called on the frame the component is created.
 2. **Start**: Called on the next frame before `MainUpdate` and `FixedUpdate`.
 3. **MainUpdate**: Called during MonoGame `Update`.
 4. **FixedUpdate**: Runs on MonoGame `Update` with `FixedTimeStep`.
@@ -56,15 +60,20 @@
 ---
 
 ## Physics
-- Physics is handled using **[BulletSharp](https://andrestraks.github.io/BulletSharp/)** and runs in the `FixedUpdate` loop.
+- Physics is handled using [BulletSharp](https://andrestraks.github.io/BulletSharp/) and runs in the `FixedUpdate` loop.
+
+---
 
 ## UI
-- UI Code is in `Game.UI.cs` and uses [Myra](https://github.com/rds1983/Myra/wiki)
-- UI Initalization is `Start`
-- UI Rendering is in `Render`
+- UI Code resides in `Game.UI.cs` and utilizes [Myra](https://github.com/rds1983/Myra/wiki).
+- **UI Initialization**: `Start`.
+- **UI Rendering**: `Render`.
+
+---
 
 ## Animation
-- This engine uses [Aether.Animation](https://github.com/nkast/Aether.Extras/tree/main/Animation) for animations, please refer to it and the built in sample project for reference on usage.
+- Uses [Aether.Animation](https://github.com/nkast/Aether.Extras/tree/main/Animation).
+- Refer to the built-in sample project for usage.
 - **`Core.Components.Meshrenderer.cs`** supports CPU animated models by default.
 
 ---
@@ -77,28 +86,27 @@
 
 ### ECS
 - **`Core.ECS.ECSManager.cs` (singleton)**  
-  For creating and destroying entities and components.
+  Manages entities and components.
 - **`Core.ECS.Component.cs`**  
-  *All components should inherit from this class.*  
-  Override methods like `Start`, `MainUpdate`, `FixedUpdate`, etc.
+  All components must inherit from this class. Override lifecycle methods like `Start`, `MainUpdate`, `FixedUpdate`, etc.
 
 ### Rendering
 - **`Core.Rendering.LightManager.cs` (singleton)**  
-  Set ambient light colors.
+  Configure ambient light.
 - **`Core.Rendering.StaticMesh.cs`**  
   Generate procedural models compatible with MeshRenderer.
 - **`Core.Rendering.PrimitiveModel.cs`**  
-  Provides functions to create primitives like boxes, spheres, etc.
+  Create primitives like boxes and spheres.
 - **`Core.Rendering.Material.cs`**  
-  Defines materials for MeshRenderers (uses `DefaultShader` by default).
+  Define materials for MeshRenderers (defaults to `DefaultShader`).
 
 ### Physics
 - **`Core.Rendering.PhysicsManager.cs` (singleton)**  
-  Create collision shapes, masks, and raycasting.
+  Provides collision shapes, masks, and raycasting utilities.
 
 ### Audio
 - **`Core.Audio.SoundManager.cs` (singleton)**  
-  Handles sound creation and playback using the content pipeline.
+  Manages sound creation and playback via the content pipeline.
 
 ---
 
@@ -107,19 +115,19 @@
 ### Core
 - **`Core.Components.Transform.cs`**  
   Defines 3D position, scale, rotation, and directional vectors (`Up`, `Right`, `Forward`).  
-  *All entities have a `Transform` component by default.*
+  *Automatically included in all entities.*
 
 ### Physics
 - **`Core.Components.Physics.Rigidbody.cs`**  
-  Integrates entities with the [BulletSharp](https://andrestraks.github.io/BulletSharp/) physics system for interactions.
+  Integrates with [BulletSharp](https://andrestraks.github.io/BulletSharp/) for physics interactions.
 
 ### Rendering
 - **`Core.Components.Camera.cs`**  
-  Controls the camera in the scene (perspective or orthographic view).
+  Controls the scene camera (perspective or orthographic view).
 - **`Core.Components.LightComponent.cs`**  
-  Adds directional and point lights to the scene.
+  Adds directional and point lights.
 - **`Core.Components.MeshRenderer.cs`**  
-  Renders models or static meshes with a specified material.
+  Renders models or meshes with specified materials.
 
 ---
 
