@@ -118,12 +118,16 @@
 - **`Core.Components.MeshRenderer.cs`**  
   Renders models or static meshes with a specified material.
 
+## Animation
+- This engine uses [Aether.Animation](https://github.com/nkast/Aether.Extras/tree/main/Animation) for animations, please refer to it and the built in sample project for reference on usage.
+
 ---
 
 ## Useful Links
 
+ [Aether.Animation](https://github.com/nkast/Aether.Extras/tree/main/Animation)
+- [BulletSharp Documentation](https://andrestraks.github.io/BulletSharp/)
 - [MonoGame Documentation](https://docs.monogame.net/)
 - [MonoGame.UI.Forms](https://github.com/csharpskolan/MonoGame.UI.Forms)
-- [BulletSharp Documentation](https://andrestraks.github.io/BulletSharp/)
 - [MonoGame Samples](https://docs.monogame.net/articles/samples.html)
 - [ShaderToy](https://www.shadertoy.com/)
