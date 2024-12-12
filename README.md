@@ -23,16 +23,15 @@
 ## Information Overview
 
 ### File Structure
-- **Main Engine Loop**: `MainEngine.cs`
-- **UI Form Code**: `UI/UIControls.cs`
+- **Main Game Loop**: `Game.Game.cs`
+- **UI Loop**: `Game.UI.cs`
 - **Custom Components**: `Components` folder
 - **Assets (e.g., sounds, images)**: `Content` folder  
-  *Note*: `defaultFont.spritefont` is required for UI functionality.
 - **Core Engine Code & Components**: `Core` folder
 
 ---
 
-## Engine Lifecycle
+## Game Lifecycle
 
 1. **Awake**: MonoGame initialization.
 2. **Start**: MonoGame `LoadContent`.
@@ -57,8 +56,16 @@
 ---
 
 ## Physics
-
 - Physics is handled using **[BulletSharp](https://andrestraks.github.io/BulletSharp/)** and runs in the `FixedUpdate` loop.
+
+## UI
+- UI Code is in `Game.UI.cs` and uses [Myra](https://github.com/rds1983/Myra/wiki)
+- UI Initalization is `Start`
+- UI Rendering is in `Render`
+
+## Animation
+- This engine uses [Aether.Animation](https://github.com/nkast/Aether.Extras/tree/main/Animation) for animations, please refer to it and the built in sample project for reference on usage.
+- **`Core.Components.Meshrenderer.cs`** supports CPU animated models by default.
 
 ---
 
@@ -67,10 +74,6 @@
 ### Core
 - **`Core.EngineManager.cs` (singleton)**  
   Access key features like `Content` (ContentManager), `DefaultShader` (Effect), `UIControls` (UIControls), and `Graphics` (GraphicsDeviceManager).
-
-### UI
-- **`Core.UI.UIControls.cs`**  
-  Manages renderable UI elements, similar to WinForms.
 
 ### ECS
 - **`Core.ECS.ECSManager.cs` (singleton)**  
@@ -118,10 +121,6 @@
 - **`Core.Components.MeshRenderer.cs`**  
   Renders models or static meshes with a specified material.
 
-## Animation
-- This engine uses [Aether.Animation](https://github.com/nkast/Aether.Extras/tree/main/Animation) for animations, please refer to it and the built in sample project for reference on usage.
-- **`Core.Components.Meshrenderer.cs`** supports CPU animated models by default.
-
 ---
 
 ## Useful Links
@@ -129,6 +128,6 @@
 - [Aether.Animation](https://github.com/nkast/Aether.Extras/tree/main/Animation)
 - [BulletSharp Documentation](https://andrestraks.github.io/BulletSharp/)
 - [MonoGame Documentation](https://docs.monogame.net/)
-- [MonoGame.UI.Forms](https://github.com/csharpskolan/MonoGame.UI.Forms)
+- [Myra](https://github.com/rds1983/Myra/wiki)
 - [MonoGame Samples](https://docs.monogame.net/articles/samples.html)
 - [ShaderToy](https://www.shadertoy.com/)
