@@ -187,7 +187,7 @@ namespace Engine
 
             MeshRenderer Renderer = new MeshRenderer(Model, [new Material { DiffuseColor = Color.Cyan }], AnimPlayer);
             ECSManager.Instance.AddComponent(AnimatedModel, Renderer);
-            AnimatedModel.Transform.Scale = Vector3.One / 25;
+            AnimatedModel.Transform.Scale = Vector3.One / 20;
         }
 
     }
