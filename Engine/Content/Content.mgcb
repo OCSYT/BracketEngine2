@@ -17,13 +17,6 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin defaultFont.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:defaultFont.spritefont
-
 #begin GameContent/Textures/Default/checkerboard.png
 /importer:TextureImporter
 /processor:TextureProcessor
