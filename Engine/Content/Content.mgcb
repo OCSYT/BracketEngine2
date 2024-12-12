@@ -32,13 +32,6 @@
 /processorParam:TextureFormat=Color
 /build:GameContent/Textures/Default/checkerboard.png
 
-#begin GameContent/Walking.dae
-/importer:SkinnedMeshImporter
-/processor:SkinnedMeshProcessor
-/processorParam:KeyframeDecimalPlaceRounding=5
-/processorParam:SkipUVs=False
-/build:GameContent/Walking.dae
-
 #begin Rendering/Shaders/Default.fx
 /importer:EffectImporter
 /processor:EffectProcessor
