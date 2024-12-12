@@ -24,7 +24,6 @@
 		<PackageReference Include="BulletSharp" Version="0.11.1" />
 		<PackageReference Include="Contentless" Version="4.0.0" />
 		<PackageReference Include="Coroutine" Version="2.1.5" />
-		<PackageReference Include="Lovebirb.MonoGame.SkinnedMeshImporter" Version="1.0.4" />
 		<PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.2.1105" />
 		<PackageReference Include="MonoGame.Extended" Version="4.0.3" />
 		<PackageReference Include="MonoGame.Framework.Content.Pipeline" Version="3.8.2.1105" />
