@@ -125,7 +125,7 @@
 
 ## Useful Links
 
- [Aether.Animation](https://github.com/nkast/Aether.Extras/tree/main/Animation)
+- [Aether.Animation](https://github.com/nkast/Aether.Extras/tree/main/Animation)
 - [BulletSharp Documentation](https://andrestraks.github.io/BulletSharp/)
 - [MonoGame Documentation](https://docs.monogame.net/)
 - [MonoGame.UI.Forms](https://github.com/csharpskolan/MonoGame.UI.Forms)
