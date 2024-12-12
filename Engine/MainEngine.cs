@@ -19,7 +19,10 @@ namespace Engine
     {
         private Entity CameraEntity;
         private Entity PlayerEntity;
-        Animations AnimPlayer;
+        private Entity AnimatedModel;
+        private Animations AnimPlayer;
+        private Transform HandTransform;
+        private Vector3 HandOffset = Vector3.Up;
         public List<Transform> PointTransforms = new List<Transform>();
         public override void Awake()
         {
@@ -37,6 +40,7 @@ namespace Engine
             CreateSphere(new Vector3(-15, 10, 15), new Vector3(0, 0, 90), 4, Color.Green);
             CreateSphere(new Vector3(20, 10, 20), new Vector3(90, 0, 0), 1.5f, Color.Yellow);
             CreateSphere(new Vector3(0, 10, 20), new Vector3(0, 90, 0), 2.5f, Color.Blue);
+            HandTransform = CreateHandBox();
             CreateAnimatedModel();
             CreateCamera();
             CreatePlayer();
@@ -48,6 +52,22 @@ namespace Engine
 
             //Update Animations
             AnimPlayer.Update(GameTime.ElapsedGameTime, true, Matrix.Identity);
+
+
+            Matrix RightHandMatrix = AnimPlayer.WorldTransforms[AnimPlayer.GetBoneIndex("mixamorig:RightHand")];
+            RightHandMatrix.Decompose(out Vector3 scale, out Quaternion rotation, out Vector3 position);
+
+
+            //Scale our positon to be same as AnimatedModel
+            position *= AnimatedModel.Transform.Scale;
+
+            //Transform Position relative to AnimatedModel
+            HandTransform.Position = AnimatedModel.Transform.Position + Vector3.Transform(position + 
+                Vector3.Transform(HandOffset, rotation), 
+                AnimatedModel.Transform.Rotation);
+
+            //Transform Rotation relative to AnimatedModel
+            HandTransform.Rotation = AnimatedModel.Transform.Rotation * Quaternion.Negate(rotation);
         }
 
         public override void FixedUpdate(GameTime GameTime)
@@ -110,9 +130,8 @@ namespace Engine
                 DiffuseTexture = CheckerTex,
             };
 
-            Transform _Transform = ECSManager.Instance.GetComponent<Transform>(FloorObj);
-            _Transform.Position = new Vector3(0, -2, 0);
-            _Transform.Scale = new Vector3(100, 1, 100);
+            FloorObj.Transform.Position = new Vector3(0, -2, 0);
+            FloorObj.Transform.Scale = new Vector3(100, 1, 100);
             ECSManager.Instance.AddComponent(FloorObj, new MeshRenderer(FloorModel, [ FloorMaterial ]));
             ECSManager.Instance.AddComponent(FloorObj, new RigidBody
             {
@@ -132,11 +151,9 @@ namespace Engine
             Texture2D CheckerTex = Content.Load<Texture2D>("GameContent/Textures/Default/checkerboard");
             Material SphereMaterial = new Material {DiffuseTexture = CheckerTex,  DiffuseColor = Color };
 
-
-            Transform _Transform = ECSManager.Instance.GetComponent<Transform>(SphereObj);
-            _Transform.Position = Position;
-            _Transform.Rotation = Quaternion.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z);
-            _Transform.Scale = new Vector3(Scale, Scale, Scale);
+            SphereObj.Transform.Position = Position;
+            SphereObj.Transform.Rotation = Quaternion.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z);
+            SphereObj.Transform.Scale = new Vector3(Scale, Scale, Scale);
 
             ECSManager.Instance.AddComponent(SphereObj, new MeshRenderer(SphereModel, [ SphereMaterial ]));
             ECSManager.Instance.AddComponent(SphereObj, new RigidBody
@@ -150,14 +167,25 @@ namespace Engine
             });
         }
 
+        private Transform CreateHandBox()
+        {
+            Entity BoxObj = ECSManager.Instance.CreateEntity();
+            StaticMesh BoxModel = PrimitiveModel.CreateBox(1,1,1);
+            Texture2D CheckerTex = Content.Load<Texture2D>("GameContent/Textures/Default/checkerboard");
+            Material BoxMaterial = new Material { DiffuseTexture = CheckerTex, DiffuseColor = Color.Purple };
+            BoxObj.Transform.Scale = Vector3.One / 2;
+
+            ECSManager.Instance.AddComponent(BoxObj, new MeshRenderer(BoxModel, [BoxMaterial]));
+            return BoxObj.Transform;
+        }
+
 
         private void CreatePlayer()
         {
             float PlayerHeight = 5;
             PlayerEntity = ECSManager.Instance.CreateEntity();
 
-            Transform _Transform = ECSManager.Instance.GetComponent<Transform>(PlayerEntity);
-            _Transform.Position = Vector3.Up * 10;
+            PlayerEntity.Transform.Position = Vector3.Up * 10;
 
             RigidBody PlayerBody = new RigidBody
             {
@@ -179,7 +207,7 @@ namespace Engine
 
         public void CreateAnimatedModel()
         {
-            Entity AnimatedModel = ECSManager.Instance.CreateEntity();
+            AnimatedModel = ECSManager.Instance.CreateEntity();
             Model Model = Content.Load<Model>("GameContent/Walking");
             AnimPlayer = Model.GetAnimations();
             Clip WalkClip = AnimPlayer.Clips["mixamo.com"];
@@ -188,6 +216,8 @@ namespace Engine
             MeshRenderer Renderer = new MeshRenderer(Model, [new Material { DiffuseColor = Color.Cyan }], AnimPlayer);
             ECSManager.Instance.AddComponent(AnimatedModel, Renderer);
             AnimatedModel.Transform.Scale = Vector3.One / 20;
+            AnimatedModel.Transform.Position += -Vector3.Forward * 5 - Vector3.Right * 3;
+            AnimatedModel.Transform.Rotation = Quaternion.CreateFromYawPitchRoll(MathHelper.ToRadians(45), 0, 0);
         }
 
     }
