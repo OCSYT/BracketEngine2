@@ -8,7 +8,7 @@ using Engine.Components;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Engine.Core.Rendering;
+using Engine.Core.Rendering;    
 using Engine.Core.Components;
 using Engine.Core.Components.Rendering;
 using Engine.Core.Components.Physics;
@@ -22,7 +22,7 @@ namespace Engine
         public List<Transform> PointTransforms = new List<Transform>();
         public override void Awake()
         {
-            Debug = true;
+            //Debug = true;
         }
         public override void Start()
         {
