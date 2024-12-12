@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using Engine.Core.ECS;
 using Engine.Core.Rendering;
 using Engine.Core.Components;
+using System.Linq;
+using System;
+using System.Runtime.InteropServices;
 
 namespace Engine.Core.Components.Rendering
 {
@@ -12,6 +15,7 @@ namespace Engine.Core.Components.Rendering
         public Model Model { get; set; }
         public StaticMesh StaticMesh { get; set; }
         public Material[] Materials { get; set; }
+
         private readonly Dictionary<int, Effect> _effectCache = new();
         private readonly Dictionary<int, Material> _lastMaterialCache = new();
 
@@ -31,10 +35,7 @@ namespace Engine.Core.Components.Rendering
 
         public override void Render(BasicEffect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
         {
-            var transform = ECSManager.Instance.GetComponent<Transform>(EntityId);
-            if (transform == null || EngineManager.Instance.DefaultShader == null) return;
-
-            var worldMatrix = transform.GetWorldMatrix();
+            var worldMatrix = Transform.GetWorldMatrix();
             var viewProjectionMatrix = viewMatrix * projectionMatrix;
             var frustum = new BoundingFrustum(viewProjectionMatrix);
 
@@ -140,7 +141,7 @@ namespace Engine.Core.Components.Rendering
             }
             catch
             {
-
+                // Ignore missing parameter
             }
 
             try
@@ -151,8 +152,9 @@ namespace Engine.Core.Components.Rendering
             }
             catch
             {
-
+                // Ignore missing parameters
             }
+
             if (material != null)
             {
                 material.ApplyEffectParameters(effect, material.Shader == null);

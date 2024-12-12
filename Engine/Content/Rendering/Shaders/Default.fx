@@ -43,7 +43,7 @@ struct VertexOutput
     float2 TexCoord : TEXCOORD0;
     float3 WorldNormal : TEXCOORD2;
     float4 WorldPosition : TEXCOORD1;
-    float4 ViewPosition : TEXCOORD3; 
+    float4 ViewPosition : TEXCOORD3;
 };
 
 VertexOutput VS(VertexInput input)
@@ -56,7 +56,7 @@ VertexOutput VS(VertexInput input)
 
     output.Position = mul(worldPosition, mul(View, Projection));
 
-    float3 worldNormal = mul(input.Normal, (float3x3) World); 
+    float3 worldNormal = mul(input.Normal, (float3x3) World);
     worldNormal = normalize(worldNormal);
 
     output.WorldNormal = worldNormal;

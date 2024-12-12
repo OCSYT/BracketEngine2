@@ -16,7 +16,6 @@ namespace Engine.Core.Components.Physics
     public class RigidBody : Component
     {
         public BulletSharp.RigidBody BulletRigidBody { get; private set; }
-        public Transform Transform;
         private DiscreteDynamicsWorld PhysicsWorld;
         public CollisionShape[] Shapes;
         public bool IsStatic { get; set; }
@@ -80,11 +79,8 @@ namespace Engine.Core.Components.Physics
         public override void Start()
         {
             Debugger = new PhysicsDebugger();
-            Transform = ECSManager.Instance.GetComponent<Transform>(EntityId);
-            if (Transform != null)
-            {
-                RebuildRigidBody();
-            }
+
+            RebuildRigidBody();
         }
 
         public delegate void CollisionEventHandler(RigidBody self, RigidBody other);
@@ -180,11 +176,6 @@ namespace Engine.Core.Components.Physics
             if (BulletRigidBody != null)
             {
                 RemoveFromWorld();
-            }
-
-            if (Transform == null)
-            {
-                Transform = ECSManager.Instance.GetComponent<Transform>(EntityId);
             }
 
             BulletSharp.Math.Matrix initialTransform = BulletSharp.Math.Matrix.AffineTransformation(
@@ -334,7 +325,6 @@ namespace Engine.Core.Components.Physics
                 Shapes = null;
             }
             Debugger = null;
-            Transform = null;
         }
 
         private static Quaternion BulletToQuaternion(BulletSharp.Math.Matrix bulletMatrix)

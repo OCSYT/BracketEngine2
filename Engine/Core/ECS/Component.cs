@@ -1,4 +1,5 @@
 ﻿using System;
+using Engine.Core.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -6,7 +7,8 @@ namespace Engine.Core.ECS
 {
     public class Component : IComponentLifecycle
     {
-        public int EntityId { get; private set; }
+        public Entity Entity { get; private set; }
+        public Transform Transform { get; private set; }
         public virtual void Awake()
         {
         }
@@ -35,11 +37,15 @@ namespace Engine.Core.ECS
         }
         public void DestroyEntity()
         {
-            ECSManager.Instance.RemoveEntity(EntityId);
+            ECSManager.Instance.RemoveEntity(Entity);
         }
-        public void SetEntityId(int entityId)
+        public void SetEntity(Entity EntityInstance)
         {
-            EntityId = entityId;
+            Entity = EntityInstance;
+        }
+        public void SetTransform(Transform TransformInstance)
+        {
+            Transform = TransformInstance;
         }
 
     }

@@ -1,14 +1,14 @@
 ﻿using Engine.Core.Components;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
+using Microsoft.Xna.Framework;
+using MonoGame.Extended.ECS;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System;
 using System.Linq;
-using System.Threading.Tasks;
-
 namespace Engine.Core.ECS
 {
+
     public interface IComponentLifecycle
     {
         void Awake();
@@ -19,6 +19,12 @@ namespace Engine.Core.ECS
         void DrawGUI(GameTime gameTime);
         void OnDestroy();
     }
+
+    public struct Entity
+    {
+        public int ID;
+        public Transform Transform;
+    }
     public class ECSManager
     {
         private static readonly Lazy<ECSManager> _lazyInstance = new Lazy<ECSManager>(() => new ECSManager());
@@ -27,99 +33,90 @@ namespace Engine.Core.ECS
         private readonly List<int> _entities = new();
         private int _nextEntityId;
 
-        private readonly Dictionary<Type, List<IComponentLifecycle>> _lifecycleComponents = new();
+        // Cache dictionaries to avoid repeated lookups
         private readonly ConcurrentDictionary<Type, ConcurrentDictionary<int, object>> _components = new();
-        private readonly ConcurrentDictionary<int, float> _timedRemovals = new();
+        private readonly ConcurrentDictionary<Type, List<IComponentLifecycle>> _lifecycleComponents = new();
+        private readonly ConcurrentDictionary<Entity, float> _timedRemovals = new();
 
-        private readonly HashSet<IComponentLifecycle> _startQueuedComponents = new();
+        private List<IComponentLifecycle> _startQueuedComponents = new();
 
         private ECSManager() { }
 
-        public int CreateEntity()
+        public Entity CreateEntity()
         {
             int entityId = _nextEntityId++;
             _entities.Add(entityId);
-            AddComponent(entityId, new Transform());
-            return entityId;
+            Entity entity = new Entity { ID = entityId, Transform = new Transform() };
+            AddComponent(entity, entity.Transform);
+            return entity;
         }
 
-        public void RemoveEntity(int entityId)
+        public void RemoveEntity(Entity entity)
         {
-            Parallel.ForEach(_components.Values, componentType =>
+            foreach (var componentType in _components.Values)
             {
-                if (componentType.TryRemove(entityId, out var component) && component is IComponentLifecycle lifecycleComponent)
+                if (componentType.TryRemove(entity.ID, out var component) && component is IComponentLifecycle lifecycleComponent)
                 {
-                    if (_lifecycleComponents.ContainsKey(component.GetType()))
-                    {
-                        _lifecycleComponents[component.GetType()].Remove(lifecycleComponent);
-                    }
+                    _lifecycleComponents[lifecycleComponent.GetType()].Remove(lifecycleComponent);
                     lifecycleComponent.OnDestroy();
                 }
-            });
-            _entities.Remove(entityId);
+            }
+            _entities.Remove(entity.ID);
         }
 
-        public void RemoveEntityTimed(int entityId, float seconds)
+        public void RemoveEntityTimed(Entity entity, float seconds)
         {
-            _timedRemovals.TryAdd(entityId, seconds);
+            _timedRemovals.TryAdd(entity, seconds);
         }
-        public void AddComponent<T>(int entityId, T component) where T : Component
+
+        public void AddComponent<T>(Entity entity, T component) where T : Component
         {
             var type = typeof(T);
             if (!_components.ContainsKey(type))
             {
                 _components[type] = new ConcurrentDictionary<int, object>();
+                _lifecycleComponents[type] = new List<IComponentLifecycle>();
             }
 
-            _components[type][entityId] = component;
-            component.SetEntityId(entityId);
+            _components[type][entity.ID] = component;
+            component.SetEntity(entity);
+            component.SetTransform(entity.Transform);
             component.Awake();
-
-
-            if (component is IComponentLifecycle lifecycleComponentStart)
-            {
-                _startQueuedComponents.Add(lifecycleComponentStart);
-            }
 
             if (component is IComponentLifecycle lifecycleComponent)
             {
-                if (!_lifecycleComponents.ContainsKey(type))
-                {
-                    _lifecycleComponents[type] = new List<IComponentLifecycle>();
-                }
                 _lifecycleComponents[type].Add(lifecycleComponent);
+                if (_startQueuedComponents.Contains(lifecycleComponent) == false)
+                {
+                    _startQueuedComponents.Add(lifecycleComponent);
+                }
             }
         }
 
-
-        public T GetComponent<T>(int entityId) where T : class
+        public T GetComponent<T>(Entity entity) where T : class
         {
             var type = typeof(T);
-            if (_components.TryGetValue(type, out var entityComponents) && entityComponents.TryGetValue(entityId, out var component))
+            if (_components.TryGetValue(type, out var entityComponents) && entityComponents.TryGetValue(entity.ID, out var component))
             {
-                return component as T;
+                return (T)component;
             }
-
-            throw new Exception($"Entity {entityId} does not have a component of type {type.Name}");
+            throw new Exception($"Entity {entity.ID} does not have a component of type {type.Name}");
         }
 
-        public bool HasComponent<T>(int entityId)
+        public bool HasComponent<T>(Entity entity)
         {
             var type = typeof(T);
-            return _components.TryGetValue(type, out var entityComponents) && entityComponents.ContainsKey(entityId);
+            return _components.TryGetValue(type, out var entityComponents) && entityComponents.ContainsKey(entity.ID);
         }
 
-        public void RemoveComponent<T>(int entityId)
+        public void RemoveComponent<T>(Entity entity)
         {
             var type = typeof(T);
             if (_components.TryGetValue(type, out var entityComponents))
             {
-                if (entityComponents.TryRemove(entityId, out var component) && component is IComponentLifecycle lifecycleComponent)
+                if (entityComponents.TryRemove(entity.ID, out var component) && component is IComponentLifecycle lifecycleComponent)
                 {
-                    if (_lifecycleComponents.ContainsKey(type))
-                    {
-                        _lifecycleComponents[type].Remove(lifecycleComponent);
-                    }
+                    _lifecycleComponents[type].Remove(lifecycleComponent);
                 }
             }
         }
@@ -127,16 +124,13 @@ namespace Engine.Core.ECS
         public List<int> GetEntitiesWithComponent<T>()
         {
             var type = typeof(T);
-            return _components.TryGetValue(type, out var entityComponents)
-                ? entityComponents.Keys.ToList()
-                : new List<int>();
+            return _components.TryGetValue(type, out var entityComponents) ? entityComponents.Keys.ToList() : new List<int>();
         }
 
         public void CallFixedUpdateOnComponents(GameTime gameTime)
         {
             ProcessTimedRemovals(gameTime);
-
-            foreach (var lifecycle in _lifecycleComponents.Values.SelectMany(lifecycleList => lifecycleList))
+            foreach (var lifecycle in _lifecycleComponents.Values.SelectMany(l => l))
             {
                 lifecycle.FixedUpdate(gameTime);
             }
@@ -150,35 +144,46 @@ namespace Engine.Core.ECS
             }
             _startQueuedComponents.Clear();
 
-            foreach (var lifecycle in _lifecycleComponents.Values.SelectMany(lifecycleList => lifecycleList))
+            foreach (var lifecycle in _lifecycleComponents.Values.SelectMany(l => l))
             {
                 lifecycle.MainUpdate(gameTime);
             }
         }
 
-        public void CallRenderOnComponents(BasicEffect basicEffect, Matrix viewMatrix, Matrix projectionMatrix, GameTime GameTime)
+        public void CallRenderOnComponents(BasicEffect basicEffect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
         {
-            foreach (var lifecycle in _lifecycleComponents.Values.SelectMany(lifecycleList => lifecycleList))
+            foreach (var lifecycle in _lifecycleComponents.Values.SelectMany(l => l))
             {
-                lifecycle.Render(basicEffect, viewMatrix, projectionMatrix, GameTime);
-            }
-        }
-        public void CallDrawGUIOnComponents(GameTime GameTime)
-        {
-            foreach (var lifecycle in _lifecycleComponents.Values.SelectMany(lifecycleList => lifecycleList))
-            {
-                lifecycle.DrawGUI(GameTime);
+                lifecycle.Render(basicEffect, viewMatrix, projectionMatrix, gameTime);
             }
         }
 
+        public void CallDrawGUIOnComponents(GameTime gameTime)
+        {
+            foreach (var lifecycle in _lifecycleComponents.Values.SelectMany(l => l))
+            {
+                lifecycle.DrawGUI(gameTime);
+            }
+        }
 
-
+        public Entity GetEntityById(int entityId)
+        {
+            if (_entities.Contains(entityId))
+            {
+                return new Entity
+                {
+                    ID = entityId,
+                    Transform = GetComponent<Transform>(new Entity { ID = entityId })
+                };
+            }
+            throw new Exception($"Entity with ID {entityId} does not exist.");
+        }
 
         private void ProcessTimedRemovals(GameTime gameTime)
         {
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            Parallel.ForEach(_timedRemovals.ToList(), kvp =>
+            foreach (var kvp in _timedRemovals)
             {
                 if (kvp.Value <= elapsedSeconds)
                 {
@@ -187,9 +192,9 @@ namespace Engine.Core.ECS
                 }
                 else
                 {
-                    _timedRemovals[kvp.Key] = kvp.Value - elapsedSeconds;
+                    _timedRemovals[kvp.Key] -= elapsedSeconds;
                 }
-            });
+            }
         }
     }
 }

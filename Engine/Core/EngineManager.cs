@@ -79,6 +79,10 @@ namespace Engine.Core
             Components.Add(UIControls);
 
             Awake();
+            if (Debug)
+            {
+                AllocConsole();
+            }
             base.Initialize();
         }
 
@@ -88,10 +92,6 @@ namespace Engine.Core
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             DefaultShader = Content.Load<Effect>("Rendering/Shaders/Default");
             Start();    
-            if (Debug)
-            {
-                AllocConsole();
-            }
             base.LoadContent();
         }
 

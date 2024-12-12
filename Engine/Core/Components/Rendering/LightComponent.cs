@@ -47,15 +47,10 @@ namespace Engine.Core.Components.Rendering
             LightManager.Instance.RegisterLight(this);
         }
 
-        Transform LocalTransform = null;
         public override void MainUpdate(GameTime gameTime)
         {
-            if (LocalTransform == null)
-            {
-                LocalTransform = ECSManager.Instance.GetComponent<Transform>(EntityId);
-            }
-            Position = LocalTransform.Position;
-            Direction = LocalTransform.Forward;
+            Position = Transform.Position;
+            Direction = Transform.Forward;
         }
 
         public override void OnDestroy()

@@ -17,9 +17,13 @@ namespace Engine
 {
     public class MainEngine : EngineManager
     {
-        private int CameraEntity;
-        private int PlayerEntity;
+        private Entity CameraEntity;
+        private Entity PlayerEntity;
         public List<Transform> PointTransforms = new List<Transform>();
+        public override void Awake()
+        {
+            Debug = true;
+        }
         public override void Start()
         {
             // Call functions to initialize each object
@@ -43,7 +47,7 @@ namespace Engine
 
         public override void FixedUpdate(GameTime gameTime)
         {
-            foreach(Transform pointlight in PointTransforms)
+            foreach (Transform pointlight in PointTransforms)
             {
                 pointlight.Position = Vector3.Transform(pointlight.Position, Quaternion.CreateFromYawPitchRoll(1 * (MathF.PI / 180), 0, 0));
             }
@@ -77,10 +81,9 @@ namespace Engine
         private void CreatePointLight(Vector3 Position, Color Color, float Range = 50)
 
         {
-            int PointLightEntity = ECSManager.Instance.CreateEntity();
-            Transform _Transform = ECSManager.Instance.GetComponent<Transform>(PointLightEntity);
-            PointTransforms.Add(_Transform);
-            _Transform.Position = Position;
+            Entity PointLightEntity = ECSManager.Instance.CreateEntity();
+            PointTransforms.Add(PointLightEntity.Transform);
+            PointLightEntity.Transform.Position = Position;
             LightComponent PointLight = new LightComponent
             {
                 LightType = LightType.Point,
@@ -94,7 +97,7 @@ namespace Engine
         // Function to create the Floor object
         private void CreateFloor()
         {
-            int FloorObj = ECSManager.Instance.CreateEntity();
+            Entity FloorObj = ECSManager.Instance.CreateEntity();
             StaticMesh FloorModel = PrimitiveModel.CreateBox(1, 1, 1);
             Texture2D CheckerTex = Content.Load<Texture2D>("GameContent/Textures/Default/checkerboard");
             Material FloorMaterial = new Material
@@ -119,7 +122,7 @@ namespace Engine
         // Function to create Sphere object
         private void CreateSphere(Vector3 Position, Vector3 Rotation, float Scale, Color Color)
         {
-            int SphereObj = ECSManager.Instance.CreateEntity();
+            Entity SphereObj = ECSManager.Instance.CreateEntity();
             StaticMesh SphereModel = PrimitiveModel.CreateSphere(1);
             Texture2D CheckerTex = Content.Load<Texture2D>("GameContent/Textures/Default/checkerboard");
             Material SphereMaterial = new Material {DiffuseTexture = CheckerTex,  DiffuseColor = Color };

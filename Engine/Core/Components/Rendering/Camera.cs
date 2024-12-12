@@ -40,25 +40,17 @@ namespace Engine.Core.Components.Rendering
 
         public Matrix GetViewMatrix()
         {
-            var transform = ECSManager.Instance.GetComponent<Transform>(EntityId);
-            if (transform == null)
-            {
-                Listener.Position = Vector3.Zero;
-                Listener.Up = Vector3.Up;
-                Listener.Forward = Vector3.Forward;
-                return Matrix.CreateLookAt(new Vector3(0, 0, 0), Vector3.Zero, Vector3.Up);
-            }
 
-            Matrix rotationMatrix = Matrix.CreateFromQuaternion(transform.Rotation);
+            Matrix rotationMatrix = Matrix.CreateFromQuaternion(Transform.Rotation);
             Vector3 forward = Vector3.Transform(Vector3.Forward, rotationMatrix);
             Vector3 up = Vector3.Transform(Vector3.Up, rotationMatrix);
-            Vector3 target = transform.Position + forward;
+            Vector3 target = Transform.Position + forward;
 
-            Listener.Position = transform.Position;
-            Listener.Up = transform.Up;
-            Listener.Forward = transform.Forward;
+            Listener.Position = Transform.Position;
+            Listener.Up = Transform.Up;
+            Listener.Forward = Transform.Forward;
 
-            return Matrix.CreateLookAt(transform.Position, target, up);
+            return Matrix.CreateLookAt(Transform.Position, target, up);
         }
 
         public Matrix GetProjectionMatrix()

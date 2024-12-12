@@ -17,7 +17,6 @@ namespace Engine.Components
         public float Sensitivity = 1;
         private float MouseX = 0;
         private float MouseY = 0;
-        private Transform LocalTransform;
         private Transform CamTransform;
         private Vector3 AirVelocity = Vector3.Zero;
         public float Speed = 50;
@@ -44,8 +43,7 @@ namespace Engine.Components
 
         public override void Start()
         {
-            CamTransform = ECSManager.Instance.GetComponent<Transform>(CameraObj.EntityId);
-            LocalTransform = ECSManager.Instance.GetComponent<Transform>(EntityId);
+            CamTransform = CameraObj.Transform;
             Body.BulletRigidBody.Friction = 0f;
             Body.BulletRigidBody.Restitution = 0f;
             Body.SetAngularFactor(Vector3.Zero);
@@ -73,8 +71,8 @@ namespace Engine.Components
         {
 
             PhysicsManager.HitResult HitResult =
-                PhysicsManager.Instance.Raycast(LocalTransform.Position,
-                LocalTransform.Position + Vector3.Down * Height, PhysicsManager.CreateCollisionMask([2]),
+                PhysicsManager.Instance.Raycast(Transform.Position,
+                Transform.Position + Vector3.Down * Height, PhysicsManager.CreateCollisionMask([2]),
                 PhysicsManager.CreateCollisionMask([1]));
 
             KeyboardState State = Keyboard.GetState();
@@ -120,7 +118,7 @@ namespace Engine.Components
 
             if (HitResult.HasHit)
             {
-                LocalTransform.Position = new Vector3(LocalTransform.Position.X, HitResult.HitPoint.Y + Height, LocalTransform.Position.Z);
+                Transform.Position = new Vector3(Transform.Position.X, HitResult.HitPoint.Y + Height, Transform.Position.Z);
                 YVel = 0;
                 if (State.IsKeyDown(Keys.Space))
                 {
@@ -137,7 +135,7 @@ namespace Engine.Components
                 new BulletSharp.Math.Vector3(LocalVel.X, LocalVel.Y, LocalVel.Z);
 
 
-            CamTransform.Position = LocalTransform.Position + Vector3.Up * Height/2;
+            CamTransform.Position = Transform.Position + Vector3.Up * Height/2;
         }
     }
 }
