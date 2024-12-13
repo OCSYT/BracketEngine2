@@ -6,7 +6,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System;
 using System.Linq;
-using System.ComponentModel;
 namespace Engine.Core.ECS
 {
 
@@ -56,14 +55,23 @@ namespace Engine.Core.ECS
         {
             foreach (var componentType in _components.Values)
             {
-                if (componentType.TryRemove(entity.ID, out var component) && component is IComponentLifecycle lifecycleComponent)
+                if (componentType.TryRemove(entity.ID, out var component))
                 {
-                    _lifecycleComponents[lifecycleComponent.GetType()].Remove(lifecycleComponent);
-                    lifecycleComponent.OnDestroy();
+                    if (component is IComponentLifecycle lifecycleComponent)
+                    {
+                        _lifecycleComponents[lifecycleComponent.GetType()].Remove(lifecycleComponent);
+                        if (lifecycleComponent is IDisposable disposableComponent)
+                        {
+                            disposableComponent.Dispose();
+                        }
+                    }
                 }
             }
+
             _entities.Remove(entity.ID);
+            _timedRemovals.TryRemove(entity, out _);
         }
+
 
         public void RemoveEntityTimed(Entity entity, float seconds)
         {
@@ -73,6 +81,14 @@ namespace Engine.Core.ECS
         public void AddComponent<T>(Entity entity, T component) where T : Component
         {
             var type = typeof(T);
+
+            // Check if the entity exists
+            if (!_entities.Contains(entity.ID))
+            {
+                Console.WriteLine($"Entity with ID {entity.ID} does not exist.");
+                return;
+            }
+
             if (!_components.ContainsKey(type))
             {
                 _components[type] = new ConcurrentDictionary<int, object>();
@@ -87,12 +103,14 @@ namespace Engine.Core.ECS
             if (component is IComponentLifecycle lifecycleComponent)
             {
                 _lifecycleComponents[type].Add(lifecycleComponent);
-                if (_startQueuedComponents.Contains(lifecycleComponent) == false)
+                if (!_startQueuedComponents.Contains(lifecycleComponent))
                 {
                     _startQueuedComponents.Add(lifecycleComponent);
                 }
             }
         }
+
+
 
         public T GetComponent<T>(Entity entity) where T : class
         {
@@ -101,7 +119,8 @@ namespace Engine.Core.ECS
             {
                 return (T)component;
             }
-            throw new Exception($"Entity {entity.ID} does not have a component of type {type.Name}");
+            Console.WriteLine($"Entity {entity.ID} does not have a component of type {type.Name}");
+            return null; // Return null to signify the absence of the component.
         }
 
         public bool HasComponent<T>(Entity entity)
@@ -110,17 +129,25 @@ namespace Engine.Core.ECS
             return _components.TryGetValue(type, out var entityComponents) && entityComponents.ContainsKey(entity.ID);
         }
 
-        public void RemoveComponent<T>(Entity entity)
+        public void RemoveComponent<T>(Entity entity) where T : Component
         {
             var type = typeof(T);
             if (_components.TryGetValue(type, out var entityComponents))
             {
-                if (entityComponents.TryRemove(entity.ID, out var component) && component is IComponentLifecycle lifecycleComponent)
+                if (entityComponents.TryRemove(entity.ID, out var component))
                 {
-                    _lifecycleComponents[type].Remove(lifecycleComponent);
+                    if (component is IComponentLifecycle lifecycleComponent)
+                    {
+                        _lifecycleComponents[type].Remove(lifecycleComponent);
+                        if (lifecycleComponent is IDisposable disposableComponent)
+                        {
+                            disposableComponent.Dispose();
+                        }
+                    }
                 }
             }
         }
+
 
         public List<int> GetEntitiesWithComponent<T>()
         {
@@ -183,8 +210,10 @@ namespace Engine.Core.ECS
                     Transform = GetComponent<Transform>(new Entity { ID = entityId })
                 };
             }
-            throw new Exception($"Entity with ID {entityId} does not exist.");
+            Console.WriteLine($"Entity with ID {entityId} does not exist.");
+            return default;
         }
+
 
         private void ProcessTimedRemovals(GameTime gameTime)
         {

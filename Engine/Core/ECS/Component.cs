@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Engine.Core.ECS
 {
-    public class Component : IComponentLifecycle
+    public class Component : IComponentLifecycle, IDisposable
     {
         public Entity Entity { get; private set; }
         public Transform Transform { get; private set; }
@@ -35,6 +35,8 @@ namespace Engine.Core.ECS
         public virtual void OnDestroy()
         {
         }
+
+
         public void DestroyEntity()
         {
             ECSManager.Instance.RemoveEntity(Entity);
@@ -48,5 +50,9 @@ namespace Engine.Core.ECS
             Transform = TransformInstance;
         }
 
+        public void Dispose()
+        {
+            OnDestroy();
+        }
     }
 }
