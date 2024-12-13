@@ -175,7 +175,7 @@ namespace Engine.Core.Rendering
                 22
             };
 
-            return CreatePrimitiveModel(vertices, indices);
+            return CreateStaticMesh(vertices, indices);
         }
         public static StaticMesh CreateQuad(float width, float height)
         {
@@ -203,7 +203,7 @@ namespace Engine.Core.Rendering
             );
             short[] indices = new short[] { 0, 2, 3, 0, 1, 2 };
 
-            return CreatePrimitiveModel(vertices, indices);
+            return CreateStaticMesh(vertices, indices);
         }
 
         public static StaticMesh CreateSphere(
@@ -264,7 +264,7 @@ namespace Engine.Core.Rendering
                 }
             }
 
-            return CreatePrimitiveModel(vertices.ToArray(), indices.ToArray());
+            return CreateStaticMesh(vertices.ToArray(), indices.ToArray());
         }
 
         public static StaticMesh CreateCapsule(
@@ -305,7 +305,7 @@ namespace Engine.Core.Rendering
                 longitudeDivisions
             );
 
-            return CreatePrimitiveModel(vertices.ToArray(), indices.ToArray());
+            return CreateStaticMesh(vertices.ToArray(), indices.ToArray());
         }
 
         private static void CreateHemisphere(
@@ -465,7 +465,7 @@ namespace Engine.Core.Rendering
                 longitudeDivisions
             );
 
-            return CreatePrimitiveModel(vertices.ToArray(), indices.ToArray());
+            return CreateStaticMesh(vertices.ToArray(), indices.ToArray());
         }
 
         private static void CreateCylinderEnd(
@@ -638,10 +638,10 @@ namespace Engine.Core.Rendering
                 );
             }
 
-            return CreatePrimitiveModel(VertexList.ToArray(), indices.ToArray());
+            return CreateStaticMesh(VertexList.ToArray(), indices.ToArray());
         }
 
-        private static StaticMesh CreatePrimitiveModel(
+        public static StaticMesh CreateStaticMesh(
             VertexPositionNormalTexture[] vertices,
             short[] indices
         )
