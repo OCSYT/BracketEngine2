@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using System.ComponentModel;
 namespace Engine.Core.ECS
 {
 
@@ -138,17 +139,23 @@ namespace Engine.Core.ECS
 
         public void CallMainUpdateOnComponents(GameTime gameTime)
         {
-            foreach (var lifecycleComponent in _startQueuedComponents)
+            while (_startQueuedComponents.Count > 0)
             {
-                lifecycleComponent.Start();
-            }
-            _startQueuedComponents.Clear();
+                var startComponentsSnapshot = _startQueuedComponents.ToList();
+                _startQueuedComponents.Clear();
 
-            foreach (var lifecycle in _lifecycleComponents.Values.SelectMany(l => l))
+                foreach (var lifecycleComponent in startComponentsSnapshot)
+                {
+                    lifecycleComponent.Start();
+                }
+            }
+            var lifecycleSnapshot = _lifecycleComponents.Values.SelectMany(l => l).ToList();
+            foreach (var lifecycle in lifecycleSnapshot)
             {
                 lifecycle.MainUpdate(gameTime);
             }
         }
+
 
         public void CallRenderOnComponents(BasicEffect basicEffect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
         {
