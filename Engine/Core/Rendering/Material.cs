@@ -16,8 +16,9 @@ namespace Engine.Core.Rendering
         public Dictionary<string, object> ShaderParams { get; set; } = new Dictionary<string, object>();
         public static Material Default { get; } = new Material();
         public float Alpha { get; set; } = 1;
-        public bool Transparent { get; set; } = false;
         public bool Lighting { get; set; } = true;
+        public bool Transparent = false;
+        public int SortOrder;
         public Material()
         {
         }
@@ -37,15 +38,31 @@ namespace Engine.Core.Rendering
             EmissionColor = emissive == default ? Color.Black : emissive;
             Shader = shader;
             Alpha = alpha;
-            Transparent = transparent;
             Lighting = lighting;
         }
 
         public void ApplyEffectParameters(Effect effect, bool fallback)
         {
             if (effect == null) return;
-
-            EngineManager.Instance.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            if (SortOrder == 0 || SortOrder == 1)
+            {
+                if (Transparent)
+                {
+                    SortOrder = 1;
+                }
+                else
+                {
+                    SortOrder = 0;
+                }
+            }
+            if (Transparent)
+            {
+                EngineManager.Instance.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            }
+            else
+            {
+                EngineManager.Instance.GraphicsDevice.BlendState = BlendState.Opaque;
+            }
             if (!fallback)
             {
                 try
@@ -117,14 +134,7 @@ namespace Engine.Core.Rendering
             else
             {
                 effect.Parameters["Lighting"]?.SetValue(Lighting ? 1 : 0);
-                if (Transparent)
-                {
-                    effect.Parameters["Alpha"]?.SetValue(Alpha);
-                }
-                else
-                {
-                    effect.Parameters["Alpha"]?.SetValue(1);
-                }
+                effect.Parameters["Alpha"]?.SetValue(Alpha);
                 if (DiffuseTexture != null)
                 {
                     effect.Parameters["DiffuseTexture"]?.SetValue(DiffuseTexture);
@@ -146,7 +156,6 @@ namespace Engine.Core.Rendering
 
             }
         }
-
 
     }
 }

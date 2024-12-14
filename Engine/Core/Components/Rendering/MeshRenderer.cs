@@ -18,7 +18,7 @@ namespace Engine.Core.Components.Rendering
         public Animations AnimationPlayer;
         private readonly Dictionary<int, Effect> _effectCache = new();
         private readonly Dictionary<int, Material> _lastMaterialCache = new();
-
+        public int SortOrderTotal = 0;
         public MeshRenderer(Model model, Material[] materials = null, Animations animationPlayer = null)
         {
             Model = model;
@@ -35,7 +35,27 @@ namespace Engine.Core.Components.Rendering
             AnimationPlayer = null;
         }
 
-        public override void Render(BasicEffect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
+
+        private void CalculateSortOrder()
+        {
+            SortOrderTotal = 0;
+            foreach (var material in Materials)
+            {
+                SortOrderTotal += material.SortOrder;
+            }
+        }
+
+        public override void Awake()
+        {
+            CalculateSortOrder();
+        }
+
+        public override void FixedUpdate(GameTime gameTime)
+        {
+            CalculateSortOrder();
+        }
+
+        public void RenderMesh(BasicEffect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
         {
             var worldMatrix = Transform.GetWorldMatrix();
             var viewProjectionMatrix = viewMatrix * projectionMatrix;
@@ -59,9 +79,15 @@ namespace Engine.Core.Components.Rendering
             {
                 if (!frustum.Intersects(mesh.BoundingSphere.Transform(worldMatrix))) continue;
 
-                foreach (var part in mesh.MeshParts)
+                // Sort MeshParts by Material.SortOrder
+                var sortedMeshParts = mesh.MeshParts
+                    .OrderBy(part => Materials?[mesh.MeshParts.IndexOf(part)].SortOrder ?? int.MaxValue)
+                    .ToList();
+
+                foreach (var part in sortedMeshParts)
                 {
-                    if (AnimationPlayer != null) {
+                    if (AnimationPlayer != null)
+                    {
                         part.UpdateVertices(AnimationPlayer.AnimationTransforms);
                     }
 
@@ -86,7 +112,12 @@ namespace Engine.Core.Components.Rendering
             var defaultShader = EngineManager.Instance.DefaultShader;
             var device = EngineManager.Instance.Graphics.GraphicsDevice;
 
-            foreach (var subMesh in StaticMesh.SubMeshes)
+            // Sort SubMeshes by Material.SortOrder
+            var sortedSubMeshes = StaticMesh.SubMeshes
+                .OrderBy(subMesh => Materials?[StaticMesh.SubMeshes.IndexOf(subMesh)].SortOrder ?? int.MaxValue)
+                .ToList();
+
+            foreach (var subMesh in sortedSubMeshes)
             {
                 int subMeshIndex = StaticMesh.SubMeshes.IndexOf(subMesh);
 
@@ -106,7 +137,6 @@ namespace Engine.Core.Components.Rendering
                 device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, subMesh.NumIndices / 3);
             }
 
-            // Reset device state to avoid conflicts in subsequent renders
             device.SetVertexBuffer(null);
             device.Indices = null;
         }

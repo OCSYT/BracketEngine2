@@ -6,9 +6,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using Engine.Core.Rendering;
+
 namespace Engine.Core.ECS
 {
-
     public interface IComponentLifecycle
     {
         void Awake();
@@ -25,6 +26,7 @@ namespace Engine.Core.ECS
         public int ID;
         public Transform Transform;
     }
+
     public class ECSManager
     {
         private static readonly Lazy<ECSManager> _lazyInstance = new Lazy<ECSManager>(() => new ECSManager());
@@ -34,7 +36,7 @@ namespace Engine.Core.ECS
         private int _nextEntityId;
 
         // Cache dictionaries to avoid repeated lookups
-        private readonly ConcurrentDictionary<Type, ConcurrentDictionary<int, object>> _components = new();
+        private readonly ConcurrentDictionary<int, List<Component>> _components = new();
         private readonly ConcurrentDictionary<Type, List<IComponentLifecycle>> _lifecycleComponents = new();
         private readonly ConcurrentDictionary<Entity, float> _timedRemovals = new();
 
@@ -53,25 +55,19 @@ namespace Engine.Core.ECS
 
         public void RemoveEntity(Entity entity)
         {
-            foreach (var componentType in _components.Values)
+            if (_components.TryGetValue(entity.ID, out var entityComponents))
             {
-                if (componentType.TryRemove(entity.ID, out var component))
+                foreach (var type in _lifecycleComponents.Keys.ToList())
                 {
-                    if (component is IComponentLifecycle lifecycleComponent)
-                    {
-                        _lifecycleComponents[lifecycleComponent.GetType()].Remove(lifecycleComponent);
-                        if (lifecycleComponent is IDisposable disposableComponent)
-                        {
-                            disposableComponent.Dispose();
-                        }
-                    }
+                    RemoveComponentType(entity.ID, type);
                 }
+
+                _components.TryRemove(entity.ID, out _);
             }
 
             _entities.Remove(entity.ID);
             _timedRemovals.TryRemove(entity, out _);
         }
-
 
         public void RemoveEntityTimed(Entity entity, float seconds)
         {
@@ -89,19 +85,26 @@ namespace Engine.Core.ECS
                 return;
             }
 
-            if (!_components.ContainsKey(type))
+            if (!_components.ContainsKey(entity.ID))
             {
-                _components[type] = new ConcurrentDictionary<int, object>();
-                _lifecycleComponents[type] = new List<IComponentLifecycle>();
+                _components[entity.ID] = new List<Component>();
             }
 
-            _components[type][entity.ID] = component;
+            var componentList = _components[entity.ID];
+
+            componentList.Add(component);
+
             component.SetEntity(entity);
             component.SetTransform(entity.Transform);
             component.Awake();
 
             if (component is IComponentLifecycle lifecycleComponent)
             {
+                if (!_lifecycleComponents.ContainsKey(type))
+                {
+                    _lifecycleComponents[type] = new List<IComponentLifecycle>();
+                }
+
                 _lifecycleComponents[type].Add(lifecycleComponent);
                 if (!_startQueuedComponents.Contains(lifecycleComponent))
                 {
@@ -110,35 +113,89 @@ namespace Engine.Core.ECS
             }
         }
 
-
-
         public T GetComponent<T>(Entity entity) where T : class
         {
             var type = typeof(T);
-            if (_components.TryGetValue(type, out var entityComponents) && entityComponents.TryGetValue(entity.ID, out var component))
+            if (_components.TryGetValue(entity.ID, out var entityComponents))
             {
-                return (T)component;
+                foreach (var component in entityComponents)
+                {
+                    if (component is T typedComponent)
+                    {
+                        return typedComponent;
+                    }
+                }
             }
             Console.WriteLine($"Entity {entity.ID} does not have a component of type {type.Name}");
-            return null; // Return null to signify the absence of the component.
+            return null;
+        }
+
+
+        public T[] GetComponents<T>(Entity entity) where T : class
+        {
+            var componentsList = new List<T>();
+            if (_components.TryGetValue(entity.ID, out var entityComponents))
+            {
+                foreach (var component in entityComponents)
+                {
+                    if (component is T typedComponent)
+                    {
+                        componentsList.Add(typedComponent);
+                    }
+                }
+            }
+
+            return componentsList.ToArray();
         }
 
         public bool HasComponent<T>(Entity entity)
         {
             var type = typeof(T);
-            return _components.TryGetValue(type, out var entityComponents) && entityComponents.ContainsKey(entity.ID);
+            return _components.TryGetValue(entity.ID, out var entityComponents) &&
+                   entityComponents.Any(c => c.GetType() == type);
         }
 
         public void RemoveComponent<T>(Entity entity) where T : Component
         {
             var type = typeof(T);
-            if (_components.TryGetValue(type, out var entityComponents))
+
+            if (_components.TryGetValue(entity.ID, out var entityComponents))
             {
-                if (entityComponents.TryRemove(entity.ID, out var component))
+                var componentsToRemove = entityComponents
+                    .Where(c => c.GetType() == type)
+                    .ToList();
+
+                foreach (var component in componentsToRemove)
                 {
+                    entityComponents.Remove(component);
+
                     if (component is IComponentLifecycle lifecycleComponent)
                     {
                         _lifecycleComponents[type].Remove(lifecycleComponent);
+                        if (lifecycleComponent is IDisposable disposableComponent)
+                        {
+                            disposableComponent.Dispose();
+                        }
+                    }
+                }
+            }
+        }
+
+        private void RemoveComponentType(int entityId, Type componentType)
+        {
+            if (_components.TryGetValue(entityId, out var entityComponents))
+            {
+                var componentsToRemove = entityComponents
+                    .Where(c => c.GetType() == componentType)
+                    .ToList();
+
+                foreach (var component in componentsToRemove)
+                {
+                    entityComponents.Remove(component);
+
+                    if (component is IComponentLifecycle lifecycleComponent)
+                    {
+                        _lifecycleComponents[componentType].Remove(lifecycleComponent);
                         if (lifecycleComponent is IDisposable disposableComponent)
                         {
                             disposableComponent.Dispose();
@@ -152,7 +209,9 @@ namespace Engine.Core.ECS
         public List<int> GetEntitiesWithComponent<T>()
         {
             var type = typeof(T);
-            return _components.TryGetValue(type, out var entityComponents) ? entityComponents.Keys.ToList() : new List<int>();
+            return _components.Where(kvp => kvp.Value.Any(c => c.GetType() == type))
+                              .Select(kvp => kvp.Key)
+                              .ToList();
         }
 
         public void CallFixedUpdateOnComponents(GameTime gameTime)
@@ -183,9 +242,9 @@ namespace Engine.Core.ECS
             }
         }
 
-
         public void CallRenderOnComponents(BasicEffect basicEffect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
         {
+            RenderManager.Instance.Render(basicEffect, viewMatrix, projectionMatrix, gameTime);
             foreach (var lifecycle in _lifecycleComponents.Values.SelectMany(l => l))
             {
                 lifecycle.Render(basicEffect, viewMatrix, projectionMatrix, gameTime);
@@ -213,7 +272,6 @@ namespace Engine.Core.ECS
             Console.WriteLine($"Entity with ID {entityId} does not exist.");
             return default;
         }
-
 
         private void ProcessTimedRemovals(GameTime gameTime)
         {
