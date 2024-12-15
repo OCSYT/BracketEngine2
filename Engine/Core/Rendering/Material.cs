@@ -19,6 +19,7 @@ namespace Engine.Core.Rendering
         public bool Lighting { get; set; } = true;
         public bool Transparent = false;
         public int SortOrder;
+        public DepthStencilState DepthStencilState { get; set; } = DepthStencilState.Default;
         public Material()
         {
         }
@@ -55,6 +56,7 @@ namespace Engine.Core.Rendering
                     SortOrder = 0;
                 }
             }
+            EngineManager.Instance.GraphicsDevice.DepthStencilState = DepthStencilState;
             if (Transparent)
             {
                 EngineManager.Instance.GraphicsDevice.BlendState = BlendState.AlphaBlend;

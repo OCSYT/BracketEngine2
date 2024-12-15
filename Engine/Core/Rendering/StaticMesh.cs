@@ -66,6 +66,7 @@ namespace Engine.Core.Rendering
 
             Vector3 min = new Vector3(float.MaxValue);
             Vector3 max = new Vector3(float.MinValue);
+
             foreach (var vertex in vertices)
             {
                 Vector3 position = vertex.Position;
@@ -74,14 +75,16 @@ namespace Engine.Core.Rendering
             }
 
             Vector3 center = (min + max) / 2f;
-            float radius = 0f;
+
+            float radiusSquared = 0f;
             foreach (var vertex in vertices)
             {
-                float distance = Vector3.Distance(center, vertex.Position);
-                radius = Math.Max(radius, distance);
+                float distanceSquared = Vector3.DistanceSquared(center, vertex.Position);
+                radiusSquared = Math.Max(radiusSquared, distanceSquared);
             }
-            return new BoundingSphere(center, radius);
+            return new BoundingSphere(center, (float)Math.Sqrt(radiusSquared));
         }
+
 
         public class SubMesh
         {
