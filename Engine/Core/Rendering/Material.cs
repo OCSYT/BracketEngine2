@@ -8,6 +8,30 @@ namespace Engine.Core.Rendering
 {
     public class Material
     {
+        public struct VertexPositionNormalTextureColor : IVertexType
+        {
+            public Vector3 Position;
+            public Vector3 Normal;
+            public Vector2 TextureCoordinate;
+            public Color Color;
+
+            public VertexPositionNormalTextureColor(Vector3 position, Vector3 normal, Vector2 textureCoordinate, Color color)
+            {
+                Position = position;
+                Normal = normal;
+                TextureCoordinate = textureCoordinate;
+                Color = color;
+            }
+
+            VertexDeclaration IVertexType.VertexDeclaration =>
+                new VertexDeclaration(new VertexElement[]
+                {
+                new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
+                new VertexElement(12, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
+                new VertexElement(24, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
+                new VertexElement(32, VertexElementFormat.Color, VertexElementUsage.Color, 0)
+                });
+        }
         public Texture2D DiffuseTexture { get; set; }
         public Texture2D EmissionTexture { get; set; }
         public Effect Shader { get; set; }
@@ -17,6 +41,7 @@ namespace Engine.Core.Rendering
         public static Material Default { get; } = new Material();
         public float Alpha { get; set; } = 1;
         public bool Lighting { get; set; } = true;
+        public bool VertexColors = false;
         public bool Transparent = false;
         public int SortOrder;
         public DepthStencilState DepthStencilState { get; set; } = null;
@@ -32,8 +57,9 @@ namespace Engine.Core.Rendering
                         Color emissive = default,
                         Effect shader = null,
                         float alpha = 1,
-                        bool transparent = false, bool lighting = true)
+                        bool transparent = false, bool lighting = true, bool vertcolors = false)
         {
+            VertexColors = vertcolors;
             DiffuseTexture = diffuseTexture;
             EmissionTexture = emissionTexture;
             DiffuseColor = diffuseColor == default ? Color.White : diffuseColor;
@@ -152,6 +178,7 @@ namespace Engine.Core.Rendering
             }
             else
             {
+                effect.Parameters["VertexColors"]?.SetValue(VertexColors ? 1 : 0);
                 effect.Parameters["Lighting"]?.SetValue(Lighting ? 1 : 0);
                 effect.Parameters["Alpha"]?.SetValue(Alpha);
                 if (DiffuseTexture != null)

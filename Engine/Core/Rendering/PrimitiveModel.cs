@@ -9,130 +9,154 @@ namespace Engine.Core.Rendering
     {
         public static StaticMesh CreateBox(float width, float height, float depth)
         {
-            var vertices = new VertexPositionNormalTexture[24];
+            var vertices = new Material.VertexPositionNormalTextureColor[24];
 
-            vertices[0] = new VertexPositionNormalTexture(
+            vertices[0] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(-width, -height, -depth),
                 Vector3.Backward,
-                new Vector2(0, 1)
+                new Vector2(0, 1),
+                Color.White
             );
-            vertices[1] = new VertexPositionNormalTexture(
+            vertices[1] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(width, -height, -depth),
                 Vector3.Backward,
-                new Vector2(1, 1)
+                new Vector2(1, 1),
+                Color.White
             );
-            vertices[2] = new VertexPositionNormalTexture(
+            vertices[2] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(width, height, -depth),
                 Vector3.Backward,
-                new Vector2(1, 0)
+                new Vector2(1, 0),
+                Color.White
             );
-            vertices[3] = new VertexPositionNormalTexture(
+            vertices[3] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(-width, height, -depth),
                 Vector3.Backward,
-                new Vector2(0, 0)
+                new Vector2(0, 0),
+                Color.White
             );
-            vertices[4] = new VertexPositionNormalTexture(
+            vertices[4] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(-width, -height, depth),
                 Vector3.Forward,
-                new Vector2(0, 1)
+                new Vector2(0, 1),
+                Color.White
             );
-            vertices[5] = new VertexPositionNormalTexture(
+            vertices[5] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(width, -height, depth),
                 Vector3.Forward,
-                new Vector2(1, 1)
+                new Vector2(1, 1),
+                Color.White
             );
-            vertices[6] = new VertexPositionNormalTexture(
+            vertices[6] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(width, height, depth),
                 Vector3.Forward,
-                new Vector2(1, 0)
+                new Vector2(1, 0),
+                Color.White
             );
-            vertices[7] = new VertexPositionNormalTexture(
+            vertices[7] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(-width, height, depth),
                 Vector3.Forward,
-                new Vector2(0, 0)
+                new Vector2(0, 0),
+                Color.White
             );
-            vertices[8] = new VertexPositionNormalTexture(
+            vertices[8] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(-width, -height, -depth),
                 Vector3.Left,
-                new Vector2(0, 1)
+                new Vector2(0, 1),
+                Color.White
             );
-            vertices[9] = new VertexPositionNormalTexture(
+            vertices[9] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(-width, -height, depth),
                 Vector3.Left,
-                new Vector2(1, 1)
+                new Vector2(1, 1),
+                Color.White
             );
-            vertices[10] = new VertexPositionNormalTexture(
+            vertices[10] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(-width, height, depth),
                 Vector3.Left,
-                new Vector2(1, 0)
+                new Vector2(1, 0),
+                Color.White
             );
-            vertices[11] = new VertexPositionNormalTexture(
+            vertices[11] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(-width, height, -depth),
                 Vector3.Left,
-                new Vector2(0, 0)
+                new Vector2(0, 0),
+                Color.White
             );
 
-            vertices[12] = new VertexPositionNormalTexture(
+            vertices[12] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(width, -height, -depth),
                 Vector3.Right,
-                new Vector2(0, 1)
+                new Vector2(0, 1),
+                Color.White
             );
-            vertices[13] = new VertexPositionNormalTexture(
+            vertices[13] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(width, -height, depth),
                 Vector3.Right,
-                new Vector2(1, 1)
+                new Vector2(1, 1),
+                Color.White
             );
-            vertices[14] = new VertexPositionNormalTexture(
+            vertices[14] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(width, height, depth),
                 Vector3.Right,
-                new Vector2(1, 0)
+                new Vector2(1, 0),
+                Color.White
             );
-            vertices[15] = new VertexPositionNormalTexture(
+            vertices[15] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(width, height, -depth),
                 Vector3.Right,
-                new Vector2(0, 0)
+                new Vector2(0, 0),
+                Color.White
             );
 
-            vertices[16] = new VertexPositionNormalTexture(
+            vertices[16] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(-width, -height, -depth),
                 Vector3.Down,
-                new Vector2(0, 1)
+                new Vector2(0, 1),
+                Color.White
             );
-            vertices[17] = new VertexPositionNormalTexture(
+            vertices[17] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(width, -height, -depth),
                 Vector3.Down,
-                new Vector2(1, 1)
+                new Vector2(1, 1),
+                Color.White
             );
-            vertices[18] = new VertexPositionNormalTexture(
+            vertices[18] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(width, -height, depth),
                 Vector3.Down,
-                new Vector2(1, 0)
+                new Vector2(1, 0),
+                Color.White
             );
-            vertices[19] = new VertexPositionNormalTexture(
+            vertices[19] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(-width, -height, depth),
                 Vector3.Down,
-                new Vector2(0, 0)
+                new Vector2(0, 0),
+                Color.White
             );
 
-            vertices[20] = new VertexPositionNormalTexture(
+            vertices[20] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(-width, height, -depth),
                 Vector3.Up,
-                new Vector2(0, 1)
+                new Vector2(0, 1),
+                Color.White
             );
-            vertices[21] = new VertexPositionNormalTexture(
+            vertices[21] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(width, height, -depth),
                 Vector3.Up,
-                new Vector2(1, 1)
+                new Vector2(1, 1),
+                Color.White
             );
-            vertices[22] = new VertexPositionNormalTexture(
+            vertices[22] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(width, height, depth),
                 Vector3.Up,
-                new Vector2(1, 0)
+                new Vector2(1, 0),
+                Color.White
             );
-            vertices[23] = new VertexPositionNormalTexture(
+            vertices[23] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(-width, height, depth),
                 Vector3.Up,
-                new Vector2(0, 0)
+                new Vector2(0, 0),
+                Color.White
             );
 
             short[] indices = new short[]
@@ -179,27 +203,27 @@ namespace Engine.Core.Rendering
         }
         public static StaticMesh CreateQuad(float width, float height)
         {
-            var vertices = new VertexPositionNormalTexture[4];
+            var vertices = new Material.VertexPositionNormalTextureColor[4];
 
-            vertices[0] = new VertexPositionNormalTexture(
+            vertices[0] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(-width, -height, 0),
                 Vector3.Backward,
-                new Vector2(0, 1)
+                new Vector2(0, 1), Color.White
             );
-            vertices[1] = new VertexPositionNormalTexture(
+            vertices[1] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(width, -height, 0),
                 Vector3.Backward,
-                new Vector2(1, 1)
+                new Vector2(1, 1), Color.White
             );
-            vertices[2] = new VertexPositionNormalTexture(
+            vertices[2] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(width, height, 0),
                 Vector3.Backward,
-                new Vector2(1, 0)
+                new Vector2(1, 0), Color.White
             );
-            vertices[3] = new VertexPositionNormalTexture(
+            vertices[3] = new Material.VertexPositionNormalTextureColor(
                 new Vector3(-width, height, 0),
                 Vector3.Backward,
-                new Vector2(0, 0)
+                new Vector2(0, 0), Color.White
             );
             short[] indices = new short[] { 0, 2, 3, 0, 1, 2 };
 
@@ -212,7 +236,7 @@ namespace Engine.Core.Rendering
             int longitudeDivisions = 64
         )
         {
-            List<VertexPositionNormalTexture> vertices = new List<VertexPositionNormalTexture>();
+            List<Material.VertexPositionNormalTextureColor> vertices = new List<Material.VertexPositionNormalTextureColor>();
             List<short> indices = new List<short>();
 
             for (int lat = 0; lat <= latitudeDivisions; lat++)
@@ -232,10 +256,10 @@ namespace Engine.Core.Rendering
                     float v = (float)lat / latitudeDivisions;
 
                     vertices.Add(
-                        new VertexPositionNormalTexture(
+                        new Material.VertexPositionNormalTextureColor(
                             new Vector3(x, y, z),
                             normal,
-                            new Vector2(u, v)
+                            new Vector2(u, v), Color.White
                         )
                     );
                 }
@@ -275,7 +299,7 @@ namespace Engine.Core.Rendering
         )
         {
             height = height / 2;
-            List<VertexPositionNormalTexture> vertices = new List<VertexPositionNormalTexture>();
+            List<Material.VertexPositionNormalTextureColor> vertices = new List<Material.VertexPositionNormalTextureColor>();
             List<short> indices = new List<short>();
 
             CreateHemisphere(
@@ -309,7 +333,7 @@ namespace Engine.Core.Rendering
         }
 
         private static void CreateHemisphere(
-            List<VertexPositionNormalTexture> vertices,
+            List<Material.VertexPositionNormalTextureColor> vertices,
             List<short> indices,
             float radius,
             float offsetY,
@@ -336,10 +360,10 @@ namespace Engine.Core.Rendering
                     float v = (float)lat / latitudeDivisions;
 
                     vertices.Add(
-                        new VertexPositionNormalTexture(
+                        new Material.VertexPositionNormalTextureColor(
                             new Vector3(x, y, z),
                             normal,
-                            new Vector2(u, v)
+                            new Vector2(u, v), Color.White
                         )
                     );
                 }
@@ -370,7 +394,7 @@ namespace Engine.Core.Rendering
         }
 
         private static void CreateCylinderVertex(
-            List<VertexPositionNormalTexture> vertices,
+            List<Material.VertexPositionNormalTextureColor> vertices,
             List<short> indices,
             float radius,
             float height,
@@ -396,10 +420,10 @@ namespace Engine.Core.Rendering
                     float v = (float)lat / latitudeDivisions;
 
                     vertices.Add(
-                        new VertexPositionNormalTexture(
+                        new Material.VertexPositionNormalTextureColor(
                             new Vector3(x, y, z),
                             normal,
-                            new Vector2(u, v)
+                            new Vector2(u, v), Color.White
                         )
                     );
                 }
@@ -433,7 +457,7 @@ namespace Engine.Core.Rendering
         )
         {
             height = height * 2;
-            List<VertexPositionNormalTexture> vertices = new List<VertexPositionNormalTexture>();
+            List<Material.VertexPositionNormalTextureColor> vertices = new List<Material.VertexPositionNormalTextureColor>();
             List<short> indices = new List<short>();
 
             CreateCylinderEnd(
@@ -469,7 +493,7 @@ namespace Engine.Core.Rendering
         }
 
         private static void CreateCylinderEnd(
-            List<VertexPositionNormalTexture> vertices,
+            List<Material.VertexPositionNormalTextureColor> vertices,
             List<short> indices,
             float radius,
             float offsetY,
@@ -481,10 +505,10 @@ namespace Engine.Core.Rendering
             int vertexCount = vertices.Count;
 
             vertices.Add(
-                new VertexPositionNormalTexture(
+                new Material.VertexPositionNormalTextureColor(
                     new Vector3(0, offsetY, 0),
                     new Vector3(0, bottom ? -1 : 1, 0),
-                    new Vector2(0.5f, 0.5f)
+                    new Vector2(0.5f, 0.5f), Color.White
                 )
             );
             for (int lon = 0; lon <= longitudeDivisions; lon++)
@@ -497,10 +521,10 @@ namespace Engine.Core.Rendering
                 float u = (MathF.Cos(phi) + 1) / 2;
                 float v = (MathF.Sin(phi) + 1) / 2;
                 vertices.Add(
-                    new VertexPositionNormalTexture(
+                    new Material.VertexPositionNormalTextureColor(
                         new Vector3(x, offsetY, z),
                         normal,
-                        new Vector2(u, v)
+                        new Vector2(u, v), Color.White
                     )
                 );
             }
@@ -517,7 +541,7 @@ namespace Engine.Core.Rendering
         }
 
         private static void CreateCylinderSides(
-            List<VertexPositionNormalTexture> vertices,
+            List<Material.VertexPositionNormalTextureColor> vertices,
             List<short> indices,
             float radius,
             float height,
@@ -543,10 +567,10 @@ namespace Engine.Core.Rendering
                     float v = (float)lat / latitudeDivisions;
 
                     vertices.Add(
-                        new VertexPositionNormalTexture(
+                        new Material.VertexPositionNormalTextureColor(
                             new Vector3(x, y, z),
                             normal,
-                            new Vector2(u, v)
+                            new Vector2(u, v), Color.White
                         )
                     );
                 }
@@ -572,11 +596,11 @@ namespace Engine.Core.Rendering
 
         public static StaticMesh CreateCone(float radius, float height, int divisions = 64)
         {
-            List<VertexPositionNormalTexture> vertices = new List<VertexPositionNormalTexture>();
+            List<Material.VertexPositionNormalTextureColor> vertices = new List<Material.VertexPositionNormalTextureColor>();
             List<short> indices = new List<short>();
 
             vertices.Add(
-                new VertexPositionNormalTexture(Vector3.Zero, Vector3.Up, new Vector2(0.5f, 0.5f))
+                new Material.VertexPositionNormalTextureColor(Vector3.Zero, Vector3.Up, new Vector2(0.5f, 0.5f), Color.White)
             );
 
             for (int i = 0; i < divisions; i++)
@@ -591,15 +615,16 @@ namespace Engine.Core.Rendering
                 float v = (z / radius + 1) / 2;
 
                 vertices.Add(
-                    new VertexPositionNormalTexture(new Vector3(x, 0, z), normal, new Vector2(u, v))
+                    new Material.VertexPositionNormalTextureColor(new Vector3(x, 0, z), normal, new Vector2(u, v), Color.White)
                 );
             }
 
             vertices.Add(
-                new VertexPositionNormalTexture(
+                new Material.VertexPositionNormalTextureColor(
                     new Vector3(0, height, 0),
                     Vector3.Up,
-                    new Vector2(0.5f, 0.5f)
+                    new Vector2(0.5f, 0.5f),
+                    Color.White
                 )
             );
 
@@ -622,18 +647,19 @@ namespace Engine.Core.Rendering
             }
 
             float offsetY = -.5f;
-            List<VertexPositionNormalTexture> VertexList = new List<VertexPositionNormalTexture>();
+            List<Material.VertexPositionNormalTextureColor> VertexList = new List<Material.VertexPositionNormalTextureColor>();
             for (int i = 0; i < vertices.ToArray().Length; i++)
             {
                 VertexList.Add(
-                    new VertexPositionNormalTexture(
+                    new Material.VertexPositionNormalTextureColor(
                         new Vector3(
                             vertices[i].Position.X,
                             vertices[i].Position.Y + offsetY,
                             vertices[i].Position.Z
                         ),
                         vertices[i].Normal,
-                        vertices[i].TextureCoordinate
+                        vertices[i].TextureCoordinate,
+                        Color.White
                     )
                 );
             }
@@ -642,13 +668,13 @@ namespace Engine.Core.Rendering
         }
 
         public static StaticMesh CreateStaticMesh(
-            VertexPositionNormalTexture[] vertices,
+            Material.VertexPositionNormalTextureColor[] vertices,
             short[] indices
         )
         {
             var vertexBuffer = new VertexBuffer(
                 EngineManager.Instance.GraphicsDevice,
-                typeof(VertexPositionNormalTexture),
+                typeof(Material.VertexPositionNormalTextureColor),
                 vertices.Length,
                 BufferUsage.None
             );
