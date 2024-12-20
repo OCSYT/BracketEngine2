@@ -19,7 +19,8 @@ namespace Engine.Core.Rendering
         public bool Lighting { get; set; } = true;
         public bool Transparent = false;
         public int SortOrder;
-        public DepthStencilState DepthStencilState { get; set; } = DepthStencilState.Default;
+        public DepthStencilState DepthStencilState { get; set; } = null;
+        public BlendState BlendState { get; set; } = null;
         public Material()
         {
         }
@@ -56,14 +57,30 @@ namespace Engine.Core.Rendering
                     SortOrder = 0;
                 }
             }
-            EngineManager.Instance.GraphicsDevice.DepthStencilState = DepthStencilState;
-            if (Transparent)
+
+            if (DepthStencilState != null)
             {
-                EngineManager.Instance.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+                EngineManager.Instance.GraphicsDevice.DepthStencilState = DepthStencilState;
             }
             else
             {
-                EngineManager.Instance.GraphicsDevice.BlendState = BlendState.Opaque;
+                EngineManager.Instance.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            }
+
+            if (BlendState != null)
+            {
+                EngineManager.Instance.GraphicsDevice.BlendState = BlendState;
+            }
+            else
+            {
+                if (Transparent)
+                {
+                    EngineManager.Instance.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+                }
+                else
+                {
+                    EngineManager.Instance.GraphicsDevice.BlendState = BlendState.Opaque;
+                }
             }
             if (!fallback)
             {
