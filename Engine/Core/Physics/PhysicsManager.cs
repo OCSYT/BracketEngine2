@@ -133,8 +133,7 @@ namespace Engine.Core.Physics
 
         public static CollisionShape CreateCollisionShapeFromStaticMesh(
             StaticMesh staticMesh,
-            Microsoft.Xna.Framework.Vector3? scale = null,
-            bool isConvex = true
+            Microsoft.Xna.Framework.Vector3? scale = null
         )
         {
             Microsoft.Xna.Framework.Vector3 scalingFactor =
@@ -156,73 +155,23 @@ namespace Engine.Core.Physics
                 }
             }
 
-            if (isConvex)
+            ConvexHullShape convexShape = new ConvexHullShape();
+            foreach (var vertex in vertices)
             {
-                ConvexHullShape convexShape = new ConvexHullShape();
-                foreach (var vertex in vertices)
-                {
-                    var scaledVertex = new Vector3(
-                        vertex.X * scalingFactor.X,
-                        vertex.Y * scalingFactor.Y,
-                        vertex.Z * scalingFactor.Z
-                    );
-                    convexShape.AddPoint(scaledVertex, false);
-                }
-                convexShape.RecalcLocalAabb();
-                return convexShape;
+                var scaledVertex = new Vector3(
+                    vertex.X * scalingFactor.X,
+                    vertex.Y * scalingFactor.Y,
+                    vertex.Z * scalingFactor.Z
+                );
+                convexShape.AddPoint(scaledVertex, false);
             }
-            else
-            {
-                TriangleMesh triangleMesh = new TriangleMesh();
-                List<int> indices = new List<int>();
-
-                foreach (StaticMesh.SubMesh subMesh in staticMesh.SubMeshes)
-                {
-                    int[] submeshIndices = new int[subMesh.NumIndices];
-                    subMesh.IndexBuffer.GetData(submeshIndices);
-
-                    foreach (var index in submeshIndices)
-                    {
-                        indices.Add(index);
-                    }
-                }
-
-
-                for (int i = 0; i < indices.Count; i += 3)
-                {
-                    var v0 = vertices[indices[i]];
-                    var v1 = vertices[indices[i + 1]];
-                    var v2 = vertices[indices[i + 2]];
-
-                    var scaledV0 = new Vector3(
-                        v0.X * scalingFactor.X,
-                        v0.Y * scalingFactor.Y,
-                        v0.Z * scalingFactor.Z
-                    );
-                    var scaledV1 = new Vector3(
-                        v1.X * scalingFactor.X,
-                        v1.Y * scalingFactor.Y,
-                        v1.Z * scalingFactor.Z
-                    );
-                    var scaledV2 = new Vector3(
-                        v2.X * scalingFactor.X,
-                        v2.Y * scalingFactor.Y,
-                        v2.Z * scalingFactor.Z
-                    );
-
-                    triangleMesh.AddTriangle(scaledV0, scaledV1, scaledV2, true);
-                }
-
-                var shape = new BvhTriangleMeshShape(triangleMesh, true);
-
-                return shape;
-            }
+            convexShape.RecalcLocalAabb();
+            return convexShape;
         }
 
         public static CollisionShape CreateCollisionShapeFromModel(
             Model model,
-            Microsoft.Xna.Framework.Vector3? scale = null,
-            bool isConvex = true
+            Microsoft.Xna.Framework.Vector3? scale = null
         )
         {
             Microsoft.Xna.Framework.Vector3 scalingFactor =
@@ -230,55 +179,20 @@ namespace Engine.Core.Physics
 
             List<Vector3> vertices = ExtractVerticesFromModel(model);
 
-            if (isConvex)
+
+            ConvexHullShape convexShape = new ConvexHullShape();
+            foreach (var vertex in vertices)
             {
-                ConvexHullShape convexShape = new ConvexHullShape();
-                foreach (var vertex in vertices)
-                {
-                    var scaledVertex = new Vector3(
-                        vertex.X * scalingFactor.X,
-                        vertex.Y * scalingFactor.Y,
-                        vertex.Z * scalingFactor.Z
-                    );
-                    convexShape.AddPoint(scaledVertex, false);
-                }
-                convexShape.RecalcLocalAabb();
-                return convexShape;
+                var scaledVertex = new Vector3(
+                    vertex.X * scalingFactor.X,
+                    vertex.Y * scalingFactor.Y,
+                    vertex.Z * scalingFactor.Z
+                );
+                convexShape.AddPoint(scaledVertex, false);
             }
-            else
-            {
-                TriangleMesh triangleMesh = new TriangleMesh();
-                List<int> indices = ExtractIndicesFromModel(model);
+            convexShape.RecalcLocalAabb();
+            return convexShape;
 
-                for (int i = 0; i < indices.Count; i += 3)
-                {
-                    var v0 = vertices[indices[i]];
-                    var v1 = vertices[indices[i + 1]];
-                    var v2 = vertices[indices[i + 2]];
-
-                    var scaledV0 = new Vector3(
-                        v0.X * scalingFactor.X,
-                        v0.Y * scalingFactor.Y,
-                        v0.Z * scalingFactor.Z
-                    );
-                    var scaledV1 = new Vector3(
-                        v1.X * scalingFactor.X,
-                        v1.Y * scalingFactor.Y,
-                        v1.Z * scalingFactor.Z
-                    );
-                    var scaledV2 = new Vector3(
-                        v2.X * scalingFactor.X,
-                        v2.Y * scalingFactor.Y,
-                        v2.Z * scalingFactor.Z
-                    );
-
-                    triangleMesh.AddTriangle(scaledV0, scaledV1, scaledV2, true);
-                }
-
-                var shape = new BvhTriangleMeshShape(triangleMesh, true);
-
-                return shape;
-            }
         }
 
         private static List<Vector3> ExtractVerticesFromModel(Model model)
@@ -302,22 +216,6 @@ namespace Engine.Core.Physics
                 }
             }
             return vertices;
-        }
-
-        private static List<int> ExtractIndicesFromModel(Model model)
-        {
-            List<int> indices = new List<int>();
-            foreach (ModelMesh mesh in model.Meshes)
-            {
-                foreach (ModelMeshPart part in mesh.MeshParts)
-                {
-                    ushort[] indexData = new ushort[part.PrimitiveCount * 3];
-                    part.IndexBuffer.GetData(indexData);
-
-                    indices.AddRange(Array.ConvertAll(indexData, x => (int)x));
-                }
-            }
-            return indices;
         }
     }
 }

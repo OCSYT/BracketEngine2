@@ -84,38 +84,46 @@ namespace Engine.Core.Rendering
                 {
                     try
                     {
-                        // Copy directional light data safely
-                        Vector3[] directions = new Vector3[MaxDirectionalLights];
-                        float[] intensities = new float[MaxDirectionalLights];
-                        Vector3[] colors = new Vector3[MaxDirectionalLights];
-                        Parallel.For(0, Math.Min(DirectionalLights.Count, MaxDirectionalLights), i =>
+                        lock (_directionalLightsLock)
                         {
-                            var light = DirectionalLights[i];
-                            directions[i] = light.Direction;
-                            intensities[i] = light.Intensity;
-                            colors[i] = light.Color.ToVector3();
-                        });
+                            var dirLightCount = Math.Min(DirectionalLights.Count, MaxDirectionalLights);
+                            var directions = new Vector3[dirLightCount];
+                            var intensities = new float[dirLightCount];
+                            var colors = new Vector3[dirLightCount];
 
-                        // Copy point light data safely
-                        Vector3[] pointPositions = new Vector3[MaxPointLights];
-                        float[] pointIntensities = new float[MaxPointLights];
-                        Vector3[] pointColors = new Vector3[MaxPointLights];
-                        Parallel.For(0, Math.Min(PointLights.Count, MaxPointLights), i =>
+                            Parallel.For(0, dirLightCount, i =>
+                            {
+                                var light = DirectionalLights[i];
+                                directions[i] = light.Direction;
+                                intensities[i] = light.Intensity;
+                                colors[i] = light.Color.ToVector3();
+                            });
+
+                            effect.Parameters["AmbientColor"]?.SetValue(AmbientColor.ToVector4());
+                            effect.Parameters["dirLightDirection"]?.SetValue(directions);
+                            effect.Parameters["dirLightIntensity"]?.SetValue(intensities);
+                            effect.Parameters["dirLightColor"]?.SetValue(colors);
+                        }
+
+                        lock (_pointLightsLock)
                         {
-                            var light = PointLights[i];
-                            pointPositions[i] = light.Position;
-                            pointIntensities[i] = light.Intensity;
-                            pointColors[i] = light.Color.ToVector3();
-                        });
-                        // Set shader parameters
-                        effect.Parameters["AmbientColor"]?.SetValue(AmbientColor.ToVector4());
-                        effect.Parameters["dirLightDirection"]?.SetValue(directions);
-                        effect.Parameters["dirLightIntensity"]?.SetValue(intensities);
-                        effect.Parameters["dirLightColor"]?.SetValue(colors);
+                            var pointLightCount = Math.Min(PointLights.Count, MaxPointLights);
+                            var pointPositions = new Vector3[pointLightCount];
+                            var pointIntensities = new float[pointLightCount];
+                            var pointColors = new Vector3[pointLightCount];
 
-                        effect.Parameters["pointLightPositions"]?.SetValue(pointPositions);
-                        effect.Parameters["pointLightIntensities"]?.SetValue(pointIntensities);
-                        effect.Parameters["pointLightColors"]?.SetValue(pointColors);
+                            Parallel.For(0, pointLightCount, i =>
+                            {
+                                var light = PointLights[i];
+                                pointPositions[i] = light.Position;
+                                pointIntensities[i] = light.Intensity;
+                                pointColors[i] = light.Color.ToVector3();
+                            });
+
+                            effect.Parameters["pointLightPositions"]?.SetValue(pointPositions);
+                            effect.Parameters["pointLightIntensities"]?.SetValue(pointIntensities);
+                            effect.Parameters["pointLightColors"]?.SetValue(pointColors);
+                        }
                     }
                     catch
                     {

@@ -79,7 +79,6 @@ namespace Engine.Core.Components.Rendering
             {
                 if (!frustum.Intersects(mesh.BoundingSphere.Transform(worldMatrix))) continue;
 
-                // Sort MeshParts by Material.SortOrder
                 var sortedMeshParts = mesh.MeshParts
                     .OrderBy(part => Materials?[mesh.MeshParts.IndexOf(part)].SortOrder ?? int.MaxValue)
                     .ToList();
@@ -112,7 +111,6 @@ namespace Engine.Core.Components.Rendering
             var defaultShader = EngineManager.Instance.DefaultShader;
             var device = EngineManager.Instance.Graphics.GraphicsDevice;
 
-            // Sort SubMeshes by Material.SortOrder
             var sortedSubMeshes = StaticMesh.SubMeshes
                 .OrderBy(subMesh => Materials?[StaticMesh.SubMeshes.IndexOf(subMesh)].SortOrder ?? int.MaxValue)
                 .ToList();

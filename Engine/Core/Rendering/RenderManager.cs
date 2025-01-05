@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System;
+using System.Threading.Tasks;
+using System.Linq;
 using SharpFont;
 
 namespace Engine.Core.Rendering
@@ -11,9 +13,19 @@ namespace Engine.Core.Rendering
     public class RenderManager
     {
         private static RenderManager _instance;
+        private Vector3 CachedCameraPosition;
+        private Matrix LastViewMatrix;
+        private List<int> CachedRendererEntities;
+        private List<MeshRenderer> CachedRenderers;
+        private int LastEntityCount;
+        private List<MeshRenderer> SortedRenderers;
 
         private RenderManager()
         {
+            CachedRendererEntities = new List<int>();
+            CachedRenderers = new List<MeshRenderer>();
+            SortedRenderers = new List<MeshRenderer>();
+            LastEntityCount = 0;
         }
 
         public static RenderManager Instance
@@ -27,44 +39,88 @@ namespace Engine.Core.Rendering
                 return _instance;
             }
         }
-        public Vector3 CalculateCameraPosition(Matrix viewMatrix)
+
+        private Vector3 CalculateCameraPosition(Matrix viewMatrix)
         {
-            Matrix invertedViewMatrix = Matrix.Invert(viewMatrix);
-            return invertedViewMatrix.Translation;
+            if (LastViewMatrix != viewMatrix)
+            {
+                LastViewMatrix = viewMatrix;
+                CachedCameraPosition = Matrix.Invert(viewMatrix).Translation;
+            }
+            return CachedCameraPosition;
+        }
+
+        private void CacheRendererEntitiesAndComponents()
+        {
+            List<int> currentRendererEntities = ECSManager.Instance.GetEntitiesWithComponent<MeshRenderer>();
+
+            if (currentRendererEntities.Count != LastEntityCount || !AreEntitiesEqual(currentRendererEntities))
+            {
+                CachedRendererEntities.Clear();
+                CachedRendererEntities.AddRange(currentRendererEntities);
+
+                CachedRenderers.Clear();
+
+                Parallel.ForEach(CachedRendererEntities, entity =>
+                {
+                    var components = ECSManager.Instance.GetComponents<MeshRenderer>(ECSManager.Instance.GetEntityById(entity));
+                    lock (CachedRenderers)
+                    {
+                        CachedRenderers.AddRange(components);
+                    }
+                });
+
+                LastEntityCount = currentRendererEntities.Count;
+            }
+        }
+
+        private bool AreEntitiesEqual(List<int> currentEntities)
+        {
+            if (currentEntities.Count != CachedRendererEntities.Count)
+                return false;
+
+            return !currentEntities.Where((t, i) => t != CachedRendererEntities[i]).Any();
         }
 
         public void Render(BasicEffect effect, Matrix viewMatrix, Matrix projectionMatrix, GameTime gameTime)
         {
-            List<int> rendererEntities = ECSManager.Instance.GetEntitiesWithComponent<MeshRenderer>();
-            List<MeshRenderer> renderers = new List<MeshRenderer>();
 
-            foreach (int entity in rendererEntities)
+            var SortTask = Task.Run(() =>
             {
-                renderers.AddRange(ECSManager.Instance.GetComponents<MeshRenderer>(ECSManager.Instance.GetEntityById(entity)));
-            }
+                Vector3 cameraPosition = CalculateCameraPosition(viewMatrix);
 
-            renderers.Sort((a, b) =>
-            {
-                int sortOrderComparison = a.SortOrderTotal.CompareTo(b.SortOrderTotal);
-                if (sortOrderComparison != 0)
+                CacheRendererEntitiesAndComponents();
+
+
+                var renderersToSort = new List<MeshRenderer>(CachedRenderers);
+
+                renderersToSort.Sort((a, b) =>
                 {
-                    return sortOrderComparison;
-                }
-                else
+                    int sortOrderComparison = a.SortOrderTotal.CompareTo(b.SortOrderTotal);
+                    if (sortOrderComparison != 0)
+                    {
+                        return sortOrderComparison;
+                    }
+                    else
+                    {
+                        float distanceA = Vector3.DistanceSquared(cameraPosition, a.Transform.Position);
+                        float distanceB = Vector3.DistanceSquared(cameraPosition, b.Transform.Position);
+                        return distanceB.CompareTo(distanceA);
+                    }
+                });
+
+                lock (SortedRenderers)
                 {
-                    Vector3 CamPos = CalculateCameraPosition(viewMatrix);
-                    float distanceA = Vector3.Distance(CamPos, a.Transform.Position);
-                    float distanceB = Vector3.Distance(CamPos, b.Transform.Position);
-                    return distanceB.CompareTo(distanceA);
+                    SortedRenderers = renderersToSort;
                 }
             });
+            SortTask.Wait();
 
-            foreach (var renderer in renderers)
+
+            foreach (var renderer in SortedRenderers)
             {
                 renderer.RenderMesh(effect, viewMatrix, projectionMatrix, gameTime);
             }
         }
-
-
     }
 }

@@ -194,6 +194,8 @@ namespace Engine.Core.Components.Physics
             );
             BulletSharp.Math.Vector3 calculatedInertia = BulletSharp.Math.Vector3.Zero;
 
+            CompoundShape compoundShape = new CompoundShape();
+
             foreach (CollisionShape shape in Shapes)
             {
                 shape.LocalScaling = new BulletSharp.Math.Vector3(
@@ -201,6 +203,7 @@ namespace Engine.Core.Components.Physics
                     Transform.Scale.Y,
                     Transform.Scale.Z
                 );
+                compoundShape.AddChildShape(BulletSharp.Math.Matrix.Identity, shape);
                 if (!IsStatic)
                 {
                     calculatedInertia += shape.CalculateLocalInertia(Mass);
@@ -210,7 +213,7 @@ namespace Engine.Core.Components.Physics
             RigidBodyConstructionInfo rigidBodyInfo = new RigidBodyConstructionInfo(
                 IsStatic ? 0 : Mass,
                 new DefaultMotionState(initialTransform),
-                Shapes[0],
+                compoundShape,
                 new BulletSharp.Math.Vector3(Inertia.X, Inertia.Y, Inertia.Z)
                     == BulletSharp.Math.Vector3.Zero
                   ? calculatedInertia
