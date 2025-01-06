@@ -20,6 +20,7 @@ Ensure you have [Visual C++ Redistributable Packages for Visual Studio 2013](htt
    - **C# Dev Kit Extension**
    - **C# Extension**
    - **.NET Install Tool Extension**
+   - **MonoGame Content Builder (Editor)**
 4. Build the project using `CTRL + ALT + B`.
 
 ---
