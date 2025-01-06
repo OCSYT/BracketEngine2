@@ -23,6 +23,8 @@ namespace Engine.Core.Components.Physics
         public bool Debug;
         private PhysicsDebugger Debugger;
         public float Mass { get; set; }
+        public float Drag { get; set; } = 0f;
+        public float AngularDrag { get; set; } = 0.05f;
         public Vector3 Inertia { get; set; }
         public float Friction { get; set; }
         public float Restitution { get; set; }
@@ -32,7 +34,9 @@ namespace Engine.Core.Components.Physics
         private bool Initalized;
 
         public RigidBody(
-            float mass = 70f,
+            float mass = 1f,
+            float drag = 0f,
+            float angulardrag = 0.05f,
             CollisionShape[] shapes = null,
             bool isStatic = false,
             bool debug = false,
@@ -45,6 +49,8 @@ namespace Engine.Core.Components.Physics
             PhysicsWorld = PhysicsManager.Instance.PhysicsWorld;
             Debug = debug;
             Mass = mass;
+            Drag = drag;
+            AngularDrag = angulardrag;
             Shapes = shapes;
             IsStatic = isStatic;
             Friction = friction;
@@ -230,7 +236,7 @@ namespace Engine.Core.Components.Physics
                 Restitution = Restitution
             };
             BulletRigidBody.SetAnisotropicFriction(BulletSharp.Math.Vector3.One *  Friction, AnisotropicFrictionFlags.RollingFriction);
-
+            BulletRigidBody.SetDamping(Drag, AngularDrag);
             BulletRigidBody.UserObject = this;
             BulletRigidBody.SetSleepingThresholds(0, 0);
             Initalized = false;
@@ -252,40 +258,40 @@ namespace Engine.Core.Components.Physics
 
         public void SetIntertia(Vector3 i)
         {
-            if (BulletRigidBody == null) return;
+            if ((Initalized && BulletRigidBody != null) == false) return;
             BulletRigidBody.SetMassProps(Mass, new BulletSharp.Math.Vector3(i.X, i.Y, i.Z));
             Inertia = i;
         }
 
         public void SetMass(float m)
         {
-            if (BulletRigidBody == null) return;
+            if ((Initalized && BulletRigidBody != null) == false) return;
             BulletRigidBody.SetMassProps(m, BulletRigidBody.LocalInertia);
             Mass = m;
         }
 
         public void SetRestitution(float f)
         {
-            if (BulletRigidBody == null) return;
+            if ((Initalized && BulletRigidBody != null) == false) return;
             BulletRigidBody.Restitution = f;
             Restitution = f;
         }
 
         public void SetVelocity(Vector3 v)
         {
-            if (BulletRigidBody == null) return;
+            if ((Initalized && BulletRigidBody != null) == false) return;
             BulletRigidBody.LinearVelocity = new BulletSharp.Math.Vector3(v.X, v.Y, v.Z);
         }
 
         public void SetAngularVelocity(Vector3 av)
         {
-            if (BulletRigidBody == null) return;
+            if ((Initalized && BulletRigidBody != null) == false) return;
             BulletRigidBody.AngularVelocity = new BulletSharp.Math.Vector3(av.X, av.Y, av.Z);
         }
 
         public void SetPosition(Vector3 position)
         {
-            if (BulletRigidBody == null) return;
+            if ((Initalized && BulletRigidBody != null) == false) return;
             BulletSharp.Math.Matrix worldTransform = BulletRigidBody.WorldTransform;
 
             worldTransform.M41 = position.X;
@@ -297,7 +303,7 @@ namespace Engine.Core.Components.Physics
 
         public void SetRotation(Quaternion rotation)
         {
-            if (BulletRigidBody == null) return;
+            if ((Initalized && BulletRigidBody != null) == false) return;
 
             BulletSharp.Math.Matrix worldTransform = BulletRigidBody.WorldTransform;
 
@@ -317,7 +323,51 @@ namespace Engine.Core.Components.Physics
 
             BulletRigidBody.WorldTransform = worldTransform;
         }
+        public void SetStatic(bool value)
+        {
+            if ((Initalized && BulletRigidBody != null) == false) return;
+            BulletRigidBody.SetMassProps(value ? 0 : Mass, BulletRigidBody.LocalInertia);
+            IsStatic = value;
+        }
+        public void SetDrag(float DragValue)
+        {
+            if ((Initalized && BulletRigidBody != null) == false) return;
+            Drag = DragValue;
+            BulletRigidBody.SetDamping(Drag, AngularDrag);
+        }
+        public void SetAngularDrag(float DragValue)
+        {
+            if ((Initalized && BulletRigidBody != null) == false) return;
+            AngularDrag = DragValue;
+            BulletRigidBody.SetDamping(Drag, AngularDrag);
+        }
 
+
+        public void SetCollisionGroup(int Group)
+        {
+            if ((Initalized && BulletRigidBody != null) == false) return;
+            CollisionGroup = Group;
+            PhysicsWorld.RemoveRigidBody(BulletRigidBody);
+            PhysicsWorld.AddRigidBody(BulletRigidBody, CollisionGroup, CollisionMask);
+        }
+        public void SetCollisionMask(int Mask)
+        {
+            if ((Initalized && BulletRigidBody != null) == false) return;
+            CollisionMask = Mask;
+            PhysicsWorld.RemoveRigidBody(BulletRigidBody);
+            PhysicsWorld.AddRigidBody(BulletRigidBody, CollisionGroup, CollisionMask);
+        }
+
+        public void SetCenterOfMass(Vector3 COM)
+        {
+            if ((Initalized && BulletRigidBody != null) == false) return;
+
+            BulletSharp.Math.Matrix CenterOfMassTransform = BulletRigidBody.CenterOfMassTransform;
+
+            CenterOfMassTransform.Origin = new BulletSharp.Math.Vector3(COM.X, COM.Y, COM.Z);
+
+            BulletRigidBody.CenterOfMassTransform = CenterOfMassTransform;
+        }
 
         private void UpdateTransform()
         {
@@ -365,6 +415,17 @@ namespace Engine.Core.Components.Physics
             if (Initalized && BulletRigidBody != null)
             {
                 BulletRigidBody.ApplyTorque(
+                    new BulletSharp.Math.Vector3(torque.X, torque.Y, torque.Z)
+                );
+            }
+        }
+
+
+        public void ApplyTorqueImpulse(Vector3 torque)
+        {
+            if (Initalized && BulletRigidBody != null)
+            {
+                BulletRigidBody.ApplyTorqueImpulse(
                     new BulletSharp.Math.Vector3(torque.X, torque.Y, torque.Z)
                 );
             }

@@ -44,8 +44,8 @@ namespace Engine.Components
         public override void Start()
         {
             CamTransform = CameraObj.Transform;
-            Body.BulletRigidBody.Friction = 0f;
-            Body.BulletRigidBody.Restitution = 0f;
+            Body.SetFriction(0f);
+            Body.SetRestitution(0f);
             Body.SetAngularFactor(Vector3.Zero);
         }
 
@@ -131,9 +131,7 @@ namespace Engine.Components
             }
 
             LocalVel += Vector3.Up * YVel;
-            Body.BulletRigidBody.LinearVelocity =
-                new BulletSharp.Math.Vector3(LocalVel.X, LocalVel.Y, LocalVel.Z);
-
+            Body.SetVelocity(LocalVel);
 
             CamTransform.Position = Transform.Position + Vector3.Up * Height/2;
         }
