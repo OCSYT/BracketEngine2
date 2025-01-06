@@ -133,6 +133,10 @@ namespace Engine.Core.Rendering
                         {
                             effect.Parameters[kvp.Key]?.SetValue((Vector3)paramValue);
                         }
+                        else if (paramType == typeof(Vector2))
+                        {
+                            effect.Parameters[kvp.Key]?.SetValue((Vector2)paramValue);
+                        }
                         else if (paramType == typeof(float))
                         {
                             effect.Parameters[kvp.Key]?.SetValue((float)paramValue);
@@ -144,6 +148,10 @@ namespace Engine.Core.Rendering
                         else if (paramType == typeof(bool))
                         {
                             effect.Parameters[kvp.Key]?.SetValue((bool)paramValue);
+                        }
+                        else if (paramType == typeof(Quaternion))
+                        {
+                            effect.Parameters[kvp.Key]?.SetValue((Quaternion)paramValue);
                         }
                         else if (paramType == typeof(TextureCube))
                         {
@@ -157,9 +165,18 @@ namespace Engine.Core.Rendering
                             {
                                 effect.Parameters[kvp.Key]?.SetValue((float[])paramValue);
                             }
+
+                            if (elementType == typeof(int))
+                            {
+                                effect.Parameters[kvp.Key]?.SetValue((int[])paramValue);
+                            }
                             else if (elementType == typeof(Vector3))
                             {
                                 effect.Parameters[kvp.Key]?.SetValue((Vector3[])paramValue);
+                            }
+                            else if (elementType == typeof(Vector2))
+                            {
+                                effect.Parameters[kvp.Key]?.SetValue((Vector2[])paramValue);
                             }
                             else if (elementType == typeof(Vector4))
                             {
@@ -172,10 +189,11 @@ namespace Engine.Core.Rendering
                         }
                     }
                 }
-                catch
+                catch 
                 {
                 }
             }
+
             else
             {
                 effect.Parameters["VertexColors"]?.SetValue(VertexColors ? 1 : 0);

@@ -32,6 +32,14 @@ namespace Engine.Game
         }
         public override void Start()
         {
+
+            Effect ACESToneMapper = Content.Load<Effect>("Rendering/Shaders/ACES");
+            PostFxManager.Instance.AddEffect(ACESToneMapper, new List<KeyValuePair<string, object>>() {
+                new ("Exposure", 1.5f),
+                new ("Gamma", .5f)
+            });
+
+
             // Call functions to initialize each object
             CreateFloor();
             CreatePointLight(new Vector3(0, 25, -50), Color.Red);
@@ -80,7 +88,6 @@ namespace Engine.Game
             }
         }
 
-
         public override void Render(GameTime GameTime)
         {
             Graphics.GraphicsDevice.Clear(Color.Black);
@@ -93,6 +100,7 @@ namespace Engine.Game
                 Effect.Projection = CameraObj.GetProjectionMatrix();
                 ECSManager.Instance.CallRenderOnComponents(Effect, CameraObj.GetViewMatrix(), CameraObj.GetProjectionMatrix(), GameTime);
             }
+            GraphicsDevice.SetRenderTarget(null);
         }
 
         //Spawning Objects

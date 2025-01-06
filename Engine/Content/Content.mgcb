@@ -53,6 +53,12 @@
 /processorParam:TextureFormat=Compressed
 /build:GameContent/Walking.fbx
 
+#begin Rendering/Shaders/ACES.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Rendering/Shaders/ACES.fx
+
 #begin Rendering/Shaders/Default.fx
 /importer:EffectImporter
 /processor:EffectProcessor

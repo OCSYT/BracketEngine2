@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using Engine.Core.Rendering;
 using Engine.Game;
 using Myra;
+using System.Collections.Generic;
 namespace Engine.Core
 {
     public class EngineManager : Microsoft.Xna.Framework.Game
@@ -51,6 +52,7 @@ namespace Engine.Core
         private float ElapsedTime = 0f;
         public float CurrentFrameRate = 0f;
         public bool Debug = false;
+        public RenderTarget2D RenderTarget { get; set; }
         public Effect DefaultShader;
         public Texture2D WhiteTex;
         public Texture2D BlackTex;
@@ -85,8 +87,20 @@ namespace Engine.Core
         }
 
 
+        private int PrevWidth;
+        private int PrevHeight;
         protected override void LoadContent()
         {
+            PrevWidth = GraphicsDevice.Viewport.Width;
+            PrevHeight = GraphicsDevice.Viewport.Height;
+            if (RenderTarget == null)
+            {
+                RenderTarget = new RenderTarget2D(GraphicsDevice, PrevWidth, PrevHeight, false,
+    SurfaceFormat.Color,
+    DepthFormat.Depth24);
+            }
+
+
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             DefaultShader = Content.Load<Effect>("Rendering/Shaders/Default");
             Start();
@@ -96,8 +110,122 @@ namespace Engine.Core
 
         protected override void Draw(GameTime gameTime)
         {
+            if ((PrevWidth != GraphicsDevice.Viewport.Width) || (PrevHeight != GraphicsDevice.Viewport.Height))
+            {
+                PrevWidth = GraphicsDevice.Viewport.Width;
+                PrevHeight = GraphicsDevice.Viewport.Height;
+                RenderTarget = new RenderTarget2D(GraphicsDevice, PrevWidth, PrevHeight, false,
+    SurfaceFormat.Color,
+    DepthFormat.Depth24);
+            }
+
             Graphics.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.SetRenderTarget(RenderTarget);
             Render(gameTime);
+            GraphicsDevice.SetRenderTarget(null);
+            foreach (KeyValuePair<int, Effect> PostFX in PostFxManager.Instance.PostFxList)
+            {
+                foreach (KeyValuePair<string, object> Parameter in PostFxManager.Instance.PostFXParameterList[PostFX.Key])
+                {
+                    try
+                    {
+                        if(Parameter.Key != "" && Parameter.Value != null)
+                        {
+                            var effectParameter = PostFX.Value.Parameters[Parameter.Key];
+                            if (effectParameter != null)
+                            {
+                                Type paramType = Parameter.Value.GetType();
+                                if (paramType == typeof(float))
+                                {
+                                    effectParameter.SetValue((float)Parameter.Value);
+                                }
+                                else if (paramType == typeof(int))
+                                {
+                                    effectParameter.SetValue((int)Parameter.Value);
+                                }
+                                else if (paramType == typeof(bool))
+                                {
+                                    effectParameter.SetValue((bool)Parameter.Value);
+                                }
+                                else if (paramType == typeof(Quaternion))
+                                {
+                                    effectParameter.SetValue((Quaternion)Parameter.Value);
+                                }
+                                else if (paramType == typeof(Vector4))
+                                {
+                                    effectParameter.SetValue((Vector4)Parameter.Value);
+                                }
+                                else if (paramType == typeof(Vector3))
+                                {
+                                    effectParameter.SetValue((Vector3)Parameter.Value);
+                                }
+                                else if (paramType == typeof(Vector2))
+                                {
+                                    effectParameter.SetValue((Vector2)Parameter.Value);
+                                }
+                                else if (paramType == typeof(Matrix))
+                                {
+                                    effectParameter.SetValue((Matrix)Parameter.Value);
+                                }
+                                else if (paramType == typeof(Texture2D))
+                                {
+                                    effectParameter.SetValue((Texture2D)Parameter.Value);
+                                }
+                                else if (paramType == typeof(TextureCube))
+                                {
+                                    effectParameter.SetValue((TextureCube)Parameter.Value);
+                                }
+                                else if (paramType.IsArray)
+                                {
+                                    var elementType = paramType.GetElementType();
+                                    if (elementType == typeof(float))
+                                    {
+                                        effectParameter.SetValue((float[])Parameter.Value);
+                                    }
+                                    if (elementType == typeof(int))
+                                    {
+                                        effectParameter.SetValue((int[])Parameter.Value);
+                                    }
+                                    else if (elementType == typeof(Vector3))
+                                    {
+                                        effectParameter.SetValue((Vector3[])Parameter.Value);
+                                    }
+                                    else if (elementType == typeof(Vector2))
+                                    {
+                                        effectParameter.SetValue((Vector2[])Parameter.Value);
+                                    }
+                                    else if (elementType == typeof(Vector4))
+                                    {
+                                        effectParameter.SetValue((Vector4[])Parameter.Value);
+                                    }
+                                    else if (elementType == typeof(Matrix))
+                                    {
+                                        effectParameter.SetValue((Matrix[])Parameter.Value);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+                }
+                foreach (EffectTechnique technique in PostFX.Value.Techniques)
+                {
+                    PostFX.Value.CurrentTechnique = technique;
+                    SpriteBatch.Begin(effect: PostFX.Value);
+                    SpriteBatch.Draw(RenderTarget, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
+                    SpriteBatch.End();
+                }
+            }
+            if(PostFxManager.Instance.PostFxList.Count == 0)
+            {
+                SpriteBatch.Begin();
+                SpriteBatch.Draw(RenderTarget, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
+                SpriteBatch.End();
+            }
+
             UIManager.Render(gameTime);
             if (WhiteTex == null && BlackTex == null)
             {
