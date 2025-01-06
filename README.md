@@ -95,6 +95,8 @@ Ensure you have [.NET 9.0 SDK](https://dotnet.microsoft.com/en-us/download) inst
 ### Rendering
 - **`Core.Rendering.LightManager.cs` (singleton)**  
   Configure ambient light.
+- **`Core.Rendering.PostFxManager.cs` (singleton)**  
+  Allows adding rendering of fullscreen shaders after main Render function has been called.
 - **`Core.Rendering.StaticMesh.cs`**  
   Generate procedural models compatible with MeshRenderer.
 - **`Core.Rendering.PrimitiveModel.cs`**  
