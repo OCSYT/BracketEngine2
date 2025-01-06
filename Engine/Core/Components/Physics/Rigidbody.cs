@@ -250,11 +250,11 @@ namespace Engine.Core.Components.Physics
             Friction = f;
         }
 
-        public void SetIntertia(BulletSharp.Math.Vector3 i)
+        public void SetIntertia(Vector3 i)
         {
             if (BulletRigidBody == null) return;
-            BulletRigidBody.SetMassProps(Mass, i);
-            Inertia = new Vector3(i.X, i.Y, i.Z);
+            BulletRigidBody.SetMassProps(Mass, new BulletSharp.Math.Vector3(i.X, i.Y, i.Z));
+            Inertia = i;
         }
 
         public void SetMass(float m)
@@ -271,18 +271,52 @@ namespace Engine.Core.Components.Physics
             Restitution = f;
         }
 
-        public void SetVelocity(BulletSharp.Math.Vector3 v)
+        public void SetVelocity(Vector3 v)
         {
             if (BulletRigidBody == null) return;
-            BulletRigidBody.LinearVelocity = v;
+            BulletRigidBody.LinearVelocity = new BulletSharp.Math.Vector3(v.X, v.Y, v.Z);
         }
 
-        public void SetAngularVelocity(BulletSharp.Math.Vector3 av)
+        public void SetAngularVelocity(Vector3 av)
         {
             if (BulletRigidBody == null) return;
-            BulletRigidBody.AngularVelocity = av;
+            BulletRigidBody.AngularVelocity = new BulletSharp.Math.Vector3(av.X, av.Y, av.Z);
         }
 
+        public void SetPosition(Vector3 position)
+        {
+            if (BulletRigidBody == null) return;
+            BulletSharp.Math.Matrix worldTransform = BulletRigidBody.WorldTransform;
+
+            worldTransform.M41 = position.X;
+            worldTransform.M42 = position.Y;
+            worldTransform.M43 = position.Z;
+
+            BulletRigidBody.WorldTransform = worldTransform;
+        }
+
+        public void SetRotation(Quaternion rotation)
+        {
+            if (BulletRigidBody == null) return;
+
+            BulletSharp.Math.Matrix worldTransform = BulletRigidBody.WorldTransform;
+
+            BulletSharp.Math.Matrix rotationMatrix = BulletSharp.Math.Matrix.RotationQuaternion(new BulletSharp.Math.Quaternion(rotation.X, rotation.Y, rotation.Z, rotation.W));
+
+            worldTransform.M11 = rotationMatrix.M11;
+            worldTransform.M12 = rotationMatrix.M12;
+            worldTransform.M13 = rotationMatrix.M13;
+
+            worldTransform.M21 = rotationMatrix.M21;
+            worldTransform.M22 = rotationMatrix.M22;
+            worldTransform.M23 = rotationMatrix.M23;
+
+            worldTransform.M31 = rotationMatrix.M31;
+            worldTransform.M32 = rotationMatrix.M32;
+            worldTransform.M33 = rotationMatrix.M33;
+
+            BulletRigidBody.WorldTransform = worldTransform;
+        }
 
 
         private void UpdateTransform()
