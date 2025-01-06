@@ -22,7 +22,7 @@ Ensure you have [.NET 9.0 SDK](https://dotnet.microsoft.com/en-us/download) inst
    - **C# Extension**
    - **.NET Install Tool Extension**
    - **MonoGame Content Builder (Editor)**
-4. Build the project using `CTRL + ALT + B`.
+4. Build the project using `CTRL + SHIFT + B`.
 
 ---
 
