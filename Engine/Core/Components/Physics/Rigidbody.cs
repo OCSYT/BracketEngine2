@@ -18,6 +18,7 @@ namespace Engine.Core.Components.Physics
         public BulletSharp.RigidBody BulletRigidBody { get; private set; }
         private DiscreteDynamicsWorld PhysicsWorld;
         public CollisionShape[] Shapes;
+        private CompoundShape PhysicsShape;
         public bool IsStatic { get; set; }
         public bool Debug;
         private PhysicsDebugger Debugger;
@@ -194,7 +195,7 @@ namespace Engine.Core.Components.Physics
             );
             BulletSharp.Math.Vector3 calculatedInertia = BulletSharp.Math.Vector3.Zero;
 
-            CompoundShape compoundShape = new CompoundShape();
+            PhysicsShape = new CompoundShape();
 
             foreach (CollisionShape shape in Shapes)
             {
@@ -203,18 +204,19 @@ namespace Engine.Core.Components.Physics
                     Transform.Scale.Y,
                     Transform.Scale.Z
                 );
-                compoundShape.AddChildShape(BulletSharp.Math.Matrix.Identity, shape);
+
                 if (!IsStatic)
                 {
                     calculatedInertia += shape.CalculateLocalInertia(Mass);
                 }
+                PhysicsShape.AddChildShape(BulletSharp.Math.Matrix.Identity, shape);
             }
 
             RigidBodyConstructionInfo rigidBodyInfo = new RigidBodyConstructionInfo(
                 IsStatic ? 0 : Mass,
                 new DefaultMotionState(initialTransform),
-                compoundShape,
-                new BulletSharp.Math.Vector3(Inertia.X, Inertia.Y, Inertia.Z)
+                PhysicsShape,
+                new BulletSharp.Math.Vector3(Inertia.X, Inertia.Y,  Inertia.Z)
                     == BulletSharp.Math.Vector3.Zero
                   ? calculatedInertia
                   : new BulletSharp.Math.Vector3(Inertia.X, Inertia.Y, Inertia.Z)
@@ -222,15 +224,66 @@ namespace Engine.Core.Components.Physics
 
             BulletRigidBody = new BulletSharp.RigidBody(rigidBodyInfo)
             {
+                RollingFriction = Friction,
+                SpinningFriction = Friction,
                 Friction = Friction,
                 Restitution = Restitution
             };
+            BulletRigidBody.SetAnisotropicFriction(BulletSharp.Math.Vector3.One *  Friction, AnisotropicFrictionFlags.RollingFriction);
+
             BulletRigidBody.UserObject = this;
             BulletRigidBody.SetSleepingThresholds(0, 0);
             Initalized = false;
             PhysicsWorld.AddRigidBody(BulletRigidBody, CollisionGroup, CollisionMask);
             Initalized = true;
         }
+
+        public void SetFriction(float f)
+        {
+            if (BulletRigidBody == null || PhysicsShape == null) return;
+
+            BulletRigidBody.RollingFriction = f;
+            BulletRigidBody.SpinningFriction = f;
+            BulletRigidBody.Friction = f;
+            BulletRigidBody.SetAnisotropicFriction(BulletSharp.Math.Vector3.One * Friction, AnisotropicFrictionFlags.RollingFriction);
+
+            Friction = f;
+        }
+
+        public void SetIntertia(BulletSharp.Math.Vector3 i)
+        {
+            if (BulletRigidBody == null) return;
+            BulletRigidBody.SetMassProps(Mass, i);
+            Inertia = new Vector3(i.X, i.Y, i.Z);
+        }
+
+        public void SetMass(float m)
+        {
+            if (BulletRigidBody == null) return;
+            BulletRigidBody.SetMassProps(m, BulletRigidBody.LocalInertia);
+            Mass = m;
+        }
+
+        public void SetRestitution(float f)
+        {
+            if (BulletRigidBody == null) return;
+            BulletRigidBody.Restitution = f;
+            Restitution = f;
+        }
+
+        public void SetVelocity(BulletSharp.Math.Vector3 v)
+        {
+            if (BulletRigidBody == null) return;
+            BulletRigidBody.LinearVelocity = v;
+        }
+
+        public void SetAngularVelocity(BulletSharp.Math.Vector3 av)
+        {
+            if (BulletRigidBody == null) return;
+            BulletRigidBody.AngularVelocity = av;
+        }
+
+
 
         private void UpdateTransform()
         {

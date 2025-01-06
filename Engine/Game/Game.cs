@@ -159,7 +159,7 @@ namespace Engine.Game
             ECSManager.Instance.AddComponent(SphereObj, new MeshRenderer(SphereModel, [SphereMaterial]));
             ECSManager.Instance.AddComponent(SphereObj, new RigidBody
             {
-                Friction = 5,
+                Friction = 25 * Scale,
                 Mass = 1000 * Scale,
                 Shapes = [new BulletSharp.SphereShape(1)],
                 IsStatic = false,
