@@ -527,7 +527,7 @@ var
 begin
   // https://dotnet.microsoft.com/download/dotnet/9.0
   // Set the registry path for system-wide .NET SDK installed versions
-  RegPath := 'SOFTWARE\dotnet\Setup\InstalledVersions\' + Dependency_ArchSuffix + '\sdk';
+  RegPath := 'SOFTWARE\Microsoft\ASP.NET Core\Shared Framework\v9.0';
 
   // Check if any version of .NET 9.0 SDK is already installed
   if not RegKeyExists(HKLM, RegPath) or not Dependency_IsNetCoreInstalled('-n Microsoft.NETCore.App -v 9.0.0') then

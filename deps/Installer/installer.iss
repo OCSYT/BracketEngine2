@@ -20,6 +20,7 @@ DefaultDirName={localappdata}\{#MyAppPublisher}\{#MyAppName}
 DisableDirPage=yes
 OutputDir=..\
 OutputBaseFilename="{#MyAppName} v{#MyAppVersion}"
+SetupIconFile=inc\img\setup.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
