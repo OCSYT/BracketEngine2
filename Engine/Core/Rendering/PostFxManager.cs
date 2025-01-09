@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine.Core.Rendering
 {
@@ -12,6 +9,7 @@ namespace Engine.Core.Rendering
         private int count = 0;
         public Dictionary<int, Effect> PostFxList = new Dictionary<int, Effect>();
         public Dictionary<int, List<KeyValuePair<string, object>>> PostFXParameterList = new Dictionary<int, List<KeyValuePair<string, object>>>();
+
         private static PostFxManager _instance;
         public static PostFxManager Instance
         {
@@ -33,10 +31,24 @@ namespace Engine.Core.Rendering
             count++;
             return prevcount;
         }
+
         public void RemoveEffect(int ID)
         {
+            if (!PostFxList.ContainsKey(ID) || !PostFXParameterList.ContainsKey(ID))
+            {
+                throw new ArgumentException($"Effect with ID {ID} does not exist.");
+            }
             PostFxList.Remove(ID);
             PostFXParameterList.Remove(ID);
+        }
+
+        public void UpdateEffectParameters(int ID, List<KeyValuePair<string, object>> updatedParameters)
+        {
+            if (!PostFxList.ContainsKey(ID) || !PostFXParameterList.ContainsKey(ID))
+            {
+                throw new ArgumentException($"Effect with ID {ID} does not exist.");
+            }
+            PostFXParameterList[ID] = updatedParameters;
         }
     }
 }
