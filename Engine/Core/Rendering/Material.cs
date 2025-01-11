@@ -48,6 +48,7 @@ namespace Engine.Core.Rendering
         public bool Transparent { get; set; } = false;
 
         public int SortOrder;
+        public bool Lighting = true;
         public DepthStencilState DepthStencilState { get; set; } = null;
         public BlendState BlendState { get; set; } = null;
         public Dictionary<string, object> ShaderParams { get; set; } = new Dictionary<string, object>();
@@ -69,6 +70,7 @@ namespace Engine.Core.Rendering
                         Texture2D normalTexture = null,
                         Texture2D ambientOcclusionTexture = null,
                         float alpha = 1,
+                        bool lighting = true,
                         bool transparent = false, bool vertexColors = false, Effect shader = null)
         {
             BaseColorTexture = baseColorTexture;
@@ -85,6 +87,7 @@ namespace Engine.Core.Rendering
             EmissionColor = emissionColor;
             MetallicIntensity = metallicIntensity;
             RoughnessIntensity = roughnessIntensity;
+            Lighting = lighting;
         }
 
         public void ApplyEffectParameters(Effect effect, bool fallback)
@@ -143,6 +146,7 @@ namespace Engine.Core.Rendering
             {
                 // Fallback parameter setting
                 effect.Parameters["VertexColors"]?.SetValue(VertexColors ? 1 : 0);
+                effect.Parameters["Lighting"]?.SetValue(Lighting ? 1 : 0);
                 effect.Parameters["Alpha"]?.SetValue(Alpha);
                 effect.Parameters["MetallicIntensity"]?.SetValue(MetallicIntensity);
                 effect.Parameters["RoughnessIntensity"]?.SetValue(RoughnessIntensity);

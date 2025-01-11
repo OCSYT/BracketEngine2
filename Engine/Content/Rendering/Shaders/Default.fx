@@ -5,6 +5,7 @@ float3 ViewPosition;
 
 float Alpha = 1;
 float VertexColors = 0;
+float Lighting = 0;
 
 float4 BaseColor;
 Texture2D BaseColorTexture;
@@ -129,11 +130,12 @@ float3 FresnelSchlick(float3 F0, float3 normal, float roughness)
 
 float3 CalculatePBRLighting(VertexOutput input, float3 normal, float3 albedo, float metallic, float roughness, float ao)
 {
+    albedo = albedo * ao;
     roughness = max(0.1, roughness);
 
     float3 F0 = lerp(0, albedo, metallic);
 
-    float3 finalColor = AmbientColor.rgb * ao;
+    float3 finalColor = AmbientColor.rgb;
 
     float3 V = normalize(-input.ViewDirection);
     float3 R = reflect(-V, normal);
@@ -201,8 +203,15 @@ float4 PS(VertexOutput input) : COLOR
     float3x3 TBN = float3x3(tangent, bitangent, surfaceNormal);
 
     float3 worldNormal = normalize(mul(tangentNormal, TBN));
-
-    float3 finalColor = CalculatePBRLighting(input, worldNormal, albedo, metallic, roughness, ao) + emission;
+    float3 finalColor = float3(1, 1, 1);
+    if (Lighting == 1)
+    {
+        finalColor = CalculatePBRLighting(input, worldNormal, albedo, metallic, roughness, ao) + emission;
+    }
+    else
+    {
+        finalColor = (albedo * ao) + emission;
+    }
 
     return float4(finalColor, Alpha * BaseColor.a);
 }
