@@ -135,7 +135,7 @@ float3 CalculatePBRLighting(VertexOutput input, float3 normal, float3 albedo, fl
 
     float3 F0 = lerp(0, albedo, metallic);
 
-    float3 finalColor = AmbientColor.rgb;
+    float3 finalColor = AmbientColor.rgb * albedo;
 
     float3 V = normalize(-input.ViewDirection);
     float3 R = reflect(-V, normal);
@@ -146,7 +146,7 @@ float3 CalculatePBRLighting(VertexOutput input, float3 normal, float3 albedo, fl
 
     for (int i = 0; i < 16; i++)
     {
-        float3 lightDir = normalize(-DirLightDirection[i]);
+        float3 lightDir = normalize(DirLightDirection[i]);
         float3 halfVec = normalize(lightDir + normal);
 
         float NDF = pow(max(dot(normal, halfVec), 0.0), roughness * 128.0);
@@ -183,10 +183,10 @@ float3 CalculatePBRLighting(VertexOutput input, float3 normal, float3 albedo, fl
 
 float4 PS(VertexOutput input) : COLOR
 {
-    float3 albedo = tex2D(BaseColorSampler, input.TexCoord).rgb * BaseColor.rgb;
+    float4 albedo = tex2D(BaseColorSampler, input.TexCoord) * BaseColor;
     if (VertexColors == 1)
     {
-        albedo *= input.Color.rgb;
+        albedo.rgb *= input.Color.rgb;
     }
 
     float3 emission = tex2D(EmissionColorSampler, input.TexCoord).rgb * EmissionColor.rgb;
@@ -206,14 +206,19 @@ float4 PS(VertexOutput input) : COLOR
     float3 finalColor = float3(1, 1, 1);
     if (Lighting == 1)
     {
-        finalColor = CalculatePBRLighting(input, worldNormal, albedo, metallic, roughness, ao) + emission;
+        finalColor = CalculatePBRLighting(input, worldNormal, albedo.rgb, metallic, roughness, ao) + emission;
     }
     else
     {
-        finalColor = (albedo * ao) + emission;
+        finalColor = (albedo.rgb * ao) + emission;
     }
 
-    return float4(finalColor, Alpha * BaseColor.a);
+    if (Alpha * BaseColor.a * albedo.a < 0.1)
+    {
+        discard;
+    }
+    
+    return float4(finalColor, Alpha * BaseColor.a * albedo.a);
 }
 
 technique PBRShader
