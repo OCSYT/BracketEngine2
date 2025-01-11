@@ -169,25 +169,12 @@ namespace Engine.Core.Components.Rendering
 
             LightManager.Instance.UpdateLights(ref effect);
 
-            try
-            {
-                effect.Parameters["Time"]?.SetValue(currentTime);
-            }
-            catch
-            {
-                // Ignore missing parameter
-            }
 
-            try
-            {
-                effect.Parameters["World"]?.SetValue(worldMatrix);
-                effect.Parameters["View"]?.SetValue(viewMatrix);
-                effect.Parameters["Projection"]?.SetValue(projectionMatrix);
-            }
-            catch
-            {
-                // Ignore missing parameters
-            }
+            effect.Parameters["Time"]?.SetValue(currentTime);
+            effect.Parameters["ViewPosition"]?.SetValue(-viewMatrix.Translation);
+            effect.Parameters["World"]?.SetValue(worldMatrix);
+            effect.Parameters["View"]?.SetValue(viewMatrix);
+            effect.Parameters["Projection"]?.SetValue(projectionMatrix);
 
             if (material != null)
             {

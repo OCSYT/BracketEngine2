@@ -56,6 +56,8 @@ namespace Engine.Core
         public Effect DefaultShader;
         public Texture2D WhiteTex;
         public Texture2D BlackTex;
+        public Texture2D NormalTex;
+        public TextureCube CubeTex;
         public UI UIManager = new UI();
         protected EngineManager()
         {
@@ -227,17 +229,34 @@ namespace Engine.Core
             }
 
             UIManager.Render(gameTime);
-            if (WhiteTex == null && BlackTex == null)
+            if (WhiteTex == null && BlackTex == null && NormalTex == null && CubeTex == null)
             {
                 Texture2D WhiteTexture = new Texture2D(GraphicsDevice, 1, 1);
                 Color[] WhiteData = new Color[1] { Color.White };
                 WhiteTexture.SetData(WhiteData);
                 WhiteTex = WhiteTexture;
+
                 Texture2D BlackTexture = new Texture2D(GraphicsDevice, 1, 1);
                 Color[] BlackData = new Color[1] { Color.Black };
                 BlackTexture.SetData(BlackData);
                 BlackTex = BlackTexture;
+
+                Texture2D FlatNormalTexture = new Texture2D(GraphicsDevice, 1, 1);
+                Color[] NormalData = new Color[1] { new Color(128, 128, 255) };
+                FlatNormalTexture.SetData(NormalData);
+                NormalTex = FlatNormalTexture;
+
+                CubeTex = new TextureCube(GraphicsDevice, 1, false, SurfaceFormat.Color);
+                Color[] BlackColor = new Color[1] { Color.Black };
+                CubeTex.SetData(CubeMapFace.PositiveX, BlackColor);
+                CubeTex.SetData(CubeMapFace.NegativeX, BlackColor);
+                CubeTex.SetData(CubeMapFace.PositiveY, BlackColor);
+                CubeTex.SetData(CubeMapFace.NegativeY, BlackColor);
+                CubeTex.SetData(CubeMapFace.PositiveZ, BlackColor);
+                CubeTex.SetData(CubeMapFace.NegativeZ, BlackColor);
             }
+
+
 
             Graphics.GraphicsDevice.DepthStencilState = DepthStencilState.None;
             SpriteBatch.Begin();

@@ -15,7 +15,7 @@ namespace Engine.Core.Rendering
         private const int MaxPointLights = 16;
         public Color AmbientColor = new Color(0.1f, 0.1f, 0.1f);
         private static LightManager _instance;
-
+        public TextureCube EnvironmentMap;
         public static LightManager Instance
         {
             get
@@ -23,6 +23,8 @@ namespace Engine.Core.Rendering
                 if (_instance == null)
                 {
                     _instance = new LightManager();
+
+                    Instance.EnvironmentMap = EngineManager.Instance.CubeTex;
                 }
                 return _instance;
             }
@@ -35,6 +37,7 @@ namespace Engine.Core.Rendering
         private readonly object _pointLightsLock = new object();
 
         private LightManager() { }
+
 
         public void RegisterLight(LightComponent light)
         {
@@ -100,9 +103,9 @@ namespace Engine.Core.Rendering
                             });
 
                             effect.Parameters["AmbientColor"]?.SetValue(AmbientColor.ToVector4());
-                            effect.Parameters["dirLightDirection"]?.SetValue(directions);
-                            effect.Parameters["dirLightIntensity"]?.SetValue(intensities);
-                            effect.Parameters["dirLightColor"]?.SetValue(colors);
+                            effect.Parameters["DirLightDirection"]?.SetValue(directions);
+                            effect.Parameters["DirLightIntensity"]?.SetValue(intensities);
+                            effect.Parameters["DirLightColor"]?.SetValue(colors);
                         }
 
                         lock (_pointLightsLock)
@@ -120,9 +123,9 @@ namespace Engine.Core.Rendering
                                 pointColors[i] = light.Color.ToVector3();
                             });
 
-                            effect.Parameters["pointLightPositions"]?.SetValue(pointPositions);
-                            effect.Parameters["pointLightIntensities"]?.SetValue(pointIntensities);
-                            effect.Parameters["pointLightColors"]?.SetValue(pointColors);
+                            effect.Parameters["PointLightPositions"]?.SetValue(pointPositions);
+                            effect.Parameters["PointLightIntensities"]?.SetValue(pointIntensities);
+                            effect.Parameters["PointLightColors"]?.SetValue(pointColors);
                         }
                     }
                     catch

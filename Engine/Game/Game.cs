@@ -32,7 +32,6 @@ namespace Engine.Game
         }
         public override void Start()
         {
-
             Effect ACESToneMapper = Content.Load<Effect>("Rendering/Shaders/ACES");
             PostFxManager.Instance.AddEffect(ACESToneMapper, new List<KeyValuePair<string, object>>() {
                 new ("Exposure", 1.5f),
@@ -136,7 +135,7 @@ namespace Engine.Game
             Texture2D CheckerTex = Content.Load<Texture2D>("GameContent/Textures/Default/checkerboard");
             Material FloorMaterial = new Material
             {
-                DiffuseTexture = CheckerTex,
+                BaseColorTexture = CheckerTex,
             };
 
             FloorObj.Transform.Position = new Vector3(0, -2, 0);
@@ -158,7 +157,12 @@ namespace Engine.Game
             Entity SphereObj = ECSManager.Instance.CreateEntity();
             StaticMesh SphereModel = PrimitiveModel.CreateSphere(1);
             Texture2D CheckerTex = Content.Load<Texture2D>("GameContent/Textures/Default/checkerboard");
-            Material SphereMaterial = new Material { DiffuseTexture = CheckerTex, DiffuseColor = Color };
+            Material SphereMaterial = new Material { 
+                BaseColorTexture = CheckerTex, 
+                BaseColor = Color,
+                RoughnessIntensity = 1f,
+                MetallicIntensity = .7f,
+            };
 
             SphereObj.Transform.Position = Position;
             SphereObj.Transform.Rotation = Quaternion.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z);
@@ -181,7 +185,7 @@ namespace Engine.Game
             Entity BoxObj = ECSManager.Instance.CreateEntity();
             StaticMesh BoxModel = PrimitiveModel.CreateBox(1, 1, 1);
             Texture2D CheckerTex = Content.Load<Texture2D>("GameContent/Textures/Default/checkerboard");
-            Material BoxMaterial = new Material { DiffuseTexture = CheckerTex, DiffuseColor = Color.Purple };
+            Material BoxMaterial = new Material { BaseColorTexture = CheckerTex, BaseColor = Color.Purple };
             BoxObj.Transform.Scale = Vector3.One / 2;
 
             ECSManager.Instance.AddComponent(BoxObj, new MeshRenderer(BoxModel, [BoxMaterial]));
@@ -222,7 +226,14 @@ namespace Engine.Game
             Clip WalkClip = AnimPlayer.Clips["mixamo.com"];
             AnimPlayer.SetClip(WalkClip);
 
-            MeshRenderer Renderer = new MeshRenderer(Model, [new Material { DiffuseColor = Color.Cyan }], AnimPlayer);
+            MeshRenderer Renderer = new MeshRenderer(Model, [
+                new Material {
+                    BaseColor = Color.Cyan,
+                    RoughnessIntensity = 1f,
+                    MetallicIntensity = .7f,
+                }],
+                AnimPlayer);
+
             ECSManager.Instance.AddComponent(AnimatedModel, Renderer);
             AnimatedModel.Transform.Scale = Vector3.One / 20;
             AnimatedModel.Transform.Position += -Vector3.Forward * 5 - Vector3.Right * 3;
