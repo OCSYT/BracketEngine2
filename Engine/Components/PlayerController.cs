@@ -58,8 +58,8 @@ namespace Engine.Components
             Vector2 CurrentMousePosition = Mouse.GetState().Position.ToVector2();
             Vector2 MouseDelta = CurrentMousePosition - new Vector2(Graphics.GraphicsDevice.Viewport.Width / 2, Graphics.GraphicsDevice.Viewport.Height / 2);
 
-            MouseX -= MouseDelta.X * (Sensitivity / 100000);
-            MouseY = MathHelper.Clamp(MouseY - MouseDelta.Y * (Sensitivity / 100000), MathHelper.ToRadians(-90), MathHelper.ToRadians(90));
+            MouseX -= MouseDelta.X * (Sensitivity / 10) * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            MouseY = MathHelper.Clamp(MouseY - MouseDelta.Y * (Sensitivity / 10) * (float)gameTime.ElapsedGameTime.TotalSeconds, MathHelper.ToRadians(-90), MathHelper.ToRadians(90));
 
             CamTransform.Rotation = Quaternion.CreateFromYawPitchRoll(MouseX, MouseY, 0);
             Quaternion BodyDir = Quaternion.CreateFromYawPitchRoll(MouseX, 0, 0);

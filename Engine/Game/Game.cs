@@ -38,7 +38,6 @@ namespace Engine.Game
                 new ("Gamma", .5f)
             });
 
-
             // Call functions to initialize each object
             CreateFloor();
             CreatePointLight(new Vector3(0, 25, -50), Color.Red);
