@@ -15,6 +15,7 @@ using Engine.Core.Components.Physics;
 using Aether.Animation;
 using Myra.Graphics2D.UI;
 using Myra;
+
 namespace Engine.Game
 {
     public class Game : EngineManager
@@ -143,7 +144,7 @@ namespace Engine.Game
             ECSManager.Instance.AddComponent(FloorObj, new RigidBody
             {
                 Mass = 0,
-                Shapes = [new BulletSharp.BoxShape(1, 1, 1)],
+                Shapes = [new BulletSharp.BoxShape(1,1,1)],
                 IsStatic = true,
                 CollisionGroup = PhysicsManager.CreateCollisionMask([1]),
                 CollisionMask = PhysicsManager.CreateCollisionMask([1, 2]),
