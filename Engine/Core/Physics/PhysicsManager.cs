@@ -5,6 +5,7 @@ using Engine.Core.Rendering;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Engine.Core.Physics
 {
@@ -163,26 +164,30 @@ namespace Engine.Core.Physics
             {
                 TriangleMesh TriangleMesh = new TriangleMesh();
 
-                for (int I = 0; I < Indices.Count; I += 3)
+                Task ProcessMesh = Task.Run(() =>
                 {
-                    Vector3 ScaledVertex1 = new Vector3(
-                        Vertices[Indices[I]].X * ScalingFactor.X,
-                        Vertices[Indices[I]].Y * ScalingFactor.Y,
-                        Vertices[Indices[I]].Z * ScalingFactor.Z
-                    );
-                    Vector3 ScaledVertex2 = new Vector3(
-                        Vertices[Indices[I + 1]].X * ScalingFactor.X,
-                        Vertices[Indices[I + 1]].Y * ScalingFactor.Y,
-                        Vertices[Indices[I + 1]].Z * ScalingFactor.Z
-                    );
-                    Vector3 ScaledVertex3 = new Vector3(
-                        Vertices[Indices[I + 2]].X * ScalingFactor.X,
-                        Vertices[Indices[I + 2]].Y * ScalingFactor.Y,
-                        Vertices[Indices[I + 2]].Z * ScalingFactor.Z
-                    );
+                    for (int I = 0; I < Indices.Count; I += 3)
+                    {
+                        Vector3 ScaledVertex1 = new Vector3(
+                            Vertices[Indices[I]].X * ScalingFactor.X,
+                            Vertices[Indices[I]].Y * ScalingFactor.Y,
+                            Vertices[Indices[I]].Z * ScalingFactor.Z
+                        );
+                        Vector3 ScaledVertex2 = new Vector3(
+                            Vertices[Indices[I + 1]].X * ScalingFactor.X,
+                            Vertices[Indices[I + 1]].Y * ScalingFactor.Y,
+                            Vertices[Indices[I + 1]].Z * ScalingFactor.Z
+                        );
+                        Vector3 ScaledVertex3 = new Vector3(
+                            Vertices[Indices[I + 2]].X * ScalingFactor.X,
+                            Vertices[Indices[I + 2]].Y * ScalingFactor.Y,
+                            Vertices[Indices[I + 2]].Z * ScalingFactor.Z
+                        );
 
-                    TriangleMesh.AddTriangle(ScaledVertex1, ScaledVertex2, ScaledVertex3, true);
-                }
+                        TriangleMesh.AddTriangle(ScaledVertex1, ScaledVertex2, ScaledVertex3, true);
+                    }
+                });
+                ProcessMesh.Wait();
 
                 GImpactMeshShape GImpactShape = new GImpactMeshShape(TriangleMesh);
                 GImpactShape.UpdateBound();
@@ -260,26 +265,30 @@ namespace Engine.Core.Physics
             {
                 TriangleMesh TriangleMesh = new TriangleMesh();
 
-                for (int I = 0; I < Indices.Count; I += 3)
+                Task ProcessMesh = Task.Run(() =>
                 {
-                    Vector3 ScaledVertex1 = new Vector3(
-                        Vertices[Indices[I]].X * ScalingFactor.X,
-                        Vertices[Indices[I]].Y * ScalingFactor.Y,
-                        Vertices[Indices[I]].Z * ScalingFactor.Z
-                    );
-                    Vector3 ScaledVertex2 = new Vector3(
-                        Vertices[Indices[I + 1]].X * ScalingFactor.X,
-                        Vertices[Indices[I + 1]].Y * ScalingFactor.Y,
-                        Vertices[Indices[I + 1]].Z * ScalingFactor.Z
-                    );
-                    Vector3 ScaledVertex3 = new Vector3(
-                        Vertices[Indices[I + 2]].X * ScalingFactor.X,
-                        Vertices[Indices[I + 2]].Y * ScalingFactor.Y,
-                        Vertices[Indices[I + 2]].Z * ScalingFactor.Z
-                    );
+                    for (int I = 0; I < Indices.Count; I += 3)
+                    {
+                        Vector3 ScaledVertex1 = new Vector3(
+                            Vertices[Indices[I]].X * ScalingFactor.X,
+                            Vertices[Indices[I]].Y * ScalingFactor.Y,
+                            Vertices[Indices[I]].Z * ScalingFactor.Z
+                        );
+                        Vector3 ScaledVertex2 = new Vector3(
+                            Vertices[Indices[I + 1]].X * ScalingFactor.X,
+                            Vertices[Indices[I + 1]].Y * ScalingFactor.Y,
+                            Vertices[Indices[I + 1]].Z * ScalingFactor.Z
+                        );
+                        Vector3 ScaledVertex3 = new Vector3(
+                            Vertices[Indices[I + 2]].X * ScalingFactor.X,
+                            Vertices[Indices[I + 2]].Y * ScalingFactor.Y,
+                            Vertices[Indices[I + 2]].Z * ScalingFactor.Z
+                        );
 
-                    TriangleMesh.AddTriangle(ScaledVertex1, ScaledVertex2, ScaledVertex3, true);
-                }
+                        TriangleMesh.AddTriangle(ScaledVertex1, ScaledVertex2, ScaledVertex3, true);
+                    }
+                });
+                ProcessMesh.Wait();
 
                 GImpactMeshShape GImpactShape = new GImpactMeshShape(TriangleMesh);
                 GImpactShape.UpdateBound();
