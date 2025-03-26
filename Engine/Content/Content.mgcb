@@ -59,6 +59,12 @@
 /processorParam:DebugMode=Auto
 /build:Rendering/Shaders/ACES.fx
 
+#begin Rendering/Shaders/Bloom.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Rendering/Shaders/Bloom.fx
+
 #begin Rendering/Shaders/Default.fx
 /importer:EffectImporter
 /processor:EffectProcessor

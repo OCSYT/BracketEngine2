@@ -38,6 +38,13 @@ namespace Engine.Game
                 new ("Exposure", 1.5f),
                 new ("Gamma", .5f)
             });
+            Effect Bloom = Content.Load<Effect>("Rendering/Shaders/Bloom");
+            PostFxManager.Instance.AddEffect(Bloom, new List<KeyValuePair<string, object>>() {
+                new ("BloomIntensity", 1.0f),    // Controls overall bloom strength
+                new ("BloomThreshold", 1.0f),    // Sets brightness threshold for bloom
+                new ("BloomBlurSize", 2.0f),     // Controls the spread of the bloom
+                new ("BloomExposure", 2.0f)      // Adjusts bloom exposure
+            });
 
             // Call functions to initialize each object
             CreateFloor();
@@ -161,7 +168,7 @@ namespace Engine.Game
                 BaseColorTexture = CheckerTex, 
                 BaseColor = Color,
                 RoughnessIntensity = 1f,
-                MetallicIntensity = .7f,
+                MetallicIntensity = .7f
             };
 
             SphereObj.Transform.Position = Position;
