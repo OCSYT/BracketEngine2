@@ -1,99 +1,74 @@
-﻿// HDR Color Texture (the result from scene rendering)
-sampler2D HDRTexture : register(s0);
+﻿sampler2D HDRTexture : register(s0);
 
-// Bloom parameters
-float BloomIntensity : register(c1) = 1.0; // Overall bloom strength
-float BloomThreshold : register(c2) = 1.0; // Brightness threshold for bloom
-float BloomBlurSize : register(c3) = 1.0; // Size of blur kernel
-float BloomExposure : register(c4) = 1.0; // Exposure adjustment
+float BloomIntensity : register(c1) = 0.8;
+float BloomThreshold : register(c2) = 0.8;
+float BloomBlurSize : register(c3) = 4.0;
+float BloomExposure : register(c4) = 1.2;
 
-// Single-pass ultra-high-quality bloom effect
 float4 BloomEffectPS(float2 TexCoord : TEXCOORD0) : COLOR
 {
-    // Sample base color
-    float4 baseColor = tex2D(HDRTexture, TexCoord);
-    
-    // Extract bright areas
-    float luminance = dot(baseColor.rgb, float3(0.2126, 0.7152, 0.0722));
-    float3 brightColor = baseColor.rgb * max(0, luminance - BloomThreshold) / max(luminance, 0.001);
-    
-    // Ultra-high-quality Gaussian blur with more samples
-    float4 bloomColor = float4(brightColor, 1.0) * 0.159576; // Center weight
-    float2 pixelSizeX = float2(BloomBlurSize / 1920.0, 0);
-    float2 pixelSizeY = float2(0, BloomBlurSize / 1080.0);
-    
-    // 25-tap Gaussian kernel (12 either side + center)
-    const int SAMPLE_COUNT = 12;
-    float weights[SAMPLE_COUNT] =
-    {
-        0.132980, // Closest to center
-        0.115876,
-        0.094397,
-        0.071948,
-        0.051350,
-        0.034317,
-        0.021449,
-        0.012555,
-        0.006883,
-        0.003534,
-        0.001699,
-        0.000764 // Furthest
-    };
-    
-    float offsets[SAMPLE_COUNT] =
-    {
-        1.2, // Tighter spacing near center
-        2.5,
-        3.9,
-        5.4,
-        7.0,
-        8.7,
-        10.5,
-        12.4,
-        14.4,
-        16.5,
-        18.7,
-        21.0 // Wider spacing further out
-    };
-    
-    // Perform ultra-high-quality blur
-    [unroll]
-    for (int i = 0; i < SAMPLE_COUNT; i++)
-    {
-        float2 offsetX = pixelSizeX * offsets[i];
-        float2 offsetY = pixelSizeY * offsets[i];
-        
-        // Horizontal samples
-        float4 sampleXPos = tex2D(HDRTexture, TexCoord + offsetX);
-        float4 sampleXNeg = tex2D(HDRTexture, TexCoord - offsetX);
-        
-        // Vertical samples
-        float4 sampleYPos = tex2D(HDRTexture, TexCoord + offsetY);
-        float4 sampleYNeg = tex2D(HDRTexture, TexCoord - offsetY);
-        
-        // Extract bright components with proper weighting
-        float lumXPos = dot(sampleXPos.rgb, float3(0.2126, 0.7152, 0.0722));
-        float lumXNeg = dot(sampleXNeg.rgb, float3(0.2126, 0.7152, 0.0722));
-        float lumYPos = dot(sampleYPos.rgb, float3(0.2126, 0.7152, 0.0722));
-        float lumYNeg = dot(sampleYNeg.rgb, float3(0.2126, 0.7152, 0.0722));
-        
-        bloomColor.rgb += max(0, sampleXPos.rgb * (lumXPos - BloomThreshold) / max(lumXPos, 0.001)) * weights[i];
-        bloomColor.rgb += max(0, sampleXNeg.rgb * (lumXNeg - BloomThreshold) / max(lumXNeg, 0.001)) * weights[i];
-        bloomColor.rgb += max(0, sampleYPos.rgb * (lumYPos - BloomThreshold) / max(lumYPos, 0.001)) * weights[i];
-        bloomColor.rgb += max(0, sampleYNeg.rgb * (lumYNeg - BloomThreshold) / max(lumYNeg, 0.001)) * weights[i];
-    }
-    
-    // Apply exposure and intensity
-    bloomColor.rgb *= BloomExposure * BloomIntensity;
-    
-    // Combine with base color
-    float3 finalColor = baseColor.rgb + bloomColor.rgb;
+    float4 BaseColor = tex2D(HDRTexture, TexCoord);
 
-    
-    return float4(finalColor, baseColor.a);
+    float Luminance = dot(BaseColor.rgb, float3(0.2126, 0.7152, 0.0722));
+    float Brightness = max(0, Luminance - BloomThreshold);
+    float SoftBrightness = max(0, Brightness);
+    SoftBrightness = SoftBrightness / (max(Brightness, 1e-5));
+    float3 BrightColor = BaseColor.rgb * SoftBrightness;
+
+    float4 BloomColor = float4(BrightColor, 1.0) * 0.132980;
+    float2 PixelSizeX = float2(BloomBlurSize / 1920.0, 0);
+    float2 PixelSizeY = float2(0, BloomBlurSize / 1080.0);
+
+    static const float Weights[12] =
+    {
+        0.115876, 0.094397, 0.071948, 0.051350, 0.034317, 0.021449,
+        0.012555, 0.006883, 0.003534, 0.001699, 0.000764, 0.000382
+    };
+
+    static const float Offsets[12] =
+    {
+        1.2, 2.5, 3.9, 5.4, 7.0, 8.7, 10.5, 12.4, 14.4, 16.5, 18.7, 21.0
+    };
+
+    [unroll]
+    for (int i = 0; i < 12; i++)
+    {
+        float2 OffsetX = PixelSizeX * Offsets[i];
+        float2 OffsetY = PixelSizeY * Offsets[i];
+
+        float4 SampleXPos = tex2D(HDRTexture, TexCoord + OffsetX);
+        float4 SampleXNeg = tex2D(HDRTexture, TexCoord - OffsetX);
+
+        float4 SampleYPos = tex2D(HDRTexture, TexCoord + OffsetY);
+        float4 SampleYNeg = tex2D(HDRTexture, TexCoord - OffsetY);
+
+        float SampleLumXPos = dot(SampleXPos.rgb, float3(0.2126, 0.7152, 0.0722));
+        float SampleLumXNeg = dot(SampleXNeg.rgb, float3(0.2126, 0.7152, 0.0722));
+        float SampleLumYPos = dot(SampleYPos.rgb, float3(0.2126, 0.7152, 0.0722));
+        float SampleLumYNeg = dot(SampleYNeg.rgb, float3(0.2126, 0.7152, 0.0722));
+
+        float SampleBrightnessXPos = max(0, SampleLumXPos - BloomThreshold);
+        float SampleBrightnessXNeg = max(0, SampleLumXNeg - BloomThreshold);
+        float SampleBrightnessYPos = max(0, SampleLumYPos - BloomThreshold);
+        float SampleBrightnessYNeg = max(0, SampleLumYNeg - BloomThreshold);
+
+        float SampleSoftBrightnessXPos = max(0, SampleBrightnessXPos) / (max(SampleBrightnessXPos, 1e-5));
+        float SampleSoftBrightnessXNeg = max(0, SampleBrightnessXNeg) / (max(SampleBrightnessXNeg, 1e-5));
+        float SampleSoftBrightnessYPos = max(0, SampleBrightnessYPos) / (max(SampleBrightnessYPos, 1e-5));
+        float SampleSoftBrightnessYNeg = max(0, SampleBrightnessYNeg) / (max(SampleBrightnessYNeg, 1e-5));
+
+        BloomColor.rgb += SampleXPos.rgb * SampleSoftBrightnessXPos * Weights[i];
+        BloomColor.rgb += SampleXNeg.rgb * SampleSoftBrightnessXNeg * Weights[i];
+        BloomColor.rgb += SampleYPos.rgb * SampleSoftBrightnessYPos * Weights[i];
+        BloomColor.rgb += SampleYNeg.rgb * SampleSoftBrightnessYNeg * Weights[i];
+    }
+
+    BloomColor.rgb *= BloomIntensity * BloomExposure;
+    float3 FinalColor = lerp(BaseColor.rgb, BaseColor.rgb + BloomColor.rgb, BloomIntensity);
+
+    return float4(FinalColor, BaseColor.a);
 }
 
-// Single technique
 technique BloomEffect
 {
     pass P0

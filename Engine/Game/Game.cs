@@ -237,7 +237,7 @@ namespace Engine.Game
                 new Material {
                     BaseColor = Color.Cyan,
                     RoughnessIntensity = 1f,
-                    MetallicIntensity = .7f,
+                    MetallicIntensity = .7f
                 }],
                 AnimPlayer);
 
