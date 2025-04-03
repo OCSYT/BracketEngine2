@@ -11,7 +11,6 @@
 		<PublishSingleFile>true</PublishSingleFile>
 		<StartupObject>Engine.MainProgram</StartupObject>
 		<PublishTrimmed>true</PublishTrimmed>
-		<PublishSingleFile>true</PublishSingleFile>
 		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 		<SelfContained>false</SelfContained>
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
@@ -52,6 +51,8 @@
 	
 	<Target Name="PostBuildCleanup" AfterTargets="Build">
 		<RemoveDir Directories="ContentXML" />
+		<RemoveDir Directories="Content/bin" />
+		<RemoveDir Directories="Content/obj" />
 	</Target>
 
 </Project>
