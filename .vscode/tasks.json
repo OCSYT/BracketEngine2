@@ -6,7 +6,7 @@
 			"command": "cmd",
 			"args": [
 				"/c",
-				"dotnet build ${workspaceFolder}/Engine/Engine.csproj --configuration Release && dotnet run --project ${workspaceFolder}/Engine/Engine.csproj"
+				"dotnet run --project ${workspaceFolder}/Engine/Engine.csproj"
 			],
 			"group": {
 				"kind": "build",
