@@ -1,21 +1,19 @@
-	{
-		"version": "2.0.0",
-		"tasks": [
-			{
-				"type": "process",
-				"command": "dotnet",
-				"args": [
-					"build",
-					"${workspaceFolder}/Engine/Engine.csproj",
-					"--configuration",
-					"Release"
-				],
-				"group": {
-					"kind": "build",
-					"isDefault": true
-				},
-				"problemMatcher": [],
-				"label": "Build BracketEngine"
-            }
-		]
-	}
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "process",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"dotnet build ${workspaceFolder}/Engine/Engine.csproj --configuration Release && dotnet run --project ${workspaceFolder}/Engine/Engine.csproj"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": [],
+			"label": "Build and Run BracketEngine"
+		}
+	]
+}
