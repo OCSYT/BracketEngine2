@@ -253,14 +253,14 @@ DepthFormat.Depth24);
             base.Draw(GameTime);
         }
 
-        public TextureCube GenerateCubeMap(GraphicsDevice graphicsDevice, Texture2D[] textures)
+        public TextureCube GenerateCubeMap(Texture2D[] textures)
         {
             if (textures.Length != 6)
                 throw new ArgumentException("Exactly 6 textures are required to generate a cubemap.");
 
             int size = textures[0].Width; // Assuming all textures are square and of the same size.
 
-            TextureCube cubeMap = new TextureCube(graphicsDevice, size, false, SurfaceFormat.Color);
+            TextureCube cubeMap = new TextureCube(GraphicsDevice, size, false, SurfaceFormat.Color);
 
             for (int i = 0; i < 6; i++)
             {

@@ -29,7 +29,7 @@ namespace Engine.Game
         public List<Transform> PointTransforms = new List<Transform>();
         public override void Awake()
         {
-            //Debug = true;
+            Debug = true;
         }
         public override void Start()
         {
@@ -60,6 +60,15 @@ namespace Engine.Game
             CreateAnimatedModel();
             CreateCamera();
             CreatePlayer();
+            LightManager.Instance.EnvironmentMap = GenerateCubeMap(new Texture2D[]
+            {
+    Content.Load<Texture2D>("Main/Skybox/right"),   // Positive X
+    Content.Load<Texture2D>("Main/Skybox/left"),    // Negative X
+    Content.Load<Texture2D>("Main/Skybox/top"),      // Positive Y
+    Content.Load<Texture2D>("Main/Skybox/bottom"),    // Negative Y
+    Content.Load<Texture2D>("Main/Skybox/front"),   // Positive Z
+    Content.Load<Texture2D>("Main/Skybox/back")     // Negative Z
+            });
         }
 
         public override void MainUpdate(GameTime GameTime)
@@ -151,7 +160,7 @@ namespace Engine.Game
             ECSManager.Instance.AddComponent(FloorObj, new RigidBody
             {
                 Mass = 0,
-                Shapes = [new BulletSharp.BoxShape(1,1,1)],
+                Shapes = [new BulletSharp.BoxShape(1, 1, 1)],
                 IsStatic = true,
                 CollisionGroup = PhysicsManager.CreateCollisionMask([1]),
                 CollisionMask = PhysicsManager.CreateCollisionMask([1, 2]),
@@ -164,8 +173,9 @@ namespace Engine.Game
             Entity SphereObj = ECSManager.Instance.CreateEntity();
             StaticMesh SphereModel = PrimitiveModel.CreateSphere(1);
             Texture2D CheckerTex = Content.Load<Texture2D>("Main/Textures/Default/checkerboard");
-            Material SphereMaterial = new Material { 
-                BaseColorTexture = CheckerTex, 
+            Material SphereMaterial = new Material
+            {
+                BaseColorTexture = CheckerTex,
                 BaseColor = Color,
                 RoughnessIntensity = 1f,
                 MetallicIntensity = .7f
