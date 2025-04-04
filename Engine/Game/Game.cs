@@ -244,9 +244,9 @@ namespace Engine.Game
 
             MeshRenderer Renderer = new MeshRenderer(Model, [
                 new Material {
-                    BaseColor = Color.Cyan,
+                    BaseColor = Color.White,
                     RoughnessIntensity = 1f,
-                    MetallicIntensity = .7f
+                    MetallicIntensity = 1f
                 }],
                 AnimPlayer);
 
