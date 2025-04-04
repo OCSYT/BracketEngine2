@@ -263,6 +263,12 @@ namespace Engine.Core.Components.Physics
             Inertia = i;
         }
 
+        public void SetGravity(Vector3 Gravity)
+        {
+            if ((Initalized && BulletRigidBody != null) == false) return;
+            BulletRigidBody.Gravity = new BulletSharp.Math.Vector3(Gravity.X, Gravity.Y, Gravity.Z);;
+        }
+
         public void SetMass(float m)
         {
             if ((Initalized && BulletRigidBody != null) == false) return;

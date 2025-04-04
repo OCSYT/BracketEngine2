@@ -25,12 +25,14 @@ namespace Engine.Components
         private Vector3 RightDir = Vector3.Right;
         public float MaxVelocity = 50;
         public float YVel = 0;
-        public float Height = 4;
+        public float Height = 5;
+        public int CollisionMask;
+        public int CollisionGroup;
         public PlayerController()
         {
 
         }
-        public PlayerController(RigidBody Body, Camera CameraObj, float Sensitivity = 1, float Speed = 50, float Jump = 5, float MaxVelocity = 100, float Height = 5)
+        public PlayerController(RigidBody Body, Camera CameraObj, float Sensitivity = 1, float Speed = 50, float Jump = 5, float MaxVelocity = 100, float Height = 5, int CollisionMask = 1, int CollisionGroup = 1)
         {
             this.Body = Body;
             this.CameraObj = CameraObj;
@@ -39,11 +41,14 @@ namespace Engine.Components
             this.Jump = Jump;
             this.MaxVelocity = MaxVelocity;
             this.Height = Height;
+            this.CollisionGroup = CollisionGroup;
+            this.CollisionMask = CollisionMask;
         }
 
         public override void Start()
         {
             CamTransform = CameraObj.Transform;
+            Body.SetGravity(Vector3.Zero);
             Body.SetFriction(0f);
             Body.SetRestitution(0f);
             Body.SetAngularFactor(Vector3.Zero);
@@ -67,13 +72,12 @@ namespace Engine.Components
             RightDir = Vector3.Transform(Vector3.Right, BodyDir);
         }
 
-        public override void FixedUpdate(GameTime gameTime)
+        public override void FixedUpdate(GameTime GameTime)
         {
 
             PhysicsManager.HitResult HitResult =
                 PhysicsManager.Instance.Raycast(Transform.Position,
-                Transform.Position + Vector3.Down * Height, PhysicsManager.CreateCollisionMask([2]),
-                PhysicsManager.CreateCollisionMask([1]));
+                Transform.Position + Vector3.Down * (Height), CollisionGroup, CollisionMask);
 
             KeyboardState State = Keyboard.GetState();
 
@@ -116,9 +120,11 @@ namespace Engine.Components
                 LocalVel *= MaxVelocity;
             }
 
+        
             if (HitResult.HasHit)
             {
-                Transform.Position = new Vector3(Transform.Position.X, HitResult.HitPoint.Y + Height, Transform.Position.Z);
+                Vector3 NewPos = new Vector3(Transform.Position.X, HitResult.HitPoint.Y + Height, Transform.Position.Z);
+                Transform.Position = (NewPos);
                 YVel = 0;
                 if (State.IsKeyDown(Keys.Space))
                 {
@@ -132,8 +138,8 @@ namespace Engine.Components
 
             LocalVel += Vector3.Up * YVel;
             Body.SetVelocity(LocalVel);
-
-            CamTransform.Position = Transform.Position + Vector3.Up * Height/2;
+            
+            CamTransform.Position = Transform.Position + (LocalVel * (float)GameTime.ElapsedGameTime.TotalSeconds);
         }
     }
 }

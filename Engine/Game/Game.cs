@@ -210,7 +210,7 @@ namespace Engine.Game
 
         private void CreatePlayer()
         {
-            float PlayerHeight = 5;
+            float PlayerHeight = 7.5f;
             PlayerEntity = ECManager.Instance.CreateEntity();
 
             PlayerEntity.Transform.Position = Vector3.Up * 10;
@@ -229,7 +229,9 @@ namespace Engine.Game
                 Body = PlayerBody,
                 CameraObj = ECManager.Instance.GetComponent<Camera>(CameraEntity),
                 Height = PlayerHeight,
-                Sensitivity = 5
+                Sensitivity = 5,
+                CollisionGroup = PhysicsManager.CreateCollisionMask([2]),
+                CollisionMask = PhysicsManager.CreateCollisionMask([1])
             };
             ECManager.Instance.AddComponent(PlayerEntity, Controller);
         }
