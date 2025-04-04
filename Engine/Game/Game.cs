@@ -44,6 +44,7 @@ namespace Engine.Game
                 new ("BloomBlurSize", 2.0f),     // Controls the spread of the bloom
                 new ("BloomExposure", 2.0f)      // Adjusts bloom exposure
             });
+            LightManager.Instance.EnvironmentMap = GenerateCubeMap(Content.Load<Texture2D>("Main/Skybox/Skybox"), 0.5f);
 
             // Call functions to initialize each object
             CreateCamera();
@@ -58,7 +59,6 @@ namespace Engine.Game
             HandTransform = CreateHandBox();
             CreateAnimatedModel();
             CreatePlayer();
-            LightManager.Instance.EnvironmentMap = GenerateCubeMap(Content.Load<Texture2D>("Main/Skybox/Skybox"), 0.5f);
 
         }
 

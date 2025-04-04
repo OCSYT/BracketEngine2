@@ -17,7 +17,7 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin ../GameContent/Main/Skybox/HDRI.png
+#begin ../GameContent/Main/Skybox/Skybox.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -27,7 +27,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../GameContent/Main/Skybox/HDRI.png;Main/Skybox/HDRI.png
+/build:../GameContent/Main/Skybox/Skybox.png;Main/Skybox/Skybox.png
 
 #begin ../GameContent/Main/Textures/Default/checkerboard.png
 /importer:TextureImporter
@@ -43,12 +43,7 @@
 
 #begin ../GameContent/Main/Walking.fbx
 /importer:FbxImporter
-/processor:CpuAnimatedModelProcessor
-/processorParam:VertexBufferType=DynamicWriteOnly
-/processorParam:IndexBufferType=Default
-/processorParam:MaxBones=72
-/processorParam:GenerateKeyframesFrequency=0
-/processorParam:FixRealBoneRoot=False
+/processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
 /processorParam:ColorKeyEnabled=True
 /processorParam:DefaultEffect=BasicEffect
