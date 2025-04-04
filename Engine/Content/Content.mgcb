@@ -91,10 +91,12 @@
 
 #begin ../GameContent/Main/Walking.fbx
 /importer:FbxImporter
-/processor:DynamicModelProcessor
-/processorParam:Microsoft.Xna.Framework.Content.Pipeline.IContentProcessor.OutputType=GraphicsImporters.Graphics.DynamicModelContent
-/processorParam:VertexBufferType=Dynamic
-/processorParam:IndexBufferType=Dynamic
+/processor:CpuAnimatedModelProcessor
+/processorParam:VertexBufferType=DynamicWriteOnly
+/processorParam:IndexBufferType=Default
+/processorParam:MaxBones=72
+/processorParam:GenerateKeyframesFrequency=0
+/processorParam:FixRealBoneRoot=False
 /processorParam:ColorKeyColor=0,0,0,0
 /processorParam:ColorKeyEnabled=True
 /processorParam:DefaultEffect=BasicEffect
