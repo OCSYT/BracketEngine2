@@ -17,7 +17,7 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Main/Skybox/back.png
+#begin ../GameContent/Main/Skybox/back.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -27,9 +27,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Main/Skybox/back.png
+/build:../GameContent/Main/Skybox/back.png;Main/Skybox/back.png
 
-#begin Main/Skybox/bottom.png
+#begin ../GameContent/Main/Skybox/bottom.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -39,9 +39,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Main/Skybox/bottom.png
+/build:../GameContent/Main/Skybox/bottom.png;Main/Skybox/bottom.png
 
-#begin Main/Skybox/cubemap.png
+#begin ../GameContent/Main/Skybox/cubemap.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -51,9 +51,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Main/Skybox/cubemap.png
+/build:../GameContent/Main/Skybox/cubemap.png;Main/Skybox/cubemap.png
 
-#begin Main/Skybox/right.png
+#begin ../GameContent/Main/Skybox/right.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -63,9 +63,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Main/Skybox/right.png
+/build:../GameContent/Main/Skybox/right.png;Main/Skybox/right.png
 
-#begin Main/Skybox/top.png
+#begin ../GameContent/Main/Skybox/top.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -75,9 +75,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Main/Skybox/top.png
+/build:../GameContent/Main/Skybox/top.png;Main/Skybox/top.png
 
-#begin Main/Textures/Default/checkerboard.png
+#begin ../GameContent/Main/Textures/Default/checkerboard.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -87,11 +87,14 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Main/Textures/Default/checkerboard.png
+/build:../GameContent/Main/Textures/Default/checkerboard.png;Main/Textures/Default/checkerboard.png
 
-#begin Main/Walking.fbx
+#begin ../GameContent/Main/Walking.fbx
 /importer:FbxImporter
-/processor:ModelProcessor
+/processor:DynamicModelProcessor
+/processorParam:Microsoft.Xna.Framework.Content.Pipeline.IContentProcessor.OutputType=GraphicsImporters.Graphics.DynamicModelContent
+/processorParam:VertexBufferType=Dynamic
+/processorParam:IndexBufferType=Dynamic
 /processorParam:ColorKeyColor=0,0,0,0
 /processorParam:ColorKeyEnabled=True
 /processorParam:DefaultEffect=BasicEffect
@@ -106,23 +109,23 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:Main/Walking.fbx
+/build:../GameContent/Main/Walking.fbx;Main/Walking.fbx
 
-#begin Rendering/Shaders/ACES.fx
+#begin ../GameContent/Rendering/Shaders/ACES.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:Rendering/Shaders/ACES.fx
+/build:../GameContent/Rendering/Shaders/ACES.fx;Rendering/Shaders/ACES.fx
 
-#begin Rendering/Shaders/Bloom.fx
+#begin ../GameContent/Rendering/Shaders/Bloom.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:Rendering/Shaders/Bloom.fx
+/build:../GameContent/Rendering/Shaders/Bloom.fx;Rendering/Shaders/Bloom.fx
 
-#begin Rendering/Shaders/Default.fx
+#begin ../GameContent/Rendering/Shaders/Default.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:Rendering/Shaders/Default.fx
+/build:../GameContent/Rendering/Shaders/Default.fx;Rendering/Shaders/Default.fx
 
