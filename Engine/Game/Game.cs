@@ -139,7 +139,7 @@ namespace Engine.Game
         {
             Entity FloorObj = ECSManager.Instance.CreateEntity();
             StaticMesh FloorModel = PrimitiveModel.CreateBox(1, 1, 1);
-            Texture2D CheckerTex = Content.Load<Texture2D>("GameContent/Textures/Default/checkerboard");
+            Texture2D CheckerTex = Content.Load<Texture2D>("Main/Textures/Default/checkerboard");
             Material FloorMaterial = new Material
             {
                 BaseColorTexture = CheckerTex,
@@ -163,7 +163,7 @@ namespace Engine.Game
         {
             Entity SphereObj = ECSManager.Instance.CreateEntity();
             StaticMesh SphereModel = PrimitiveModel.CreateSphere(1);
-            Texture2D CheckerTex = Content.Load<Texture2D>("GameContent/Textures/Default/checkerboard");
+            Texture2D CheckerTex = Content.Load<Texture2D>("Main/Textures/Default/checkerboard");
             Material SphereMaterial = new Material { 
                 BaseColorTexture = CheckerTex, 
                 BaseColor = Color,
@@ -191,7 +191,7 @@ namespace Engine.Game
         {
             Entity BoxObj = ECSManager.Instance.CreateEntity();
             StaticMesh BoxModel = PrimitiveModel.CreateBox(1, 1, 1);
-            Texture2D CheckerTex = Content.Load<Texture2D>("GameContent/Textures/Default/checkerboard");
+            Texture2D CheckerTex = Content.Load<Texture2D>("Main/Textures/Default/checkerboard");
             Material BoxMaterial = new Material { BaseColorTexture = CheckerTex, BaseColor = Color.Purple };
             BoxObj.Transform.Scale = Vector3.One / 2;
 
@@ -220,7 +220,8 @@ namespace Engine.Game
             {
                 Body = PlayerBody,
                 CameraObj = ECSManager.Instance.GetComponent<Camera>(CameraEntity),
-                Height = PlayerHeight
+                Height = PlayerHeight,
+                Sensitivity = 5
             };
             ECSManager.Instance.AddComponent(PlayerEntity, Controller);
         }
@@ -228,7 +229,7 @@ namespace Engine.Game
         public void CreateAnimatedModel()
         {
             AnimatedModel = ECSManager.Instance.CreateEntity();
-            Model Model = Content.Load<Model>("GameContent/Walking");
+            Model Model = Content.Load<Model>("Main/Walking");
             AnimPlayer = Model.GetAnimations();
             Clip WalkClip = AnimPlayer.Clips["mixamo.com"];
             AnimPlayer.SetClip(WalkClip);
