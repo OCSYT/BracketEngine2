@@ -86,10 +86,10 @@ Ensure you have [.NET 9.0 SDK](https://dotnet.microsoft.com/en-us/download) inst
 - **`Core.EngineManager.cs` (singleton)**  
   Access key features like `Content` (ContentManager), `DefaultShader` (Effect), `UIControls` (UIControls), and `Graphics` (GraphicsDeviceManager).
 
-### ECS
-- **`Core.ECS.ECSManager.cs` (singleton)**  
+### EC
+- **`Core.EC.ECManager.cs` (singleton)**  
   Manages entities and components.
-- **`Core.ECS.Component.cs`**  
+- **`Core.EC.Component.cs`**  
   All components must inherit from this class. Override lifecycle methods like `Start`, `MainUpdate`, `FixedUpdate`, etc.
 
 ### Rendering

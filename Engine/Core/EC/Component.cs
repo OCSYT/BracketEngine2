@@ -3,7 +3,7 @@ using Engine.Core.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Engine.Core.ECS
+namespace Engine.Core.EC
 {
     public class Component : IComponentLifecycle, IDisposable
     {
@@ -39,7 +39,7 @@ namespace Engine.Core.ECS
 
         public void DestroyEntity()
         {
-            ECSManager.Instance.RemoveEntity(Entity);
+            ECManager.Instance.RemoveEntity(Entity);
         }
         public void SetEntity(Entity EntityInstance)
         {

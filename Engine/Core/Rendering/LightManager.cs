@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Engine.Core.Components.Rendering;
-using Engine.Core.ECS;
+using Engine.Core.EC;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 

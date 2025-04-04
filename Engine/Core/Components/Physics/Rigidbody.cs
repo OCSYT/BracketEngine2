@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Linq;
-using Engine.Core.ECS;
+using Engine.Core.EC;
 using Engine.Core.Physics;
 using Engine.Core.Components;
 

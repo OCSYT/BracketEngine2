@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using Engine.Core.ECS;
+using Engine.Core.EC;
 using Engine.Core.Rendering;
 using Engine.Core.Components;
 using System.Linq;

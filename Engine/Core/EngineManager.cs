@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using BulletSharp;
 using System.Threading.Tasks;
-using Engine.Core.ECS;
+using Engine.Core.EC;
 using Engine.Core.Physics;
 using Engine.Core.Audio;
 using System.Runtime.InteropServices;
@@ -237,7 +237,7 @@ DepthFormat.Depth24);
             Graphics.GraphicsDevice.DepthStencilState = DepthStencilState.None;
             SpriteBatch.Begin();
             DrawGUI(GameTime);
-            ECSManager.Instance.CallDrawGUIOnComponents(GameTime);
+            ECManager.Instance.CallDrawGUIOnComponents(GameTime);
             SpriteBatch.End();
             Graphics.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
@@ -315,7 +315,7 @@ DepthFormat.Depth24);
             LastTime = currentTime;
             Accumulator += (float)elapsedTime;
             MainUpdate(gameTime);
-            ECSManager.Instance.CallMainUpdateOnComponents(gameTime);
+            ECManager.Instance.CallMainUpdateOnComponents(gameTime);
 
             if (Accumulator >= FixedTimeStep)
             {
@@ -327,7 +327,7 @@ DepthFormat.Depth24);
 
                 GameTime fixedUpdateTime = new GameTime(TimeSpan.FromSeconds(TotalTime), TimeSpan.FromSeconds(FixedTimeStep));
                 FixedUpdate(fixedUpdateTime);
-                ECSManager.Instance.CallFixedUpdateOnComponents(fixedUpdateTime);
+                ECManager.Instance.CallFixedUpdateOnComponents(fixedUpdateTime);
 
                 Accumulator -= FixedTimeStep;
                 TotalTime += FixedTimeStep;

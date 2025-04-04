@@ -8,7 +8,7 @@ using System;
 using System.Linq;
 using Engine.Core.Rendering;
 
-namespace Engine.Core.ECS
+namespace Engine.Core.EC
 {
     public interface IComponentLifecycle
     {
@@ -27,10 +27,10 @@ namespace Engine.Core.ECS
         public Transform Transform;
     }
 
-    public class ECSManager
+    public class ECManager
     {
-        private static readonly Lazy<ECSManager> _lazyInstance = new Lazy<ECSManager>(() => new ECSManager());
-        public static ECSManager Instance => _lazyInstance.Value;
+        private static readonly Lazy<ECManager> _lazyInstance = new Lazy<ECManager>(() => new ECManager());
+        public static ECManager Instance => _lazyInstance.Value;
 
         private readonly List<int> _entities = new();
         private int _nextEntityId;
@@ -42,7 +42,7 @@ namespace Engine.Core.ECS
 
         private List<IComponentLifecycle> _startQueuedComponents = new();
 
-        private ECSManager() { }
+        private ECManager() { }
 
         public Entity CreateEntity()
         {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Engine.Core.ECS;
+using Engine.Core.EC;
 using Engine.Core.Physics;
 using Engine.Core;
 using Engine.Components;
@@ -94,13 +94,13 @@ namespace Engine.Game
         {
             Graphics.GraphicsDevice.Clear(Color.Black);
             BasicEffect Effect = new BasicEffect(Graphics.GraphicsDevice);
-            var CameraObj = ECSManager.Instance.GetComponent<Camera>(CameraEntity);
+            var CameraObj = ECManager.Instance.GetComponent<Camera>(CameraEntity);
 
             if (CameraObj != null)
             {
                 Effect.View = CameraObj.GetViewMatrix();
                 Effect.Projection = CameraObj.GetProjectionMatrix();
-                ECSManager.Instance.CallRenderOnComponents(Effect, CameraObj.GetViewMatrix(), CameraObj.GetProjectionMatrix(), GameTime);
+                ECManager.Instance.CallRenderOnComponents(Effect, CameraObj.GetViewMatrix(), CameraObj.GetProjectionMatrix(), GameTime);
             }
             GraphicsDevice.SetRenderTarget(null);
         }
@@ -109,7 +109,7 @@ namespace Engine.Game
 
         void CreateDirectionalLight(Vector3 Rotation, Color Color, float Intensity)
         {
-            Entity DirectionalLightEntity = ECSManager.Instance.CreateEntity();
+            Entity DirectionalLightEntity = ECManager.Instance.CreateEntity();
             DirectionalLightEntity.Transform.Rotation = Quaternion.CreateFromYawPitchRoll(MathHelper.ToRadians(Rotation.X), MathHelper.ToRadians(Rotation.Y), MathHelper.ToRadians(Rotation.Z));
             LightComponent DirectionalLight = new LightComponent
             {
@@ -117,20 +117,20 @@ namespace Engine.Game
                 Color = Color,
                 Intensity = Intensity
             };
-            ECSManager.Instance.AddComponent(DirectionalLightEntity, DirectionalLight);
+            ECManager.Instance.AddComponent(DirectionalLightEntity, DirectionalLight);
         }
 
         private void CreateCamera()
         {
-            CameraEntity = ECSManager.Instance.CreateEntity();
+            CameraEntity = ECManager.Instance.CreateEntity();
             Camera Cam = new Camera();
-            ECSManager.Instance.AddComponent(CameraEntity, Cam);
+            ECManager.Instance.AddComponent(CameraEntity, Cam);
         }
 
         // Function to create the Floor object
         private void CreateFloor()
         {
-            Entity FloorObj = ECSManager.Instance.CreateEntity();
+            Entity FloorObj = ECManager.Instance.CreateEntity();
             StaticMesh FloorModel = PrimitiveModel.CreateBox(1, 1, 1);
             Texture2D CheckerTex = Content.Load<Texture2D>("Main/Textures/Default/checkerboard");
             Material FloorMaterial = new Material
@@ -140,8 +140,8 @@ namespace Engine.Game
 
             FloorObj.Transform.Position = new Vector3(0, -2, 0);
             FloorObj.Transform.Scale = new Vector3(100, 1, 100);
-            ECSManager.Instance.AddComponent(FloorObj, new MeshRenderer(FloorModel, [FloorMaterial]));
-            ECSManager.Instance.AddComponent(FloorObj, new RigidBody
+            ECManager.Instance.AddComponent(FloorObj, new MeshRenderer(FloorModel, [FloorMaterial]));
+            ECManager.Instance.AddComponent(FloorObj, new RigidBody
             {
                 Mass = 0,
                 Shapes = [new BulletSharp.BoxShape(1, 1, 1)],
@@ -154,7 +154,7 @@ namespace Engine.Game
 
         private void CreateSphere(Vector3 Position, Vector3 Rotation, float Scale, Color Color)
         {
-            Entity SphereObj = ECSManager.Instance.CreateEntity();
+            Entity SphereObj = ECManager.Instance.CreateEntity();
             StaticMesh SphereModel = PrimitiveModel.CreateSphere(1);
             Texture2D CheckerTex = Content.Load<Texture2D>("Main/Textures/Default/checkerboard");
             Material SphereMaterial = new Material
@@ -169,8 +169,8 @@ namespace Engine.Game
             SphereObj.Transform.Rotation = Quaternion.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z);
             SphereObj.Transform.Scale = new Vector3(Scale, Scale, Scale);
 
-            ECSManager.Instance.AddComponent(SphereObj, new MeshRenderer(SphereModel, [SphereMaterial]));
-            ECSManager.Instance.AddComponent(SphereObj, new RigidBody
+            ECManager.Instance.AddComponent(SphereObj, new MeshRenderer(SphereModel, [SphereMaterial]));
+            ECManager.Instance.AddComponent(SphereObj, new RigidBody
             {
                 Friction = 25 * Scale,
                 Mass = 1000 * Scale,
@@ -183,8 +183,8 @@ namespace Engine.Game
 
         private void CreateSkybox()
         {
-            float Scale = ECSManager.Instance.GetComponent<Camera>(CameraEntity).FarClip / 2f;
-            Entity SkyboxObj = ECSManager.Instance.CreateEntity();
+            float Scale = ECManager.Instance.GetComponent<Camera>(CameraEntity).FarClip / 2f;
+            Entity SkyboxObj = ECManager.Instance.CreateEntity();
             StaticMesh SkyboxModel = PrimitiveModel.CreateBox(Scale, Scale, Scale);
             Material SphereMaterial = new Material
             {
@@ -192,18 +192,18 @@ namespace Engine.Game
                 CullMode = CullMode.None
             };
 
-            ECSManager.Instance.AddComponent(SkyboxObj, new MeshRenderer(SkyboxModel, [SphereMaterial]));
+            ECManager.Instance.AddComponent(SkyboxObj, new MeshRenderer(SkyboxModel, [SphereMaterial]));
         }
 
         private Transform CreateHandBox()
         {
-            Entity BoxObj = ECSManager.Instance.CreateEntity();
+            Entity BoxObj = ECManager.Instance.CreateEntity();
             StaticMesh BoxModel = PrimitiveModel.CreateBox(1, 1, 1);
             Texture2D CheckerTex = Content.Load<Texture2D>("Main/Textures/Default/checkerboard");
             Material BoxMaterial = new Material { BaseColorTexture = CheckerTex, BaseColor = Color.Purple };
             BoxObj.Transform.Scale = Vector3.One / 2;
 
-            ECSManager.Instance.AddComponent(BoxObj, new MeshRenderer(BoxModel, [BoxMaterial]));
+            ECManager.Instance.AddComponent(BoxObj, new MeshRenderer(BoxModel, [BoxMaterial]));
             return BoxObj.Transform;
         }
 
@@ -211,7 +211,7 @@ namespace Engine.Game
         private void CreatePlayer()
         {
             float PlayerHeight = 5;
-            PlayerEntity = ECSManager.Instance.CreateEntity();
+            PlayerEntity = ECManager.Instance.CreateEntity();
 
             PlayerEntity.Transform.Position = Vector3.Up * 10;
 
@@ -223,20 +223,20 @@ namespace Engine.Game
                 CollisionMask = PhysicsManager.CreateCollisionMask([1]),
             };
 
-            ECSManager.Instance.AddComponent(PlayerEntity, PlayerBody);
+            ECManager.Instance.AddComponent(PlayerEntity, PlayerBody);
             PlayerController Controller = new PlayerController()
             {
                 Body = PlayerBody,
-                CameraObj = ECSManager.Instance.GetComponent<Camera>(CameraEntity),
+                CameraObj = ECManager.Instance.GetComponent<Camera>(CameraEntity),
                 Height = PlayerHeight,
                 Sensitivity = 5
             };
-            ECSManager.Instance.AddComponent(PlayerEntity, Controller);
+            ECManager.Instance.AddComponent(PlayerEntity, Controller);
         }
 
         public void CreateAnimatedModel()
         {
-            AnimatedModel = ECSManager.Instance.CreateEntity();
+            AnimatedModel = ECManager.Instance.CreateEntity();
             Model Model = Content.Load<Model>("Main/Walking");
             AnimPlayer = Model.GetAnimations();
             Clip WalkClip = AnimPlayer.Clips["mixamo.com"];
@@ -250,7 +250,7 @@ namespace Engine.Game
                 }],
                 AnimPlayer);
 
-            ECSManager.Instance.AddComponent(AnimatedModel, Renderer);
+            ECManager.Instance.AddComponent(AnimatedModel, Renderer);
             AnimatedModel.Transform.Scale = Vector3.One / 20;
             AnimatedModel.Transform.Position += -Vector3.Forward * 5 - Vector3.Right * 3;
             AnimatedModel.Transform.Rotation = Quaternion.CreateFromYawPitchRoll(MathHelper.ToRadians(45), 0, 0);

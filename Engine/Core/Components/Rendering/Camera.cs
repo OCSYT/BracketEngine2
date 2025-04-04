@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
-using Engine.Core.ECS;
+using Engine.Core.EC;
 using Engine.Core.Components;
 
 namespace Engine.Core.Components.Rendering

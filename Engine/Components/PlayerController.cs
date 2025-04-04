@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Engine.Core.ECS;
+using Engine.Core.EC;
 using Engine.Core.Physics;
 using Engine.Core;
 using Engine.Core.Components;

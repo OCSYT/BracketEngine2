@@ -1,5 +1,5 @@
 ﻿using Engine.Core.Components.Rendering;
-using Engine.Core.ECS;
+using Engine.Core.EC;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -52,7 +52,7 @@ namespace Engine.Core.Rendering
 
         private void CacheRendererEntitiesAndComponents()
         {
-            List<int> currentRendererEntities = ECSManager.Instance.GetEntitiesWithComponent<MeshRenderer>();
+            List<int> currentRendererEntities = ECManager.Instance.GetEntitiesWithComponent<MeshRenderer>();
 
             if (currentRendererEntities.Count != LastEntityCount || !AreEntitiesEqual(currentRendererEntities))
             {
@@ -63,7 +63,7 @@ namespace Engine.Core.Rendering
 
                 Parallel.ForEach(CachedRendererEntities, entity =>
                 {
-                    var components = ECSManager.Instance.GetComponents<MeshRenderer>(ECSManager.Instance.GetEntityById(entity));
+                    var components = ECManager.Instance.GetComponents<MeshRenderer>(ECManager.Instance.GetEntityById(entity));
                     lock (CachedRenderers)
                     {
                         CachedRenderers.AddRange(components);
