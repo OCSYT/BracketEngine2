@@ -253,25 +253,55 @@ DepthFormat.Depth24);
             base.Draw(GameTime);
         }
 
-        public TextureCube GenerateCubeMap(Texture2D[] textures)
+        public TextureCube GenerateCubeMap(Texture2D sourceTexture, float brightness = 1.0f)
         {
-            if (textures.Length != 6)
-                throw new ArgumentException("Exactly 6 textures are required to generate a cubemap.");
+            // Determine the size of each cubemap face
+            int faceSize = sourceTexture.Width / 4; // Assuming 4 faces horizontally
 
-            int size = textures[0].Width; // Assuming all textures are square and of the same size.
+            TextureCube cubeMap = new TextureCube(GraphicsDevice, faceSize, false, SurfaceFormat.Color);
+            Color[] sourceData = new Color[sourceTexture.Width * sourceTexture.Height];
+            sourceTexture.GetData(sourceData);
 
-            TextureCube cubeMap = new TextureCube(GraphicsDevice, size, false, SurfaceFormat.Color);
+            // Define the 6 cube map faces
+            CubeMapFace[] cubeFaces = {
+        CubeMapFace.PositiveX, CubeMapFace.NegativeX,
+        CubeMapFace.PositiveY, CubeMapFace.NegativeY,
+        CubeMapFace.PositiveZ, CubeMapFace.NegativeZ
+    };
+
+            // Define the source texture regions for each face
+            Rectangle[] sourceRects = {
+        new Rectangle(faceSize * 2, faceSize, faceSize, faceSize), // +X
+        new Rectangle(0, faceSize, faceSize, faceSize),           // -X
+        new Rectangle(faceSize, 0, faceSize, faceSize),           // +Y
+        new Rectangle(faceSize, faceSize * 2, faceSize, faceSize), // -Y
+        new Rectangle(faceSize, faceSize, faceSize, faceSize),     // +Z
+        new Rectangle(faceSize * 3, faceSize, faceSize, faceSize) // -Z
+    };
 
             for (int i = 0; i < 6; i++)
             {
-                var face = (CubeMapFace)i;
-                Color[] data = new Color[size * size];
-                textures[i].GetData(data);
-                cubeMap.SetData(face, data);
+                CubeMapFace face = cubeFaces[i];
+                Rectangle sourceRect = sourceRects[i];
+                Color[] faceData = new Color[faceSize * faceSize];
+
+                // Copy data from the source texture to the cubemap face
+                for (int y = 0; y < faceSize; y++)
+                {
+                    for (int x = 0; x < faceSize; x++)
+                    {
+                        int sourceX = sourceRect.X + x;
+                        int sourceY = sourceRect.Y + y;
+                        faceData[y * faceSize + x] = sourceData[sourceY * sourceTexture.Width + sourceX] * brightness;
+                    }
+                }
+
+                cubeMap.SetData(face, faceData);
             }
 
             return cubeMap;
         }
+
 
         private DateTime LastTime = DateTime.Now;
         private float TotalTime = 0f;

@@ -55,6 +55,7 @@ namespace Engine.Core.Rendering
         public static Material Default { get; } = new Material();
         public float MetallicIntensity { get; set; } = 0.0f;
         public float RoughnessIntensity { get; set; } = .5f;
+        public CullMode CullMode { get; set; } = CullMode.CullCounterClockwiseFace;
         public Material()
         {
         }
@@ -63,7 +64,7 @@ namespace Engine.Core.Rendering
                         Color baseColor = default,
                         Texture2D emissionColorTexture = null,
                         Color emissionColor = default,
-                        float metallicIntensity  = 0f,
+                        float metallicIntensity = 0f,
                         Texture2D metallicTexture = null,
                         float roughnessIntensity = 0.5f,
                         Texture2D roughnessTexture = null,
@@ -71,7 +72,7 @@ namespace Engine.Core.Rendering
                         Texture2D ambientOcclusionTexture = null,
                         float alpha = 1,
                         bool lighting = true,
-                        bool transparent = false, bool vertexColors = false, Effect shader = null)
+                        bool transparent = false, bool vertexColors = false, CullMode cullMode = CullMode.CullCounterClockwiseFace, Effect shader = null)
         {
             BaseColorTexture = baseColorTexture;
             MetallicTexture = metallicTexture;
@@ -88,6 +89,7 @@ namespace Engine.Core.Rendering
             MetallicIntensity = metallicIntensity;
             RoughnessIntensity = roughnessIntensity;
             Lighting = lighting;
+            CullMode = cullMode;
         }
 
         public void ApplyEffectParameters(Effect effect, bool fallback)
@@ -105,6 +107,16 @@ namespace Engine.Core.Rendering
 
             EngineManager.Instance.GraphicsDevice.BlendState =
                 BlendState ?? (Transparent ? BlendState.AlphaBlend : BlendState.Opaque);
+
+            RasterizerState rasterizerState = new RasterizerState()
+            {
+                CullMode = CullMode,
+                DepthClipEnable = true,
+                ScissorTestEnable = false
+            };
+
+            EngineManager.Instance.GraphicsDevice.RasterizerState = rasterizerState;
+
 
             // Apply effect parameters
             if (!fallback)
@@ -142,9 +154,7 @@ namespace Engine.Core.Rendering
                     }
                 }
             }
-            else
-            {
-                // Fallback parameter setting
+            try{
                 effect.Parameters["VertexColors"]?.SetValue(VertexColors ? 1 : 0);
                 effect.Parameters["Lighting"]?.SetValue(Lighting ? 1 : 0);
                 effect.Parameters["Alpha"]?.SetValue(Alpha);
@@ -156,10 +166,12 @@ namespace Engine.Core.Rendering
                 effect.Parameters["RoughnessTexture"]?.SetValue(RoughnessTexture ?? EngineManager.Instance.WhiteTex);
                 effect.Parameters["NormalTexture"]?.SetValue(NormalTexture ?? EngineManager.Instance.NormalTex);
                 effect.Parameters["AmbientOcclusionTexture"]?.SetValue(AmbientOcclusionTexture ?? EngineManager.Instance.WhiteTex);
-                effect.Parameters["EnvironmentMap"]?.SetValue(LightManager.Instance.EnvironmentMap ?? EngineManager.Instance.CubeTex );
+                effect.Parameters["EnvironmentMap"]?.SetValue(LightManager.Instance.EnvironmentMap ?? EngineManager.Instance.CubeTex);
                 effect.Parameters["BaseColor"]?.SetValue(BaseColor.ToVector4());
                 effect.Parameters["EmissionColor"]?.SetValue(EmissionColor.ToVector4());
                 effect.Parameters["EmissionColorTexture"]?.SetValue(EmissionColorTexture ?? EngineManager.Instance.WhiteTex);
+            }catch{
+                
             }
         }
     }

@@ -1,7 +1,6 @@
 float4x4 World;
 float4x4 View;
 float4x4 Projection;
-float3 ViewPosition;
 
 float Alpha = 1;
 float VertexColors = 0;
@@ -78,6 +77,7 @@ struct VertexOutput
     float2 TexCoord : TEXCOORD0;
     float3 WorldNormal : TEXCOORD1;
     float3 WorldPosition : TEXCOORD2;
+    float3 LocalPosition : TEXCOORD6;
     float3 ViewDirection : TEXCOORD3;
     float4 Color : COLOR0;
     float3 Tangent : TEXCOORD4;
@@ -89,10 +89,10 @@ VertexOutput VS(VertexInput input)
     float4 worldPosition = mul(input.Position, World);
     output.WorldPosition = worldPosition.xyz;
     output.Position = mul(worldPosition, mul(View, Projection));
+    output.LocalPosition = input.Position;
     float3 worldNormal = mul(input.Normal, (float3x3) World);
     output.WorldNormal = normalize(worldNormal);
-    float3 viewDirection = normalize(CameraPosition - output.WorldPosition);
-    output.ViewDirection = viewDirection;
+    output.ViewDirection = normalize(CameraPosition - output.WorldPosition);
     output.Color = input.Color;
     output.TexCoord = input.TexCoord;
 
@@ -136,10 +136,10 @@ float3 CalculatePBRLighting(VertexOutput input, float3 normal, float3 albedo, fl
     float3 F0 = lerp(0, albedo, metallic);
 
     float3 finalColor = AmbientColor.rgb * albedo;
-
-    float3 V = normalize(-input.ViewDirection);
-    float3 R = reflect(-V, normal);
-    float3 reflection = texCUBE(EnvironmentMapSampler, R).rgb;
+    
+    float3 V = normal;
+    float3 R = reflect(-V, normalize(normal));
+    float3 reflection = texCUBElod(EnvironmentMapSampler, float4(R, 0)).rgb;
 
     float3 kSpecular = F0 * reflection;
     float3 kDiffuse = (1.0 - F0) * albedo;

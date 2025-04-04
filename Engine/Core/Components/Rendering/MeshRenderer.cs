@@ -171,7 +171,7 @@ namespace Engine.Core.Components.Rendering
 
 
             effect.Parameters["Time"]?.SetValue(currentTime);
-            effect.Parameters["ViewPosition"]?.SetValue(-viewMatrix.Translation);
+            effect.Parameters["CameraPosition"]?.SetValue(viewMatrix.Translation);
             effect.Parameters["World"]?.SetValue(worldMatrix);
             effect.Parameters["View"]?.SetValue(viewMatrix);
             effect.Parameters["Projection"]?.SetValue(projectionMatrix);

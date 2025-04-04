@@ -17,7 +17,7 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin ../GameContent/Main/Skybox/back.png
+#begin ../GameContent/Main/Skybox/HDRI.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -27,127 +27,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:../GameContent/Main/Skybox/back.png;Main/Skybox/back.png
-
-#begin ../GameContent/Main/Skybox/back.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../GameContent/Main/Skybox/back.png;Main/Skybox/back.png
-
-#begin ../GameContent/Main/Skybox/bottom.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../GameContent/Main/Skybox/bottom.png;Main/Skybox/bottom.png
-
-#begin ../GameContent/Main/Skybox/bottom.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../GameContent/Main/Skybox/bottom.png;Main/Skybox/bottom.png
-
-#begin ../GameContent/Main/Skybox/front.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../GameContent/Main/Skybox/front.png;Main/Skybox/front.png
-
-#begin ../GameContent/Main/Skybox/left.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../GameContent/Main/Skybox/left.png;Main/Skybox/left.png
-
-#begin ../GameContent/Main/Skybox/right.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../GameContent/Main/Skybox/right.png;Main/Skybox/right.png
-
-#begin ../GameContent/Main/Skybox/right.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../GameContent/Main/Skybox/right.png;Main/Skybox/right.png
-
-#begin ../GameContent/Main/Skybox/top.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../GameContent/Main/Skybox/top.png;Main/Skybox/top.png
-
-#begin ../GameContent/Main/Skybox/top.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../GameContent/Main/Skybox/top.png;Main/Skybox/top.png
-
-#begin ../GameContent/Main/Textures/Default/checkerboard.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:../GameContent/Main/Textures/Default/checkerboard.png;Main/Textures/Default/checkerboard.png
+/build:../GameContent/Main/Skybox/HDRI.png;Main/Skybox/HDRI.png
 
 #begin ../GameContent/Main/Textures/Default/checkerboard.png
 /importer:TextureImporter
@@ -185,47 +65,11 @@
 /processorParam:TextureFormat=Compressed
 /build:../GameContent/Main/Walking.fbx;Main/Walking.fbx
 
-#begin ../GameContent/Main/Walking.fbx
-/importer:FbxImporter
-/processor:CpuAnimatedModelProcessor
-/processorParam:VertexBufferType=DynamicWriteOnly
-/processorParam:IndexBufferType=Default
-/processorParam:MaxBones=72
-/processorParam:GenerateKeyframesFrequency=0
-/processorParam:FixRealBoneRoot=False
-/processorParam:ColorKeyColor=0,0,0,0
-/processorParam:ColorKeyEnabled=True
-/processorParam:DefaultEffect=BasicEffect
-/processorParam:GenerateMipmaps=True
-/processorParam:GenerateTangentFrames=False
-/processorParam:PremultiplyTextureAlpha=True
-/processorParam:PremultiplyVertexColors=True
-/processorParam:ResizeTexturesToPowerOfTwo=False
-/processorParam:RotationX=0
-/processorParam:RotationY=0
-/processorParam:RotationZ=0
-/processorParam:Scale=1
-/processorParam:SwapWindingOrder=False
-/processorParam:TextureFormat=Compressed
-/build:../GameContent/Main/Walking.fbx;Main/Walking.fbx
-
 #begin ../GameContent/Rendering/Shaders/ACES.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
 /build:../GameContent/Rendering/Shaders/ACES.fx;Rendering/Shaders/ACES.fx
-
-#begin ../GameContent/Rendering/Shaders/ACES.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:../GameContent/Rendering/Shaders/ACES.fx;Rendering/Shaders/ACES.fx
-
-#begin ../GameContent/Rendering/Shaders/Bloom.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:../GameContent/Rendering/Shaders/Bloom.fx;Rendering/Shaders/Bloom.fx
 
 #begin ../GameContent/Rendering/Shaders/Bloom.fx
 /importer:EffectImporter
@@ -239,9 +83,9 @@
 /processorParam:DebugMode=Auto
 /build:../GameContent/Rendering/Shaders/Default.fx;Rendering/Shaders/Default.fx
 
-#begin ../GameContent/Rendering/Shaders/Default.fx
+#begin ../GameContent/Rendering/Shaders/Skybox.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:../GameContent/Rendering/Shaders/Default.fx;Rendering/Shaders/Default.fx
+/build:../GameContent/Rendering/Shaders/Skybox.fx;Rendering/Shaders/Skybox.fx
 

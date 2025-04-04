@@ -26,10 +26,9 @@ namespace Engine.Game
         private Animations AnimPlayer;
         private Transform HandTransform;
         private Vector3 HandOffset = Vector3.Up;
-        public List<Transform> PointTransforms = new List<Transform>();
         public override void Awake()
         {
-            Debug = true;
+            //Debug = true;
         }
         public override void Start()
         {
@@ -47,10 +46,10 @@ namespace Engine.Game
             });
 
             // Call functions to initialize each object
+            CreateCamera();
+            CreateSkybox();
             CreateFloor();
-            CreatePointLight(new Vector3(0, 25, -50), Color.Red);
-            CreatePointLight(new Vector3(50, 25, 0), Color.Green);
-            CreatePointLight(new Vector3(0, 25, 50), Color.Blue);
+            CreateDirectionalLight(new Vector3(225, 45, 0), Color.White, .5f);
             CreateSphere(new Vector3(-10, 10, -10), new Vector3(45, 0, 0), 3, Color.Cyan);
             CreateSphere(new Vector3(5, 10, -5), new Vector3(0, 45, 0), 2, Color.Red);
             CreateSphere(new Vector3(-15, 10, 15), new Vector3(0, 0, 90), 4, Color.Green);
@@ -58,17 +57,9 @@ namespace Engine.Game
             CreateSphere(new Vector3(0, 10, 20), new Vector3(0, 90, 0), 2.5f, Color.Blue);
             HandTransform = CreateHandBox();
             CreateAnimatedModel();
-            CreateCamera();
             CreatePlayer();
-            LightManager.Instance.EnvironmentMap = GenerateCubeMap(new Texture2D[]
-            {
-    Content.Load<Texture2D>("Main/Skybox/right"),   // Positive X
-    Content.Load<Texture2D>("Main/Skybox/left"),    // Negative X
-    Content.Load<Texture2D>("Main/Skybox/top"),      // Positive Y
-    Content.Load<Texture2D>("Main/Skybox/bottom"),    // Negative Y
-    Content.Load<Texture2D>("Main/Skybox/front"),   // Positive Z
-    Content.Load<Texture2D>("Main/Skybox/back")     // Negative Z
-            });
+            LightManager.Instance.EnvironmentMap = GenerateCubeMap(Content.Load<Texture2D>("Main/Skybox/Skybox"), 0.5f);
+
         }
 
         public override void MainUpdate(GameTime GameTime)
@@ -96,11 +87,7 @@ namespace Engine.Game
 
         public override void FixedUpdate(GameTime GameTime)
         {
-            //Point lights moving
-            foreach (Transform pointlight in PointTransforms)
-            {
-                pointlight.Position = Vector3.Transform(pointlight.Position, Quaternion.CreateFromYawPitchRoll(1 * (MathF.PI / 180), 0, 0));
-            }
+
         }
 
         public override void Render(GameTime GameTime)
@@ -120,27 +107,24 @@ namespace Engine.Game
 
         //Spawning Objects
 
+        void CreateDirectionalLight(Vector3 Rotation, Color Color, float Intensity)
+        {
+            Entity DirectionalLightEntity = ECSManager.Instance.CreateEntity();
+            DirectionalLightEntity.Transform.Rotation = Quaternion.CreateFromYawPitchRoll(MathHelper.ToRadians(Rotation.X), MathHelper.ToRadians(Rotation.Y), MathHelper.ToRadians(Rotation.Z));
+            LightComponent DirectionalLight = new LightComponent
+            {
+                LightType = LightType.Directional,
+                Color = Color,
+                Intensity = Intensity
+            };
+            ECSManager.Instance.AddComponent(DirectionalLightEntity, DirectionalLight);
+        }
+
         private void CreateCamera()
         {
             CameraEntity = ECSManager.Instance.CreateEntity();
             Camera Cam = new Camera();
             ECSManager.Instance.AddComponent(CameraEntity, Cam);
-        }
-
-        private void CreatePointLight(Vector3 Position, Color Color, float Range = 50)
-
-        {
-            Entity PointLightEntity = ECSManager.Instance.CreateEntity();
-            PointTransforms.Add(PointLightEntity.Transform);
-            PointLightEntity.Transform.Position = Position;
-            LightComponent PointLight = new LightComponent
-            {
-                LightType = LightType.Point,
-                Color = Color,
-                Intensity = 25,
-                Range = Range
-            };
-            ECSManager.Instance.AddComponent(PointLightEntity, PointLight);
         }
 
         // Function to create the Floor object
@@ -178,7 +162,7 @@ namespace Engine.Game
                 BaseColorTexture = CheckerTex,
                 BaseColor = Color,
                 RoughnessIntensity = 1f,
-                MetallicIntensity = .7f
+                MetallicIntensity = 1f
             };
 
             SphereObj.Transform.Position = Position;
@@ -195,6 +179,20 @@ namespace Engine.Game
                 CollisionGroup = PhysicsManager.CreateCollisionMask([1]),
                 CollisionMask = PhysicsManager.CreateCollisionMask([1, 2]),
             });
+        }
+
+        private void CreateSkybox()
+        {
+            float Scale = ECSManager.Instance.GetComponent<Camera>(CameraEntity).FarClip / 2f;
+            Entity SkyboxObj = ECSManager.Instance.CreateEntity();
+            StaticMesh SkyboxModel = PrimitiveModel.CreateBox(Scale, Scale, Scale);
+            Material SphereMaterial = new Material
+            {
+                Shader = Content.Load<Effect>("Rendering/Shaders/Skybox"),
+                CullMode = CullMode.None
+            };
+
+            ECSManager.Instance.AddComponent(SkyboxObj, new MeshRenderer(SkyboxModel, [SphereMaterial]));
         }
 
         private Transform CreateHandBox()
