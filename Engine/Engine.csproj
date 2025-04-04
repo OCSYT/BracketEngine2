@@ -51,8 +51,6 @@
 	
 	<Target Name="PostBuildCleanup" AfterTargets="Build">
 		<RemoveDir Directories="ContentXML" />
-		<RemoveDir Directories="Content/bin" />
-		<RemoveDir Directories="Content/obj" />
 	</Target>
 
 </Project>
