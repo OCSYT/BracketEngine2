@@ -1,13 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Engine.Core.EC;
 using Engine.Core.Rendering;
-using Engine.Core.Components;
 using System.Linq;
-using System;
-using System.Runtime.InteropServices;
 using Aether.Animation;
+
 namespace Engine.Core.Components.Rendering
 {
     public class MeshRenderer : Component

@@ -1,7 +1,5 @@
-﻿using Engine.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 
 namespace Engine.Core.Rendering
@@ -154,7 +152,8 @@ namespace Engine.Core.Rendering
                     }
                 }
             }
-            try{
+            try
+            {
                 effect.Parameters["VertexColors"]?.SetValue(VertexColors ? 1 : 0);
                 effect.Parameters["Lighting"]?.SetValue(Lighting ? 1 : 0);
                 effect.Parameters["Alpha"]?.SetValue(Alpha);
@@ -170,8 +169,10 @@ namespace Engine.Core.Rendering
                 effect.Parameters["BaseColor"]?.SetValue(BaseColor.ToVector4());
                 effect.Parameters["EmissionColor"]?.SetValue(EmissionColor.ToVector4());
                 effect.Parameters["EmissionColorTexture"]?.SetValue(EmissionColorTexture ?? EngineManager.Instance.WhiteTex);
-            }catch{
-                
+            }
+            catch
+            {
+
             }
         }
     }

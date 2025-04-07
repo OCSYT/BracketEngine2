@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Engine.Game;
+using System;
+
 namespace Engine
 {
     public class MainProgram
@@ -15,7 +11,7 @@ namespace Engine
                 Engine.Game.Game GameEngine = new Engine.Game.Game();
                 GameEngine.Run();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine("An error occurred:");
                 Console.WriteLine(e.Message);

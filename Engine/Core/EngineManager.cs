@@ -1,9 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using BulletSharp;
-using System.Threading.Tasks;
 using Engine.Core.EC;
 using Engine.Core.Physics;
 using Engine.Core.Audio;

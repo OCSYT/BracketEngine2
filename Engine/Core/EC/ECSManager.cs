@@ -1,7 +1,6 @@
-﻿using Engine.Core.Components;
+using Engine.Core.Components;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using MonoGame.Extended.ECS;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System;

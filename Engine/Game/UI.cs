@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Engine.Core;
+using System;
 using Microsoft.Xna.Framework;
-using Myra;
 using Myra.Graphics2D.UI;
 
 namespace Engine.Game
@@ -29,7 +23,7 @@ namespace Engine.Game
         }
         public void Render(GameTime GameTime)
         {
-            FPSLabel.Text = "FPS: " + MathF.Round(1/(float)GameTime.ElapsedGameTime.TotalSeconds);
+            FPSLabel.Text = "FPS: " + MathF.Round(1 / (float)GameTime.ElapsedGameTime.TotalSeconds);
             UIDesktop.Render();
         }
     }

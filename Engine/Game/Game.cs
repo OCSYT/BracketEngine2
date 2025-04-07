@@ -1,20 +1,15 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using Engine.Core.EC;
 using Engine.Core.Physics;
 using Engine.Core;
 using Engine.Components;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Engine.Core.Rendering;
 using Engine.Core.Components;
 using Engine.Core.Components.Rendering;
 using Engine.Core.Components.Physics;
 using Aether.Animation;
-using Myra.Graphics2D.UI;
-using Myra;
 
 namespace Engine.Game
 {

@@ -1,15 +1,10 @@
-﻿using BulletSharp;
+using BulletSharp;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Diagnostics;
 using System.Linq;
 using Engine.Core.EC;
 using Engine.Core.Physics;
-using Engine.Core.Components;
 
 namespace Engine.Core.Components.Physics
 {
@@ -222,7 +217,7 @@ namespace Engine.Core.Components.Physics
                 IsStatic ? 0 : Mass,
                 new DefaultMotionState(initialTransform),
                 PhysicsShape,
-                new BulletSharp.Math.Vector3(Inertia.X, Inertia.Y,  Inertia.Z)
+                new BulletSharp.Math.Vector3(Inertia.X, Inertia.Y, Inertia.Z)
                     == BulletSharp.Math.Vector3.Zero
                   ? calculatedInertia
                   : new BulletSharp.Math.Vector3(Inertia.X, Inertia.Y, Inertia.Z)
@@ -235,7 +230,7 @@ namespace Engine.Core.Components.Physics
                 Friction = Friction,
                 Restitution = Restitution
             };
-            BulletRigidBody.SetAnisotropicFriction(BulletSharp.Math.Vector3.One *  Friction, AnisotropicFrictionFlags.RollingFriction);
+            BulletRigidBody.SetAnisotropicFriction(BulletSharp.Math.Vector3.One * Friction, AnisotropicFrictionFlags.RollingFriction);
             BulletRigidBody.SetDamping(Drag, AngularDrag);
             BulletRigidBody.UserObject = this;
             BulletRigidBody.SetSleepingThresholds(0, 0);
@@ -266,7 +261,7 @@ namespace Engine.Core.Components.Physics
         public void SetGravity(Vector3 Gravity)
         {
             if ((Initalized && BulletRigidBody != null) == false) return;
-            BulletRigidBody.Gravity = new BulletSharp.Math.Vector3(Gravity.X, Gravity.Y, Gravity.Z);;
+            BulletRigidBody.Gravity = new BulletSharp.Math.Vector3(Gravity.X, Gravity.Y, Gravity.Z); ;
         }
 
         public void SetMass(float m)

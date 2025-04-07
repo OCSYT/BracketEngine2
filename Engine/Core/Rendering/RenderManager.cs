@@ -1,12 +1,10 @@
-﻿using Engine.Core.Components.Rendering;
+using Engine.Core.Components.Rendering;
 using Engine.Core.EC;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using System;
 using System.Threading.Tasks;
 using System.Linq;
-using SharpFont;
 
 namespace Engine.Core.Rendering
 {
