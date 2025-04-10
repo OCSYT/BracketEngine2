@@ -8,9 +8,33 @@
 Ensure you have [Visual C++ Redistributable Packages for Visual Studio 2013](https://www.microsoft.com/en-gb/download/details.aspx?id=40784) installed.
 Ensure you have [.NET 9.0 SDK](https://dotnet.microsoft.com/en-us/download) installed. 
 
-Linux:
-- Ensure Wine is installed
-- Ensure Wine64 is added to path
+### Linux Additional Setup Instructions:
+
+1. **Install Wine**  
+   Ensure [Wine](https://www.winehq.org/) is installed on your system.
+2. **Ensure Wine64 is Added to the PATH**  
+
+   1. **Install the [.NET 9.0 SDK](https://dotnet.microsoft.com/en-us/download)** in [Proton](https://github.com/ValveSoftware/Proton) / [Wine](https://www.winehq.org/) using [Protontricks](https://github.com/Matoking/protontricks) / [Winetricks](https://github.com/Winetricks/winetricks).
+
+   2. Open your terminal and add the following alias to your `~/.bashrc` file to ensure `wine64` uses the `wine` command:
+      ```bash
+      alias wine64='wine'
+      ```
+
+   3. Create a symbolic link for `wine64` so that it can be run from any directory:
+      ```bash
+      sudo ln -s /usr/local/bin/wine64 /usr/bin/wine64
+      ```
+
+   4. Create a wrapper script to ensure `wine64` runs correctly by adding the following script to `/usr/bin/wine64`:
+      ```bash
+      #!/bin/bash
+      wine "$@"
+      ```
+
+5. **Install and Use Proton**  
+   Run the output binary with [Proton](https://github.com/ValveSoftware/Proton) to prevent performance issues.
+
 
 ### Visual Studio 2022
 1. Clone the repository.
