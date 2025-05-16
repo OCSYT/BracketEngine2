@@ -138,8 +138,8 @@ namespace Engine.Components
 
             LocalVel += Vector3.Up * YVel;
             Body.SetVelocity(LocalVel);
-            
-            CamTransform.Position = Transform.Position + (LocalVel * (float)GameTime.ElapsedGameTime.TotalSeconds);
+
+            CamTransform.Position = Transform.Position;
         }
     }
 }
