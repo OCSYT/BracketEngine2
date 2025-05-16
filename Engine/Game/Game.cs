@@ -90,7 +90,6 @@ namespace Engine.Game
             Graphics.GraphicsDevice.Clear(Color.Black);
             BasicEffect Effect = new BasicEffect(Graphics.GraphicsDevice);
             var CameraObj = ECManager.Instance.GetComponent<Camera>(CameraEntity);
-
             if (CameraObj != null)
             {
                 Effect.View = CameraObj.GetViewMatrix();
