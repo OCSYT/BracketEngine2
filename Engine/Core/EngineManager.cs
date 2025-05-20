@@ -58,6 +58,7 @@ namespace Engine.Core
         public Texture2D NormalTex;
         public TextureCube CubeTex;
         public UI UIManager = new UI();
+        public float RenderScale = 1.0f;
         protected EngineManager()
         {
             if (_instance != null)
@@ -92,23 +93,17 @@ namespace Engine.Core
         private int PrevHeight;
         protected override void LoadContent()
         {
+            Start();
+            UIManager.Start();
             PrevWidth = GraphicsDevice.Viewport.Width;
             PrevHeight = GraphicsDevice.Viewport.Height;
             if (RenderTarget == null)
             {
-                RenderTarget = new RenderTarget2D(GraphicsDevice, PrevWidth, PrevHeight, false,
-    SurfaceFormat.HdrBlendable,
-    DepthFormat.Depth24);
-                BackBuffer = new RenderTarget2D(GraphicsDevice, PrevWidth, PrevHeight, false,
-SurfaceFormat.HdrBlendable,
-DepthFormat.Depth24);
+                RenderTarget = new RenderTarget2D(GraphicsDevice, (int)(PrevWidth * RenderScale), (int)(PrevHeight * RenderScale), false, SurfaceFormat.HdrBlendable, DepthFormat.Depth24);
+                BackBuffer = new RenderTarget2D(GraphicsDevice, (int)(PrevWidth * RenderScale), (int)(PrevHeight * RenderScale), false, SurfaceFormat.HdrBlendable, DepthFormat.Depth24);
             }
-
-
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             DefaultShader = Content.Load<Effect>("Rendering/Shaders/Default");
-            Start();
-            UIManager.Start();
             base.LoadContent();
         }
 
@@ -118,8 +113,8 @@ DepthFormat.Depth24);
             {
                 PrevWidth = GraphicsDevice.Viewport.Width;
                 PrevHeight = GraphicsDevice.Viewport.Height;
-                RenderTarget = new RenderTarget2D(GraphicsDevice, PrevWidth, PrevHeight, false, SurfaceFormat.HdrBlendable, DepthFormat.Depth24);
-                BackBuffer = new RenderTarget2D(GraphicsDevice, PrevWidth, PrevHeight, false, SurfaceFormat.HdrBlendable, DepthFormat.Depth24);
+                RenderTarget = new RenderTarget2D(GraphicsDevice, (int)(PrevWidth * RenderScale), (int)(PrevHeight * RenderScale), false, SurfaceFormat.HdrBlendable, DepthFormat.Depth24);
+                BackBuffer = new RenderTarget2D(GraphicsDevice, (int)(PrevWidth * RenderScale), (int)(PrevHeight * RenderScale), false, SurfaceFormat.HdrBlendable, DepthFormat.Depth24);
             }
 
             Graphics.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -193,7 +188,7 @@ DepthFormat.Depth24);
 
                     PostFX.Value.CurrentTechnique = Technique;
 
-                    SpriteBatch.Begin(effect: PostFX.Value);
+                    SpriteBatch.Begin(effect: PostFX.Value, samplerState: SamplerState.PointClamp);
                     SpriteBatch.Draw(CurrentSource, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
                     SpriteBatch.End();
 
@@ -202,7 +197,7 @@ DepthFormat.Depth24);
                 }
             }
 
-            SpriteBatch.Begin();
+            SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
             SpriteBatch.Draw(CurrentSource, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
             SpriteBatch.End();
 
