@@ -1,11 +1,12 @@
 using System;
-
+using System.Diagnostics;
 namespace Engine
 {
     public class MainProgram
     {
         public static void Main()
         {
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
             try
             {
                 Engine.Game.Game GameEngine = new Engine.Game.Game();
@@ -16,11 +17,6 @@ namespace Engine
                 Console.WriteLine("An error occurred:");
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);
-            }
-            finally
-            {
-                Console.WriteLine("Press Enter to close the console.");
-                Console.ReadLine();
             }
         }
     }

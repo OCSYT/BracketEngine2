@@ -54,7 +54,7 @@ namespace Engine.Components
             Body.SetAngularFactor(Vector3.Zero);
         }
 
-        public override void MainUpdate(GameTime gameTime)
+        public override void MainUpdate(GameTime GameTime)
         {
             if (!EngineManager.Instance.IsActive) return;
 
@@ -63,8 +63,8 @@ namespace Engine.Components
             Vector2 CurrentMousePosition = Mouse.GetState().Position.ToVector2();
             Vector2 MouseDelta = CurrentMousePosition - new Vector2(Graphics.GraphicsDevice.Viewport.Width / 2, Graphics.GraphicsDevice.Viewport.Height / 2);
 
-            MouseX -= MouseDelta.X * (Sensitivity / 10) * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            MouseY = MathHelper.Clamp(MouseY - MouseDelta.Y * (Sensitivity / 10) * (float)gameTime.ElapsedGameTime.TotalSeconds, MathHelper.ToRadians(-90), MathHelper.ToRadians(90));
+            MouseX -= MouseDelta.X * (Sensitivity / 10) * (float)GameTime.ElapsedGameTime.TotalSeconds;
+            MouseY = MathHelper.Clamp(MouseY - MouseDelta.Y * (Sensitivity / 10) * (float)GameTime.ElapsedGameTime.TotalSeconds, MathHelper.ToRadians(-90), MathHelper.ToRadians(90));
 
             CamTransform.Rotation = Quaternion.CreateFromYawPitchRoll(MouseX, MouseY, 0);
             Quaternion BodyDir = Quaternion.CreateFromYawPitchRoll(MouseX, 0, 0);
@@ -72,6 +72,7 @@ namespace Engine.Components
             RightDir = Vector3.Transform(Vector3.Right, BodyDir);
         }
 
+        Vector3 LocalVel = Vector3.Zero;
         public override void FixedUpdate(GameTime GameTime)
         {
 
@@ -81,7 +82,7 @@ namespace Engine.Components
 
             KeyboardState State = Keyboard.GetState();
 
-            Vector3 LocalVel = Vector3.Zero;
+            LocalVel = Vector3.Lerp(LocalVel, Vector3.Zero, 0.25f);
             if (EngineManager.Instance.IsActive)
             {
                 EngineManager.Instance.LockMouse();
@@ -136,8 +137,8 @@ namespace Engine.Components
                 YVel += PhysicsManager.Instance.Gravity.Y/20* Jump;
             }
 
-            LocalVel += Vector3.Up * YVel;
-            Body.SetVelocity(LocalVel);
+            Vector3 TotalVel = LocalVel + Vector3.Up * YVel;
+            Body.SetVelocity(TotalVel);
 
             CamTransform.Position = Transform.Position;
         }

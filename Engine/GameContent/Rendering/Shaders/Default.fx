@@ -63,6 +63,14 @@ float3 PointLightPositions[16];
 float3 PointLightColors[16];
 float PointLightIntensities[16];
 
+// New spotlight parameters
+float3 SpotLightPositions[16];
+float3 SpotLightDirections[16];
+float3 SpotLightColors[16];
+float SpotLightIntensities[16];
+float SpotLightInnerConeAngles[16]; // Cosine of inner cone angle
+float SpotLightOuterConeAngles[16]; // Cosine of outer cone angle
+
 struct VertexInput
 {
     float4 Position : POSITION0;
@@ -83,6 +91,7 @@ struct VertexOutput
     float3 Tangent : TEXCOORD4;
     float3 Bitangent : TEXCOORD5;
 };
+
 VertexOutput VS(VertexInput input)
 {
     VertexOutput output;
@@ -144,6 +153,7 @@ float3 CalculatePBRLighting(VertexOutput input, float3 normal, float3 albedo, fl
     float3 kSpecular = F0 * reflection;
     float3 kDiffuse = (1.0 - F0) * albedo;
 
+    // Directional lights
     for (int i = 0; i < 16; i++)
     {
         float3 lightDir = normalize(DirLightDirection[i]);
@@ -159,7 +169,11 @@ float3 CalculatePBRLighting(VertexOutput input, float3 normal, float3 albedo, fl
 
         finalColor += (kDiffuseLight + kSpecularLight) * DirLightColor[i] * DirLightIntensity[i] * NdotL
                     + (kSpecular * DirLightColor[i] * DirLightIntensity[i] * NdotL);
+    }
 
+    // Point lights
+    for (int i = 0; i < 16; i++)
+    {
         float3 lightPos = PointLightPositions[i];
         float3 lightDirPoint = normalize(lightPos - input.WorldPosition);
         float distance = length(lightPos - input.WorldPosition);
@@ -176,6 +190,35 @@ float3 CalculatePBRLighting(VertexOutput input, float3 normal, float3 albedo, fl
 
         finalColor += (kDiffusePoint + kSpecularPoint) * PointLightColors[i] * PointLightIntensities[i] * attenuation * NdotLPoint
                     + (kSpecular * PointLightColors[i] * PointLightIntensities[i] * attenuation * NdotLPoint);
+    }
+
+    // Spotlight calculations
+    for (int i = 0; i < 16; i++)
+    {
+        float3 lightPos = SpotLightPositions[i];
+        float3 lightDirSpot = normalize(lightPos - input.WorldPosition);
+        float3 spotDir = normalize(SpotLightDirections[i]);
+        
+        float distance = length(lightPos - input.WorldPosition);
+        float attenuation = 1.0 / (1.0 + 0.1 * distance + 0.01 * distance * distance);
+
+        // Calculate spotlight cone falloff
+        float cosAngle = dot(-lightDirSpot, spotDir);
+        float innerCone = SpotLightInnerConeAngles[i]; // Cosine of inner angle
+        float outerCone = SpotLightOuterConeAngles[i]; // Cosine of outer angle
+        float spotFactor = smoothstep(outerCone, innerCone, cosAngle);
+
+        float3 halfVecSpot = normalize(lightDirSpot + normal);
+        float NDFSpot = pow(max(dot(normal, halfVecSpot), 0.0), roughness * 128.0);
+        float NdotLSpot = max(dot(normal, lightDirSpot), 0.0);
+
+        float3 FSpot = FresnelSchlick(F0, normal, roughness);
+
+        float3 kSpecularSpot = (NDFSpot * FSpot) / (max(dot(normal, lightDirSpot), 0.0) + 0.001);
+        float3 kDiffuseSpot = albedo * (1.0 - FSpot);
+
+        finalColor += (kDiffuseSpot + kSpecularSpot) * SpotLightColors[i] * SpotLightIntensities[i] * attenuation * NdotLSpot * spotFactor
+                    + (kSpecular * SpotLightColors[i] * SpotLightIntensities[i] * attenuation * NdotLSpot * spotFactor);
     }
 
     return finalColor;

@@ -31,7 +31,7 @@ namespace Engine.Game
             PostFxManager.Instance.AddEffect(ACESToneMapper, new List<KeyValuePair<string, object>>() {
                 new ("Exposure", 1.5f),
                 new ("Gamma", .5f)
-            });
+            }); 
             Effect Bloom = Content.Load<Effect>("Rendering/Shaders/Bloom");
             PostFxManager.Instance.AddEffect(Bloom, new List<KeyValuePair<string, object>>() {
                 new ("BloomIntensity", 1.0f),    // Controls overall bloom strength
@@ -59,7 +59,7 @@ namespace Engine.Game
 
         public override void MainUpdate(GameTime GameTime)
         {
-
+            
             //Update Animations
             AnimPlayer.Update(GameTime.ElapsedGameTime, true, Matrix.Identity);
 
